@@ -58,12 +58,14 @@ const ejectBuild = async ({
   await fs.ensureDir(outputRoot);
   progress("Copy default engine");
 
+  console.log(`copy corePath = ${corePath} to outputRoot = ${outputRoot}`); // DEBUGHACK
   await copy(corePath, outputRoot);
 
   const expectedEngineVersion = await readEngineVersion(expectedEngineMetaPath);
 
   try {
     progress("Looking for local engine in assets/engine");
+    console.log(`copy localCorePath = ${localCorePath} to outputRoot = ${outputRoot}`); // DEBUGHACK
     await copy(localCorePath, outputRoot);
     progress("Copy local engine");
 

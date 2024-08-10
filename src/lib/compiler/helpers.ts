@@ -16,12 +16,12 @@ const TEXT_SPEED_LOOKUP = [0x0, 0x1, 0x3, 0x7, 0xf, 0x1f] as const;
 const KEY_BITS: Record<string, number> = {
   left: 0x02,
   right: 0x01,
-  up: 0x04,
-  down: 0x08,
-  a: 0x10,
-  b: 0x20,
-  select: 0x40,
-  start: 0x80,
+  up: 0x08,
+  down: 0x04,
+  a: 0x80,
+  b: 0x40,
+  select: 0x20,
+  start: 0x10,
 } as const;
 
 export const inputDec = (input: string | string[]) => {

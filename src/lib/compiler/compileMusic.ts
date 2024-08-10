@@ -5,6 +5,7 @@ import { readFile, ensureDir, pathExists, writeFile, unlink } from "fs-extra";
 import ensureBuildTools from "./ensureBuildTools";
 import { exportToC, loadUGESong } from "shared/lib/uge/ugeHelper";
 import { assetFilename } from "shared/lib/helpers/assets";
+import spawn, { ChildProcess } from "lib/helpers/cli/spawn";
 
 export interface PrecompiledMusicTrack {
   id: string;
@@ -165,13 +166,86 @@ const compileModTracks = async (
 
 const compileUgeTrack = async (
   track: PrecompiledMusicTrack,
-  { projectRoot }: CompileHugeTrackOptions
+  { projectRoot, buildToolsPath }: CompileHugeTrackOptions
 ): Promise<string> => {
   const ugePath = assetFilename(projectRoot, "music", track);
   const data = await readFile(ugePath);
   const song = loadUGESong(new Uint8Array(data).buffer);
-  if (song) {
-    return exportToC(song, track.dataName);
+  if (song) {   
+    // Convert FamiStudio file named the same as .uge file
+    var fmsFile = Path.basename(ugePath, ".uge") + ".fms";
+    var asmFile = Path.basename(ugePath, ".uge") + ".s";
+    var ugeDir = Path.dirname(ugePath);
+    
+    var fmsPath = Path.join(ugeDir, fmsFile);
+    var asmPath = Path.join(ugeDir, asmFile);
+
+    console.log(`compileUgeTrack: track.dataName = ${track.dataName}, ugePath = ${ugePath}, asmPath = ${asmPath}`); 
+
+
+  if(!(await pathExists(fmsPath))) {
+    //let arrayName = `${track.dataName}_Data`
+    //return `#pragma bank 255\nconst void __at(5) __bank_${arrayName};\nextern const unsigned char ${arrayName}; // DUMMY DATA!!!\n`;
+    fmsPath = Path.join(ugeDir, "dummy.fms");
+  }
+
+  const env = Object.create(process.env);
+  const options = {
+    cwd: "", //"/tmp",
+    env,
+    shell: true,
+  };
+
+  //const buildToolsPath = await ensureBuildTools(tmpPath);
+  const FamiStudioExe =
+    process.platform === "win32"
+      ? `"${buildToolsPath}\\famistudio\\FamiStudio.exe"`
+      : `"${buildToolsPath}/famistudio/FamiStudio"`;
+
+  console.log(`Executing ${FamiStudioExe}`);
+
+  await new Promise<void>((resolve, reject) => {
+    const child = childProcess.spawn(FamiStudioExe,
+                                     [fmsPath, "famistudio-asm-export", asmPath, "famistudio-asm-seperate-song-pattern", `${Path.basename(fmsPath)}_42`, "-famistudio-asm-format:sdas"],
+                                     options);
+
+    child.on("error", (err) => {
+      //warnings(err.toString());
+    });
+
+    child.stdout.on("data", (data) => {
+      //const lines = data.toString().split("\n");
+      //lines.forEach((line: string) => {
+      //  progress(line);
+      //});
+    });
+
+    child.stderr.on("data", (data) => {
+      //const lines = data.toString().split("\n");
+      //lines.forEach((line: string) => {
+      //  warnings(line);
+      //});
+    });
+
+    child.on("close", (code) => {
+      if (code === 0) resolve();
+      else reject(code);
+    });
+  });
+
+    var arrayName = `${track.dataName}_Data`
+    //return `#pragma bank 255\nconst void __at(5) __bank_${arrayName};\nextern const unsigned char ${arrayName}; // DUMMY DATA!!!\n`; // gbdk-nes: Bypass for FamiStudio!
+    
+    
+    const asmBuffer = await readFile(asmPath);
+    var asmText: string = asmBuffer.toString();
+    asmText = asmText.replace(".globl _music_data_\r\n", ""); // Remove .globl for unnamed songs to avoid link errors (win)
+    asmText = asmText.replace(".globl music_data_\r\n", ""); // Remove .globl for unnamed songs to avoid link errors (win)
+    asmText = asmText.replace(".globl _music_data_\n", ""); // Remove .globl for unnamed songs to avoid link errors (linux)
+    asmText = asmText.replace(".globl music_data_\n", ""); // Remove .globl for unnamed songs to avoid link errors (linux)
+    return `#pragma bank 255\nconst void __at(5) __bank_${arrayName};\nvoid dummyFunc${arrayName}() {\n__asm\nFAMISTUDIO_CFG_C_BINDINGS = 1\n.area _CODE_5\n_${arrayName}::\nFAMISTUDIO_DPCM_PTR=0xFF\n${asmText}\n__endasm;\n}\n`; // gbdk-nes: Bypass for FamiStudio!
+    
+    //return exportToC(song, track.dataName);
   } else {
     return "// No song found";
   }
@@ -187,6 +261,7 @@ const compileUgeTracks = async (
     warnings = (_msg) => {},
   }: CompileMusicOptions
 ): Promise<void> => {
+  console.log(`compileUgeTracks: ${tmpPath}`);
   const buildToolsPath = await ensureBuildTools(tmpPath);
   const cacheRoot = Path.normalize(`${tmpPath}/_gbscache/music`);
   ensureDir(cacheRoot);
@@ -195,7 +270,9 @@ const compileUgeTracks = async (
     "utf8"
   );
 
+  console.log(`Processing tracks: ${tracks}`);
   for (const track of tracks) {
+    console.log(`Processing music/${track.dataName}_Data.c`);
     output[`music/${track.dataName}_Data.c`] = await compileUgeTrack(track, {
       projectRoot,
       buildToolsPath,
@@ -227,8 +304,10 @@ export const compileMusicTracks = (
   options: CompileMusicOptions
 ) => {
   if (options.engine === "gbt") {
+    console.log("Calling compileModTracks(tracks, options)");
     return compileModTracks(tracks, options);
   } else {
+    console.log("Calling compileUgeTracks(tracks, options)");
     return compileUgeTracks(tracks, options);
   }
 };

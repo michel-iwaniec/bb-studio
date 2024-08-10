@@ -174,6 +174,11 @@ export const optimiseScriptValue = (input: ScriptValue): ScriptValue => {
           type: "number",
           value: ~optimisedValue.value,
         };
+      } else if (type === "shl7") {
+        return {
+          type: "number",
+          value: (optimisedValue.value << 7),
+        };
       } else if (type === "rnd") {
         return {
           type: "rnd",
@@ -219,6 +224,7 @@ export const expressionToScriptValue = (expression: string): ScriptValue => {
       "|": "bOR",
       "^": "bXOR",
       "~": "bNOT",
+      //"<7<": "shl7",
       "==": "eq",
       "!=": "ne",
       "<": "lt",
@@ -550,6 +556,12 @@ export const shiftLeftScriptValueConst = (
   value: ScriptValue,
   num: number
 ): ScriptValue => {
+if(num == 7) {
+  return {
+    type: "shl7",
+    value,
+  };  
+} else {
   return {
     type: "shl",
     valueA: value,
@@ -558,6 +570,7 @@ export const shiftLeftScriptValueConst = (
       value: num,
     },
   };
+}
 };
 
 export const shiftRightScriptValueConst = (

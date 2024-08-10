@@ -122,6 +122,12 @@ export const dummyPrecompiledBackground: PrecompiledBackground = {
     symbol: "ta_1",
     data: new Uint8Array(),
   },
+  tilemapAttrNES: {
+    symbol: "taNES_1",
+    data: new Uint8Array(),
+  },
+  tilemapAttrNES_width: 0,
+  tilemapAttrNES_height: 0
 };
 
 export const dummyBackground: Background = {

@@ -13,7 +13,7 @@ type BuildOptions = {
   debug: boolean;
   platform: string;
   batteryless: boolean;
-  targetPlatform: "gb" | "pocket";
+  targetPlatform: "gb" | "pocket" | "nes";
   cartType: "mbc3" | "mbc5";
 };
 
@@ -37,7 +37,7 @@ const buildMakeScript = async (
     platform === "win32"
       ? `..\\_gbstools\\gbdk\\bin\\lcc`
       : `../_gbstools/gbdk/bin/lcc`;
-  let CFLAGS = `-Iinclude -Wa-Iinclude -Wa-I../_gbstools/gbdk/lib/small/asxxxx -Wl-a -c`;
+  let CFLAGS = `-debug -Iinclude -Wa-Iinclude -Wa-I../_gbstools/gbdk/lib/small/asxxxx -Wl-a -c`;
 
   if (colorEnabled) {
     CFLAGS += " -DCGB";
@@ -47,11 +47,11 @@ const buildMakeScript = async (
     CFLAGS += " -DSGB";
   }
 
-  if (musicDriver === "huge") {
-    CFLAGS += " -DHUGE_TRACKER";
-  } else {
-    CFLAGS += " -DGBT_PLAYER";
-  }
+  //if (musicDriver === "huge") {
+  //  CFLAGS += " -DHUGE_TRACKER";
+  //} else {
+  //  CFLAGS += " -DGBT_PLAYER";
+  //}
 
   if (batteryless) {
     CFLAGS += " -DBATTERYLESS";
@@ -66,6 +66,11 @@ const buildMakeScript = async (
 
   if (targetPlatform === "pocket") {
     CFLAGS += " -msm83:ap";
+  }
+
+  if (targetPlatform === "nes") {
+    console.log(`CFLAGS += " -mmos6502:nes";`);
+    CFLAGS += " -mmos6502:nes";
   }
 
   const srcRoot = `${buildRoot}/src/**/*.@(c|s)`;
@@ -121,6 +126,7 @@ export const getBuildCommands = async (
     cartType,
   }: BuildOptions
 ) => {
+  console.log(`buildRoot = ${buildRoot}`);
   const srcRoot = `${buildRoot}/src/**/*.@(c|s)`;
   const buildFiles = await globAsync(srcRoot);
   const output = [];
@@ -144,8 +150,10 @@ export const getBuildCommands = async (
 
     if (!(await pathExists(objFile))) {
       const buildArgs = [
+        `-debug`,
         `-Iinclude`,
         `-Wa-Iinclude`,
+        `-Wa-Isrc/core/asm/nes`,
         `-Wa-I../_gbstools/gbdk/lib/small/asxxxx`,
         `-Wl-a`,
         `-Wf-MMD`,
@@ -160,11 +168,12 @@ export const getBuildCommands = async (
         buildArgs.push("-DSGB");
       }
 
-      if (musicDriver === "huge") {
-        buildArgs.push("-DHUGE_TRACKER");
-      } else {
-        buildArgs.push("-DGBT_PLAYER");
-      }
+      //if (musicDriver === "huge") {
+      //  buildArgs.push("-DHUGE_TRACKER");
+      //} else {
+      //  buildArgs.push("-DGBT_PLAYER");
+      //}
+      buildArgs.push("-DFAMISTUDIO");
 
       if (batteryless) {
         buildArgs.push("-DBATTERYLESS");
@@ -180,12 +189,16 @@ export const getBuildCommands = async (
         buildArgs.push("-Wl-w");
         buildArgs.push("-Wl-y");
         buildArgs.push("-DVM_DEBUG_OUTPUT");
-        buildArgs.push("-Wf--nolospre");
-        buildArgs.push("-Wf--nogcse");
+        //buildArgs.push("-Wf--nolospre");
+        //buildArgs.push("-Wf--nogcse"); // GCSE causes bus conflict and hang... seems to be due to excessive _ZP usage
       }
 
       if (targetPlatform === "pocket") {
         buildArgs.push("-msm83:ap");
+      }
+
+      if (targetPlatform === "nes") {
+        buildArgs.push("-mmos6502:nes");
       }
 
       buildArgs.push(
@@ -270,17 +283,18 @@ export const buildLinkFlags = (
   colorOnly = false,
   musicDriver = "gbtplayer",
   debug = false,
-  targetPlatform = "gb"
+  targetPlatform = "nes" //"gb"
 ) => {
   const validName = name
     .toUpperCase()
     .replace(/[^A-Z]*/g, "")
     .substring(0, 15);
   const cart = cartType === "mbc3" ? "0x10" : "0x1E";
-  const gameFile = colorOnly ? "game.gbc" : "game.gb";
+  const gameFile = "game.nes"; //colorOnly ? "game.gbc" : "game.gb";
   return ([] as Array<string>).concat(
     // General
     [
+      "-debug",
       `-Wm-yt${cart}`,
       "-Wm-yoA",
       "-Wm-ya4",
@@ -289,7 +303,7 @@ export const buildLinkFlags = (
       "-Wl-w",
       "-Wm-yS",
       "-Wl-klib",
-      "-Wl-g.STACK=0xDF00",
+      //"-Wl-g.STACK=0xDF00",
       "-Wi-e",
       `-Wm-yn"${validName}"`,
     ],
@@ -298,16 +312,18 @@ export const buildLinkFlags = (
     // SGB
     sgb ? ["-Wm-ys"] : [],
     // Pocket
-    targetPlatform === "pocket" ? ["-msm83:ap"] : [],
+    targetPlatform === "pocket" ? ["-msm83:ap"] : ["-mmos6502:nes"],
     // Debug emulicious
     debug ? ["-Wf--debug", "-Wl-m", "-Wl-w", "-Wl-y"] : [],
     // Music Driver
-    musicDriver === "huge"
-      ? // hugetracker
-        ["-Wl-lhUGEDriver.lib"]
-      : // gbtplayer
-        ["-Wl-lgbt_player.lib"],
+    //musicDriver === "huge"
+    //  ? // hugetracker
+    //    ["-Wl-lhUGEDriver.lib"]
+    //  : // gbtplayer
+    //    ["-Wl-lgbt_player.lib"],
+    [""],
     // Output
+    targetPlatform === "nes" ? ["-o", `build/rom/${gameFile}`] : [],
     targetPlatform === "gb" ? ["-o", `build/rom/${gameFile}`] : [],
     targetPlatform === "pocket" ? ["-o", "build/rom/game.pocket"] : [],
     [`-Wl-f${linkFile}`]
@@ -339,7 +355,7 @@ export const buildMakeDotBuildFile = ({
       .concat(
         color ? ["CGB"] : ["DMG"],
         sgb ? ["SGB"] : [],
-        musicDriver === "huge" ? ["hUGE"] : ["GBT"],
+        ["FamiStudio"], //musicDriver === "huge" ? ["hUGE"] : ["GBT"],
         cartType === "mbc3" ? ["MBC3"] : ["MBC5"],
         batteryless ? ["batteryless"] : []
       )

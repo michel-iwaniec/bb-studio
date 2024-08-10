@@ -25,6 +25,9 @@ export interface PrecompiledBackground {
   cgbTileset?: PrecompiledTileData;
   tilemap: PrecompiledTileData;
   tilemapAttr: PrecompiledTileData;
+  tilemapAttrNES: PrecompiledTileData;
+  tilemapAttrNES_width: number;
+  tilemapAttrNES_height: number;
   autoPalettes?: Palette[];
 }
 
@@ -655,8 +658,10 @@ export const compileSceneTriggers = (
       __comment: triggerName(trigger, triggerIndex),
       x: trigger.x,
       y: trigger.y,
-      width: trigger.width,
-      height: trigger.height,
+      //width: trigger.width,
+      //height: trigger.height,
+      xend: trigger.x + trigger.width - 1,
+      yend: trigger.y + trigger.height - 1,
       script: maybeScriptFarPtr(eventPtrs[sceneIndex].triggers[triggerIndex]),
       script_flags: toASMTriggerScriptFlags(trigger),
     })),
@@ -911,6 +916,8 @@ export const compileBackground = (
     {
       width: background.width,
       height: background.height,
+      attr_nes_width: background.tilemapAttrNES_width,
+      attr_nes_height: background.tilemapAttrNES_height,
       tileset: background.tileset
         ? toFarPtr(background.tileset.symbol)
         : "{ NULL, NULL }",
@@ -920,14 +927,16 @@ export const compileBackground = (
           : "{ NULL, NULL }",
       tilemap: toFarPtr(background.tilemap.symbol),
       cgb_tilemap_attr: color
-        ? toFarPtr(background.tilemapAttr.symbol)
+        //? toFarPtr(background.tilemapAttr.symbol)
+        ? toFarPtr(background.tilemapAttrNES.symbol)
         : "{ NULL, NULL }",
     },
     ([] as string[]).concat(
       background.tileset?.symbol ?? [],
       background.cgbTileset?.symbol ?? [],
       background.tilemap.symbol,
-      color ? background.tilemapAttr.symbol : []
+      //color ? background.tilemapAttr.symbol : []
+      color ? background.tilemapAttrNES.symbol : []
     )
   );
 
@@ -957,6 +966,17 @@ export const compileTilemapAttr = (tilemapAttr: PrecompiledTileData) =>
     tilemapAttr.symbol,
     `// Tilemap Attr ${tilemapAttr.symbol}`,
     Array.from(tilemapAttr.data).map(toHex),
+    16
+  );
+
+// gbdk-nes: Create dummy version of GBC attributes, as they aren't used
+// TODO: Remove them completely
+export const compileTilemapAttrDummy = (tilemapAttr: PrecompiledTileData) =>
+  toArrayDataFile(
+    DATA_TYPE,
+    tilemapAttr.symbol,
+    `// Tilemap Attr ${tilemapAttr.symbol}`,
+    Array.from([0]).map(toHex),
     16
   );
 

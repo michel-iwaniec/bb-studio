@@ -39,8 +39,10 @@ const makeBuild = async ({
   const colorEnabled = settings.colorMode !== "mono";
   const sgbEnabled = settings.sgbEnabled && settings.colorMode !== "color";
   const colorOnly = settings.colorMode === "color";
-  const targetPlatform = buildType === "pocket" ? "pocket" : "gb";
+  const targetPlatform = "nes"; //buildType === "pocket" ? "pocket" : "gb";
   const batterylessEnabled = settings.batterylessEnabled && buildType !== "web";
+  
+  console.log(`targetPlatform = ${targetPlatform}`); // DEBUGHACK
 
   const buildToolsPath = await ensureBuildTools(tmpPath);
   const buildToolsVersion = await fs.readFile(
@@ -70,11 +72,12 @@ const makeBuild = async ({
   if (debug) {
     env.DEBUG = true;
   }
-  if (settings.musicDriver === "huge") {
-    env.MUSIC_DRIVER = "HUGE_TRACKER";
-  } else {
-    env.MUSIC_DRIVER = "GBT_PLAYER";
-  }
+  //if (settings.musicDriver === "huge") {
+  //  env.MUSIC_DRIVER = "HUGE_TRACKER";
+  //} else {
+  //  env.MUSIC_DRIVER = "GBT_PLAYER";
+  //}
+  env.MUSIC_DRIVER = "FAMISTUDIO";
   if (settings.cartType === "mbc3") {
     env.RUMBLE_ENABLE = 0x20;
   } else {
@@ -85,6 +88,7 @@ const makeBuild = async ({
   await fetchCachedObjData(buildRoot, tmpPath, env);
 
   // Compile Source Files
+  console.log(`Calling getBuildCommands...`); // DEBUGHACK
   const makeCommands = await getBuildCommands(buildRoot, {
     colorEnabled,
     sgb: sgbEnabled,
@@ -95,7 +99,7 @@ const makeBuild = async ({
     targetPlatform,
     cartType: settings.cartType,
   });
-
+  console.log(`Done calling getBuildCommands!`); // DEBUGHACK
   const options = {
     cwd: buildRoot,
     env,
@@ -118,6 +122,7 @@ const makeBuild = async ({
             }
             throw e;
           }
+          console.log(`Spawn: makeCommand.command = ${makeCommand.command}, makeCommand.args = ${makeCommand.args}`); // DEBUGHACK
           const { child, completed } = spawn(
             makeCommand.command,
             makeCommand.args,
@@ -129,6 +134,7 @@ const makeBuild = async ({
           );
           childSet.add(child);
           await completed;
+          console.log(`-- Completed: makeCommand.command = ${makeCommand.command}, makeCommand.args = ${makeCommand.args}`);
           childSet.delete(child);
         }
       })
@@ -138,7 +144,7 @@ const makeBuild = async ({
 
   progress(`${l10n("COMPILER_PACKING")}...`);
   const { cartSize } = await gbspack(await getPackFiles(buildRoot), {
-    bankOffset: 1,
+    bankOffset: 3, //1, // gbdk-nes: Avoid packing in VM bank (bank 2) for alignment reasons
     filter: 255,
     extension: "rel",
     additional: batterylessEnabled ? 4 : 0,
@@ -174,6 +180,7 @@ const makeBuild = async ({
     targetPlatform
   );
 
+  console.log(`Spawn: linkCommand = ${linkCommand}, linkArgs = ${linkArgs}`); // DEBUGHACK
   const { completed: linkCompleted } = spawn(linkCommand, linkArgs, options, {
     onLog: (msg) => progress(msg),
     onError: (msg) => {
@@ -184,6 +191,7 @@ const makeBuild = async ({
     },
   });
   await linkCompleted;
+  console.log(`Link completed!`); // DEBUGHACK
 
   // Store /obj in cache
   await cacheObjData(buildRoot, tmpPath, env);

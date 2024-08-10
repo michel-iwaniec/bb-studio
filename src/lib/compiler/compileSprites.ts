@@ -12,12 +12,12 @@ import { IndexedImage } from "shared/lib/tiles/indexedImage";
 import { assetFilename } from "shared/lib/helpers/assets";
 import { optimiseTiles } from "lib/sprites/readSpriteData";
 
-const S_PALETTE = 0x10;
-const S_FLIPX = 0x20;
-const S_FLIPY = 0x40;
-const S_PRIORITY = 0x80;
+const S_PALETTE = 0x00;
+const S_FLIPX = 0x40;
+const S_FLIPY = 0x80;
+const S_PRIORITY = 0x20;
 const S_GBC_PALETTE_MASK = 0x7;
-const S_VRAM2 = 0x8;
+const S_VRAM2 = 0x00;
 
 export type SpriteTileAllocationStrategy = (
   tileIndex: number,

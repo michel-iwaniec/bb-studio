@@ -45,6 +45,13 @@ export const valueUnaryOperatorTypes = [
   "abs",
   // Bitwise
   "bNOT",
+  // Special-case-shifts
+  //"shl4",
+  "shl7",
+  //"shr4",
+  //"shr7",
+  //"asr4",
+  //"asr7",
 ] as const;
 export type ValueUnaryOperatorType = typeof valueUnaryOperatorTypes[number];
 

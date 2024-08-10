@@ -1219,7 +1219,7 @@ ipcMain.handle(
     const debuggerEnabled =
       options.debugEnabled || project.settings.debuggerEnabled;
     const colorOnly = project.settings.colorMode === "color";
-    const gameFile = colorOnly ? "game.gbc" : "game.gb";
+    const gameFile = "game.nes"; //colorOnly ? "game.gbc" : "game.gb";
 
     try {
       const compiledData = await buildProject(project, {

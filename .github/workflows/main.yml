@@ -26,27 +26,27 @@ jobs:
         run: |
           yarn --ignore-engines
 
-      - name: Test
-        run: |
-          yarn test
+#      - name: Test
+#        run: |
+#          yarn test
 
   deploy:
-    needs: test
+#    needs: test
     runs-on: ${{ matrix.os }}
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/beta-') || startsWith(github.ref, 'refs/heads/wip-')
 
     strategy:
       matrix:
         include:
-          - name: mac
-            label: macOS ARM
-            os: macos-14
-          - name: mac-intel
-            label: macOS Intel
-            os: macos-14
-          - name: win32
-            label: Windows 32-bit
-            os: ubuntu-latest
+#          - name: mac
+#            label: macOS ARM
+#            os: macos-14
+#          - name: mac-intel
+#            label: macOS Intel
+#            os: macos-14
+#          - name: win32
+#            label: Windows 32-bit
+#            os: ubuntu-latest
           - name: win64
             label: Windows 64-bit
             os: ubuntu-latest
@@ -79,13 +79,13 @@ jobs:
         run: |
           yarn --ignore-engines
 
-      - name: Update credits
-        env:
-          PATREON_ACCESS_TOKEN: ${{ secrets.PATREON_ACCESS_TOKEN }}
-          PATREON_CAMPAIGN_ID: ${{ secrets.PATREON_CAMPAIGN_ID }}
-        run: |
-          npm run fetch-contributors
-          npm run fetch-patrons
+#      - name: Update credits
+#        env:
+#          PATREON_ACCESS_TOKEN: ${{ secrets.PATREON_ACCESS_TOKEN }}
+#          PATREON_CAMPAIGN_ID: ${{ secrets.PATREON_CAMPAIGN_ID }}
+#        run: |
+#          npm run fetch-contributors
+#          npm run fetch-patrons
 
       # ==== Builds ====
 

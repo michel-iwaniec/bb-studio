@@ -85,7 +85,7 @@ const main = async (
   });
 
   const colorOnly = project.settings.colorMode === "color";
-  const gameFile = colorOnly ? "game.gbc" : "game.gb";
+  const gameFile = "game.nes"; //colorOnly ? "game.gbc" : "game.gb";
 
   if (command === "export") {
     if (program.onlyData) {
