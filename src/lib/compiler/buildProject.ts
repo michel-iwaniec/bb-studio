@@ -77,7 +77,7 @@ const buildProject = async (
   });
   if (buildType === "web") {
     const colorOnly = data.settings.colorMode === "color";
-    const gameFile = colorOnly ? "game.gbc" : "game.gb";
+    const gameFile = "game.nes"; //colorOnly ? "game.gbc" : "game.gb";
     await copy(binjgbRoot, `${outputRoot}/build/web`);
     await copy(
       `${outputRoot}/build/rom/${gameFile}`,

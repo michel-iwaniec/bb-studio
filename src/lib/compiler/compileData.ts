@@ -18,6 +18,7 @@ import compileSprites from "./compileSprites";
 import compileAvatars from "./compileAvatars";
 import compileEmotes from "./compileEmotes";
 import compileFonts from "./compileFonts";
+import convertAttrsFormatNES from "./convertAttrsFormatNES"
 import {
   compileBackground,
   compileBackgroundHeader,
@@ -25,6 +26,7 @@ import {
   compileTilemapHeader,
   compileTilemapAttr,
   compileTilemapAttrHeader,
+  compileTilemapAttrDummy,
   compileScene,
   compileSceneActors,
   compileSceneActorsHeader,
@@ -218,6 +220,14 @@ const ensureProjectAsset = async (
   return `${projectPath}`;
 };
 
+
+function toHexString(byteArray: Uint8Array) {
+  return Array.from(byteArray, function(byte) {
+    return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+  }).join(' ')
+}
+
+
 // #region precompile
 
 export const precompileBackgrounds = async (
@@ -236,6 +246,7 @@ export const precompileBackgrounds = async (
 ) => {
   const usedTilemaps: CompiledTilemapData[] = [];
   const usedTilemapAttrs: CompiledTilemapData[] = [];
+  const usedTilemapAttrsNES: CompiledTilemapData[] = [];
 
   const eventImageIds: string[] = [];
   walkScenesScripts(
@@ -309,6 +320,9 @@ export const precompileBackgrounds = async (
       let tileset2Index = -1;
       let tilemapIndex = -1;
       let tilemapAttrIndex = -1;
+      let tilemapAttrIndexNES = -1;
+      let attr_nes_width = 0;
+      let attr_nes_height = 0;
 
       // VRAM Bank 1
       if (background.vramData[0].length > 0) {
@@ -348,12 +362,47 @@ export const precompileBackgrounds = async (
         });
       }
 
+// export interface PrecompiledTileData {
+//   symbol: string;
+//   data: number[] | Uint8Array;
+// }
+
+      // Reduce Tilemap Attrs to NES 16x16 format
+      if (background.attr.length > 0) {
+      // usedTilemapAttrsNES.length
+        var tilemapAttrNES_map = convertAttrsFormatNES(usedTilemapAttrs[usedTilemapAttrsNES.length].data, background.width, background.height);
+        attr_nes_width = tilemapAttrNES_map.width;
+        attr_nes_height = tilemapAttrNES_map.height;
+        //console.log(`${background.symbol}_tilemap_attr_nes = ${tilemapAttrNES_map}, background.width = ${background.width}, background.height = ${background.height}`);
+        console.log(`${background.symbol}_tilemap_attr: (${background.width} x ${background.height})`)
+        for(var y = 0; y < background.height; y++)
+        {
+            var attrLine = usedTilemapAttrs[usedTilemapAttrsNES.length].data.slice(y * background.width, (y + 1) * background.width);
+            console.log(`  ${attrLine}`);
+        }
+        console.log(`${background.symbol}_tilemap_attr_nes: (${tilemapAttrNES_map.width} x ${tilemapAttrNES_map.height})`)
+        for(var y = 0; y < 4*tilemapAttrNES_map.height; y++)
+        {
+            var attrLineNES = toHexString(tilemapAttrNES_map.data.slice(y * tilemapAttrNES_map.width, (y + 1) * tilemapAttrNES_map.width));
+            console.log(`  ${attrLineNES}`);
+        }
+        tilemapAttrIndexNES = usedTilemapAttrsNES.length;
+        usedTilemapAttrsNES.push({
+          symbol: `${background.symbol}_tilemap_attr_nes`,
+          data: new Uint8Array(tilemapAttrNES_map.data),
+          is360: false,
+        });
+      }
+
       return {
         ...background,
         tileset: usedTilesets[tileset1Index],
         cgbTileset: usedTilesets[tileset2Index],
         tilemap: usedTilemaps[tilemapIndex],
         tilemapAttr: usedTilemapAttrs[tilemapAttrIndex],
+        tilemapAttrNES: usedTilemapAttrsNES[tilemapAttrIndexNES],
+        tilemapAttrNES_width: attr_nes_width,
+        tilemapAttrNES_height: attr_nes_height
       };
     }
   );
@@ -366,6 +415,7 @@ export const precompileBackgrounds = async (
     backgroundLookup,
     usedTilemaps,
     usedTilemapAttrs,
+    usedTilemapAttrsNES,
   };
 };
 
@@ -892,6 +942,7 @@ export const precompileMusic = (
         cmd.args &&
         (cmd.args.musicId !== undefined || cmd.command === EVENT_MUSIC_PLAY)
       ) {
+        console.log(`precompileMusic: Found EVENT_MUSIC_PLAY command: cmd.args.musicId = ${cmd.args.musicId}, music[0].id = ${music[0].id}`); // DEBUGHACK
         const musicId = ensureString(cmd.args.musicId, music[0].id);
         // If never seen this track before add it to the list
         if (usedMusicIds.indexOf(musicId) === -1) {
@@ -901,6 +952,7 @@ export const precompileMusic = (
         const referencedIds = ensureReferenceArray(cmd.args?.references, [])
           .filter((ref) => ref.type === "music")
           .map((ref) => ref.id);
+        console.log(`precompileMusic: Found references: referencedIds = ${referencedIds}`); // DEBUGHACK
         usedMusicIds.push(...referencedIds);
       }
     }
@@ -916,8 +968,10 @@ export const precompileMusic = (
         (musicDriver === "huge" && track.type === "uge") ||
         (musicDriver !== "huge" && track.type !== "uge")
       ) {
+        console.log(`usedMusic: return track = ${track}`); // DEBUGHACK
         return track;
       }
+      console.log(`usedMusic: return track = ..driverMusic = ${driverMusic[0]}, id = ${track.id}`); // DEBUGHACK
       return {
         ...driverMusic[0],
         id: track.id,
@@ -1211,6 +1265,7 @@ const precompile = async (
     usedTilesets: usedBackgroundTilesets,
     usedTilemaps,
     usedTilemapAttrs,
+    usedTilemapAttrsNES,
   } = await precompileBackgrounds(
     projectData.backgrounds,
     projectData.scenes,
@@ -1335,6 +1390,7 @@ const precompile = async (
     usedSpriteTilesets,
     usedTilemaps,
     usedTilemapAttrs,
+    usedTilemapAttrsNES,
     usedSprites,
     statesOrder,
     stateReferences,
@@ -1815,8 +1871,12 @@ const compile = async (
 
   if (colorEnabled) {
     precompiled.usedTilemapAttrs.forEach((tilemapAttr) => {
-      output[`${tilemapAttr.symbol}.c`] = compileTilemapAttr(tilemapAttr);
+      output[`${tilemapAttr.symbol}.c`] = compileTilemapAttrDummy(tilemapAttr);
       output[`${tilemapAttr.symbol}.h`] = compileTilemapAttrHeader(tilemapAttr);
+    });
+    precompiled.usedTilemapAttrsNES.forEach((tilemapAttrNES: CompiledTilemapData) => {
+      output[`${tilemapAttrNES.symbol}.c`] = compileTilemapAttr(tilemapAttrNES);
+      output[`${tilemapAttrNES.symbol}.h`] = compileTilemapAttrHeader(tilemapAttrNES);
     });
   }
 

@@ -111,6 +111,7 @@ import { loadSceneTypes } from "lib/project/sceneTypes";
 import { fileExists } from "lib/helpers/fs/fileExists";
 import confirmDeleteAsset from "lib/electron/dialog/confirmDeleteAsset";
 import { getPatronsFromGithub } from "lib/credits/getPatronsFromGithub";
+import ensureBuildTools from "lib/compiler/ensureBuildTools";
 
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -1219,7 +1220,7 @@ ipcMain.handle(
     const debuggerEnabled =
       options.debugEnabled || project.settings.debuggerEnabled;
     const colorOnly = project.settings.colorMode === "color";
-    const gameFile = colorOnly ? "game.gbc" : "game.gb";
+    const gameFile = "game.nes"; //colorOnly ? "game.gbc" : "game.gb";
 
     try {
       const compiledData = await buildProject(project, {
@@ -1251,6 +1252,13 @@ ipcMain.handle(
           `${outputRoot}/build/${buildType}`,
           `${projectRoot}/build/${buildType}`
         );
+        const buildToolsPath = await ensureBuildTools(getTmp());
+        const mapperTmpPath = Path.join(buildToolsPath, "mapper", "bbstudio.rbf");
+        const mapperProjectPath = Path.join(projectRoot, "build", `${buildType}`, "bbstudio.rbf");
+        const readmeTmpPath = Path.join(buildToolsPath, "mapper", "readme.txt");
+        const readmeProjectPath = Path.join(projectRoot, "build", `${buildType}`, "readme.txt");
+        await copy(mapperTmpPath, mapperProjectPath);
+
         shell.openPath(Path.join(projectRoot, "build", buildType));
         buildLog(`-`);
         buildLog(

@@ -88,7 +88,10 @@ ${engineFields
       engineValue && engineValue.value !== undefined
         ? engineValue.value
         : engineField.defaultValue;
-    return `        VM_SET_CONST_INT16      _${engineField.key}, ${value}`;
+    if(engineField.cType === "WORD" || engineField.cType === "UWORD")
+        return `        VM_SET_CONST_INT16      _${engineField.key}, ${value}`;
+    else
+        return `        VM_SET_CONST_INT8       _${engineField.key}, ${value}`;
   })
   .join("\n")}
 

@@ -143,6 +143,8 @@ export const scriptValueToString = (
     )} ^ ${scriptValueToString(value.valueB, options)})`;
   } else if (value.type === "bNOT") {
     return `~(${scriptValueToString(value.value, options)})`;
+  } else if (value.type === "shl7") {
+    return `~(${scriptValueToString(value.value, options)})`;
   } else if (value.type === "abs") {
     return `abs(${scriptValueToString(value.value, options)})`;
   } else if (value.type === "isqrt") {

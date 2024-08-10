@@ -3,7 +3,8 @@ include ./Makefile.build
 
 GBSTOOLS_DIR = $(TOP)../_gbstools
 GBDK = $(GBSTOOLS_DIR)/gbdk
-GBSPACK = $(GBSTOOLS_DIR)/gbspack/gbspack
+#GBSPACK = $(GBSTOOLS_DIR)/gbspack/gbspack
+GBSPACK = $(TOP)../gbspack/target/release/gbspack
 
 ROM_BUILD_DIR = build
 OBJDIR = obj

@@ -6,7 +6,8 @@ TEST_DIR = $(TOP)test
 TEST_FW	= $(TEST_DIR)/framework
 EXAMPLES_DIR = ./examples
 EMU	= $(TOP)../bgb/bgb
-GBSPACK = $(TOP)../gbspack/gbspack
+#GBSPACK = $(TOP)../gbspack/gbspack
+GBSPACK = $(TOP)../gbspack/target/release/gbspack
 TEST_CHK = python $(CURDIR)/$(TEST_FW)/unit_checker.py
 GBS_CLI = node $(TOP)../gb-studio/out/cli/gb-studio-cli.js
 PLATFORM =
@@ -20,9 +21,9 @@ REL_OBJDIR = obj/_rel
 CFLAGS = $(PLATFORM) -I$(TOP)include -Wa-I$(TOP)include
 
 LFLAGS_NBANKS += -Wm-yoA -Wm-ya4
-LFLAGS_SYMBOLS = -Wl-j -Wl-m -Wl-w -Wm-yS
+LFLAGS_SYMBOLS = -Wl-j -Wl-m -Wl-w -Wm-yS -Wl-u
 
-LFLAGS = $(PLATFORM) -Wm-yt$(CART_MBC) $(LFLAGS_NBANKS) $(LFLAGS_SYMBOLS) -Wl-klib -Wl-g.STACK=0xDF00 -Wi-e
+LFLAGS = $(PLATFORM) -Wm-yt$(CART_MBC) $(LFLAGS_NBANKS) $(LFLAGS_SYMBOLS) -Wl-klib -Wi-e
 
 PACKFLAGS = -b 1 -f 255 -e rel -c
 
@@ -42,7 +43,8 @@ TARGET = $(ROM_BUILD_DIR)/rom.gb
 
 ASRC = $(foreach dir,$(TOP)src,$(notdir $(wildcard $(dir)/*.s))) 
 CSRC = $(foreach dir,$(TOP)src,$(notdir $(wildcard $(dir)/*.c))) 
-ACORE = $(foreach dir,$(TOP)src/core,$(notdir $(wildcard $(dir)/*.s))) 
+ACORE = $(foreach dir,$(TOP)src/core,$(notdir $(wildcard $(dir)/*.s)))
+ACORE_PLATFORM = $(foreach dir,$(TOP)src/core/asm/nes,$(notdir $(wildcard $(dir)/*.s)))
 CCORE = $(foreach dir,$(TOP)src/core,$(notdir $(wildcard $(dir)/*.c))) 
 CSTATES = $(foreach dir,$(TOP)src/states,$(notdir $(wildcard $(dir)/*.c))) 
 ASTATES = $(foreach dir,$(TOP)src/states,$(notdir $(wildcard $(dir)/*.s))) 
@@ -50,6 +52,7 @@ ASTATES = $(foreach dir,$(TOP)src/states,$(notdir $(wildcard $(dir)/*.s)))
 ENGINE_OBJS = $(CSRC:%.c=$(TOP)$(OBJDIR)/%.o) \
 	$(ASRC:%.s=$(TOP)$(OBJDIR)/%.o) \
 	$(ACORE:%.s=$(TOP)$(OBJDIR)/%.o) \
+	$(ACORE_PLATFORM:%.s=$(TOP)$(OBJDIR)/%.o) \
 	$(CCORE:%.c=$(TOP)$(OBJDIR)/%.o) \
 	$(CSTATES:%.c=$(TOP)$(OBJDIR)/%.o) \
 	$(ASTATES:%.s=$(TOP)$(OBJDIR)/%.o)
@@ -128,26 +131,31 @@ $(OBJDIR):
 
 $(REL_OBJDIR):
 	mkdir -p $(REL_OBJDIR)
+	mkdir -p $(TOP)$(REL_OBJDIR)
 
 $(TOP)$(OBJDIR)/%.o:	$(TOP)src/core/%.c
-	$(CC) $(CFLAGS) -Wf-MMD $(filter -Wf-ba%, $(subst .d,-Wf-ba,$(suffix $(<:%.c=%)))) -c -o $@ $<
+	$(CC) $(CFLAGS) -Wa-l -Wf-MMD $(filter -Wf-ba%, $(subst .d,-Wf-ba,$(suffix $(<:%.c=%)))) -c -o $@ $<
 
 $(TOP)$(OBJDIR)/%.o:	$(TOP)src/core/%.s
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -Wa-l -c -o $@ $<
+
+$(TOP)$(OBJDIR)/%.o:	$(TOP)src/core/asm/nes/%.s
+	$(CC) $(CFLAGS) -Wa-l -c -o $@ $<
 
 $(TOP)$(OBJDIR)/%.o:	$(TOP)src/states/%.c
-	$(CC) $(CFLAGS) -Wf-MMD -c -o $@ $<
+	$(CC) $(CFLAGS) -Wa-l -Wf-MMD -c -o $@ $<
 
 $(TOP)$(OBJDIR)/%.o:	$(TOP)src/states/%.s
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -Wa-l -c -o $@ $<
 
 $(TOP)$(OBJDIR)/%.o:	$(TOP)src/%.c
-	$(CC) $(CFLAGS) -Wf-MMD -c -o $@ $<
+	$(CC) $(CFLAGS) -Wa-l -Wf-MMD -c -o $@ $<
 
 $(TOP)$(OBJDIR)/%.o:	$(TOP)src/%.s
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -Wa-l -c -o $@ $<
 
 $(REL_OBJDIR)/linkfile.lk:	$(OBJS)
+	mkdir -p $(TOP)$(REL_OBJDIR)
 	mkdir -p $(REL_OBJDIR)
 
 	$(shell rm -f $(REL_OBJDIR)/packfile.pk) 
@@ -156,6 +164,10 @@ $(REL_OBJDIR)/linkfile.lk:	$(OBJS)
 
 	$(shell echo -g __start_save=$(shell expr $(CART_SIZE) - 4 ) >$@)
 	$(foreach O,$(REL_OBJS),$(shell echo $O >>$@))
+
+	$(shell cp $(TOP)$(OBJDIR)/*.lst $(TOP)$(REL_OBJDIR)/)
+	$(shell cp $(TOP)$(OBJDIR)/*.lst $(REL_OBJDIR)/)
+	$(shell cp $(OBJDIR)/*.lst $(REL_OBJDIR)/)
 
 BUILD:	$(REL_OBJDIR)/linkfile.lk
 	$(CC) $(LFLAGS) -Wm-yn$(ROMTITLE) -o $(TARGET) -Wl-f$<

@@ -1,110 +1,92 @@
-# GB Studio
+# BB Studio Drag-n-Drop Game Creator for NES/Famicom
 
+## What is this?
 
-[![Github Actions Status](https://github.com/chrismaltby/gb-studio/actions/workflows/main.yml/badge.svg?branch=develop)](https://github.com/chrismaltby/gb-studio/actions?query=branch%3Adevelop)
+"BB Studio" is a heavily-hacked version of the awesome GB Studio by Chris Maltby. 
 
-Copyright (c) 2021 Chris Maltby, released under the [MIT license](https://opensource.org/licenses/MIT).
+The original GB Studio can be found [HERE](https://github.com/chrismaltby/gb-studio)
 
-Twitter: [@maltby](https://www.twitter.com/maltby) 
+It replaces the Game Boy target with the NES (the Game Boy's "Big Brother").
 
-Reddit: [/r/gbstudio](https://www.reddit.com/r/gbstudio)  
-Discord: [Join Chat](https://discord.gg/bxerKnc)
+You are strongly advised to already be familiar with the original GB Studio, before trying out BB Studio.
 
+## End User License Agreement
 
-GB Studio is a quick and easy to use retro adventure game creator for Game Boy available for Mac, Linux and Windows.
-For more information see the [GB Studio](https://www.gbstudio.dev) site
+The current version is early-alpha software with all the bugs and warts that entails.
 
-![GB Studio](gbstudio.gif)
+It is targeted at early adopters who like to tinker with experimental software.
 
-GB Studio consists of an [Electron](https://electronjs.org/) game builder application and a C based game engine using [GBDK](http://gbdk.sourceforge.net/), music is provided by [GBT Player](https://github.com/AntonioND/gbt-player)
+It may crash-and-burn on you - and you shall remain patient and courteous.
 
-## Installation
+Other than that, the MIT license [MIT license](https://opensource.org/licenses/MIT) applies.
 
-Download a release for your operating system from the [GB Studio Downloads](https://www.gbstudio.dev/download) page.
+## How to use it
 
-Or to run from source, clone this repo then:
+There are a few key things to consider to make your GBC game run well on the NES.
 
-- Install [NodeJS](https://nodejs.org/)
-- Install [Yarn](https://yarnpkg.com/)
+* You have more screen space: 256x240 instead of 160x144. This can change the look and feel of your GBC game quite a bit, for better or worse.
 
-```bash
-> cd gb-studio
-> yarn
-> npm start
-```
+* The edges of the screen will be partially cropped on a real TV - this varies depending on TV model.
 
-GB Studio currently uses Node 21.7.1. If you have [NVM](https://github.com/nvm-sh/nvm) installed you can use the included `.nvmrc` to switch to the supported Node version. 
+* You can only use half the number of background and sprite palettes in a scene. (for now)
 
-```bash
-> cd gb-studio
-> nvm use
-```
+* NES background palettes also require the first color to be the same across all 4 background palettes.
+- Typically black is a good choice for the shared background color - but your mileage may vary.
+- The exception is palette 7. This is only used for UI, and has 4 unique colors.
 
-## GB Studio CLI 
+* The NES has a limited number of total colors, and the RGB colors entered in the UI will be automatically converted to NES colors when building. They may sometimes be off from what you intended.
+- The next version will have an option for specifying NES colors directly, to remove the guesswork of RGB -> NES color mapping.
 
-Install GB Studio from source as above then
+* The NES graphics chip allows much fewer sprites / scanline than the GB/GBC. So you need to be much more frugal with placing sprites on the same horizontal line.
 
-```bash
-> npm run make:cli
-> yarn link
-# From any folder you can now run gb-studio-cli
-> gb-studio-cli -V
-3.0.0
-> gb-studio-cli --help
-```
+* The 6502 CPU may struggle to keep up with the double-clocked GBC CPU. If your game already tends to lag when running in monochrome DMG mode, it will probably struggle on the NES as well.
+- More optimizations are planned for the next version.
 
-### Update the CLI
+### Using music in your project
 
-Pull the latest code and run make:cli again, yarn link is only needed for the first run.
+BB Studio uses the FamiStudio sound engine, so any songs in your game need to be re-created with FamiStudio.
 
-```bash
-> npm run make:cli
-```
+A future version may support auto-converting Game Boy songs to FamiStudio format. But re-making your song in FamiStudio will always be the recommended option for best results.
 
-### CLI Examples
+To make a FamiStudio .fms file replace a GB Studio file, simply put it into the assets/music directory of your project, with an identical name as the .uge file apart from the .uge extension being replaced with .fms instead.
+The build process will then pick up your FamiStudio song in place of the .uge one.
 
-- **Export Project**
+FamiStudio also requires you to set the tempo mode to either "FamiStudio tempo" or "FamiTracker tempo". This is a global driver setting decided at build time.
 
-    ```bash
-    > gb-studio-cli export path/to/project.gbsproj out/
-    ```
-    Export GBDK project from gbsproj to out directory
+The current setting is FamiTracker tempo, as all music files were originally in tracker format.
 
-- **Export Data**
-    ```bash
-    > gb-studio-cli export -d path/to/project.gbsproj out/
-    ```
-    Export only src/data and include/data from gbsproj to out directory
-- **Make ROM**
-    ```bash
-    > gb-studio-cli make:rom path/to/project.gbsproj out/game.gb
-    ```
-    Make a ROM file from gbsproj
+If you wish to use FamiStudio tempo instead, you can edits this file manually:
 
-- **Make Pocket**
-    ```bash
-    > gb-studio-cli make:pocket path/to/project.gbsproj out/game.pocket
-    ```
-    Make a Pocket file from gbsproj
+`appData/src/gb/src/core/asm/nes/demo_sdcc.asminc.s`
 
-- **Make Web**
-    ```bash
-    > gb-studio-cli make:web path/to/project.gbsproj out/
-    ```
-    Make a Web build from gbsproj
+And change the line `FAMISTUDIO_USE_FAMITRACKER_TEMPO = 1` to `FAMISTUDIO_USE_FAMITRACKER_TEMPO = 0`.
 
-## Documentation
+Don't try to change any other settings unless you really know what you're doing. The FamiStudio driver will likely crash your game if you disable an effect the music relies on.
 
-[GB Studio Documentation](https://www.gbstudio.dev/docs)
+#### Sound effects
 
-## Note For Translators
+SFX is not supported in this alpha version, but will be added soon.
 
-If you'd like to help contribute new language localisations to GB Studio you can do so by submitting pull requests adding or updating the JSON files found here https://github.com/chrismaltby/gb-studio/tree/develop/src/lang
+## Running your built NES game
 
-If you're looking to update an existing translation with content that is missing, there is a handy script that lists keys found in the English localisation that are not found and copies them to your localisation
+Your NES game can be run on an Everdrive N8 Pro, by placing your built .nes file in a subdirectory on the sdcard along with the provided bbstudio.rbf. This contains an Everdrive N8 Pro implementation of the custom mapper BB Studio requires.
 
-```bash
-npm run missing-translations lang
-# e.g. npm run missing-translations de
-# e.g. npm run missing-translations en-GB
-```
+For running on a PC you can instead use a customized version of the Mesen emulator [downloadable here](https://github.com/michel-iwaniec/Mesen2/releases/tag/Mesen2-with-bbstudio-mapper).
+
+## Putting your NES game on a stand-alone cartridge for sale
+
+BB Studio uses a custom NES mapper to enable some GBC-like features such as 8x8 color attributes in an affordable way. 
+
+Because the mapper is not 100% finished yet, .nes files built by BB Studio currently use a temporary mapper number of 248, to indicate the mapper is defined by the Everdrive N8 Pro .RBF file.
+
+Sharing those files is not really recommended, as they may not work with the final version of the mapper.
+
+Prototypes of the mapper have already been built and tested. One vintage-like discrete board using only simple TTL chips. 
+
+And a more optimized board with all logic squeezed into a 32-macrocell CPLD.
+
+The specifications for this mapper should be finalized by the end of 2024, with boards being available in 2025.
+
+## Something isn't working! How do I report it?
+
+Please use the issue tracker on this github page... but only if the bug is specific to BB Studio rather than GB Studio :)

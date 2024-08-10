@@ -215,7 +215,14 @@ type ScriptBuilderRPNOperation =
   | ".ATAN2"
   | ".ISQRT"
   | ".SHL"
+  | ".SHL4"
+  | ".SHL7"
   | ".SHR"
+  | ".SHR4"
+  | ".SHR7"
+  | ".ASR"
+  | ".ASR4"
+  | ".ASR7"
   | ".RND"
   | ScriptBuilderComparisonOperator;
 
@@ -515,6 +522,8 @@ const valueFunctionToScriptOperator = (
       return ".B_XOR";
     case "bNOT":
       return ".B_NOT";
+    case "shl7":
+      return ".SHL7";
     case "rnd":
       return ".RND";
   }
@@ -1239,10 +1248,12 @@ class ScriptBuilder {
 
   _rpn = () => {
     const output: string[] = [];
+    var length: number = 0;
     const stack: number[] = [];
 
     const rpnCmd = (
       cmd: string,
+      cmdLength: number,
       ...args: Array<ScriptBuilderStackVariable>
     ) => {
       output.push(
@@ -1253,16 +1264,17 @@ class ScriptBuilder {
           12
         )
       );
+      length += cmdLength;
     };
 
     const rpn = {
       ref: (variable: ScriptBuilderStackVariable) => {
-        rpnCmd(".R_REF", variable);
+        rpnCmd(".R_REF", 1 + 2, variable);
         stack.push(0);
         return rpn;
       },
       refInd: (variable: ScriptBuilderStackVariable) => {
-        rpnCmd(".R_REF_IND", variable);
+        rpnCmd(".R_REF_IND", 1 + 2, variable);
         stack.push(0);
         return rpn;
       },
@@ -1275,12 +1287,12 @@ class ScriptBuilder {
         }
       },
       refSet: (variable: ScriptBuilderStackVariable) => {
-        rpnCmd(".R_REF_SET", variable);
+        rpnCmd(".R_REF_SET", 1 + 2, variable);
         stack.pop();
         return rpn;
       },
       refSetInd: (variable: ScriptBuilderStackVariable) => {
-        rpnCmd(".R_REF_SET_IND", variable);
+        rpnCmd(".R_REF_SET_IND", 1 + 2, variable);
         stack.pop();
         return rpn;
       },
@@ -1293,25 +1305,25 @@ class ScriptBuilder {
         }
       },
       int8: (value: number | string) => {
-        rpnCmd(".R_INT8", value);
+        rpnCmd(".R_INT8", 1 + 1, value);
         stack.push(0);
         return rpn;
       },
       int16: (value: number | string) => {
-        rpnCmd(".R_INT16", value);
+        rpnCmd(".R_INT16", 1 + 2, value);
         stack.push(0);
         return rpn;
       },
       operator: (op: ScriptBuilderRPNOperation) => {
-        rpnCmd(".R_OPERATOR", op);
+        rpnCmd(".R_OPERATOR", 1, op);
         if (!rpnUnaryOperators.includes(op)) {
           stack.pop();
         }
         return rpn;
       },
       stop: () => {
-        rpnCmd(".R_STOP");
-        this._addCmd("VM_RPN");
+        rpnCmd(".R_STOP", 1);
+        this._addCmd("VM_RPN", length+1);
         output.forEach((cmd: string) => {
           this.output.push(cmd);
         });
@@ -1367,8 +1379,8 @@ class ScriptBuilder {
             }
             this._rpn() //
               .ref(this._localRef(actorRef, 1))
-              .int16(8 * 16)
-              .operator(".DIV")
+              //.int16(7)
+              .operator(".ASR7") //.operator(".ASR")
               .refSet(localVar)
               .stop();
           } else if (propertyValue === "ypos") {
@@ -1379,8 +1391,8 @@ class ScriptBuilder {
             }
             this._rpn() //
               .ref(this._localRef(actorRef, 2))
-              .int16(8 * 16)
-              .operator(".DIV")
+              //.int16(7)
+              .operator(".ASR7") //.operator(".ASR")
               .refSet(localVar)
               .stop();
           } else if (propertyValue === "pxpos") {
@@ -1391,8 +1403,8 @@ class ScriptBuilder {
             }
             this._rpn() //
               .ref(this._localRef(actorRef, 1))
-              .int16(16)
-              .operator(".DIV")
+              //.int16(7)
+              .operator(".ASR7") //.operator(".ASR")
               .refSet(localVar)
               .stop();
           } else if (propertyValue === "pypos") {
@@ -1403,8 +1415,8 @@ class ScriptBuilder {
             }
             this._rpn() //
               .ref(this._localRef(actorRef, 2))
-              .int16(16)
-              .operator(".DIV")
+              //.int16(7)
+              .operator(".ASR7") //.operator(".ASR")
               .refSet(localVar)
               .stop();
           } else if (propertyValue === "direction") {
@@ -2479,12 +2491,12 @@ extern void __mute_mask_${symbol};
 
     this._rpn() //
       .refVariable(variableX)
-      .int16(units === "tiles" ? 0x7 : 0x4)
-      .operator(".SHL")
+      //.int16(units === "tiles" ? 0x7 : 0x4)
+      .operator(units === "tiles" ? ".SHL7" : ".SHL4") //.operator(".SHL")
       .refSet(this._localRef(actorRef, 1))
       .refVariable(variableY)
-      .int16(units === "tiles" ? 0x7 : 0x4)
-      .operator(".SHL")
+      //.int16(units === "tiles" ? 0x7 : 0x4)
+      .operator(units === "tiles" ? ".SHL7" : ".SHL4") //.operator(".SHL")
       .refSet(this._localRef(actorRef, 2))
       .stop();
 
@@ -2599,6 +2611,7 @@ extern void __mute_mask_${symbol};
     const [rpnOpsX, fetchOpsX] = precompileScriptValue(
       optimiseScriptValue(
         scriptValueToSubpixels(
+        optimiseScriptValue(
           addScriptValueToScriptValue(
             {
               type: "property",
@@ -2606,28 +2619,51 @@ extern void __mute_mask_${symbol};
               property: units === "tiles" ? "xpos" : "pxpos",
             },
             valueX
-          ),
+          )),
           units
         )
       ),
       "x"
     );
-    const [rpnOpsY, fetchOpsY] = precompileScriptValue(
-      optimiseScriptValue(
-        scriptValueToSubpixels(
-          addScriptValueToScriptValue(
-            {
-              type: "property",
-              target: actorId,
-              property: units === "tiles" ? "ypos" : "pypos",
-            },
-            valueY
+    
+    var rpnOpsY;
+    var fetchOpsY;
+    if(valueY.type == "number" && valueY.value == 0)
+    {
+        // Optimization skip add. TODO: Handle it in optimiseScriptValue
+        [rpnOpsY, fetchOpsY] = precompileScriptValue(
+          optimiseScriptValue(
+            scriptValueToSubpixels(
+                {
+                  type: "property",
+                  target: actorId,
+                  property: units === "tiles" ? "ypos" : "pypos",
+                },
+              units
+            )
           ),
-          units
-        )
-      ),
-      "y"
-    );
+          "y"
+        );
+    }
+    else {
+        [rpnOpsY, fetchOpsY] = precompileScriptValue(
+          optimiseScriptValue(
+            scriptValueToSubpixels(
+            optimiseScriptValue(
+              addScriptValueToScriptValue(
+                {
+                  type: "property",
+                  target: actorId,
+                  property: units === "tiles" ? "ypos" : "pypos",
+                },
+                valueY
+              )),
+              units
+            )
+          ),
+          "y"
+        );
+    }
 
     const localsLookup = this._performFetchOperations([
       ...fetchOpsX,
@@ -2694,12 +2730,12 @@ extern void __mute_mask_${symbol};
 
     this._rpn() //
       .refVariable(variableX)
-      .int16(units === "tiles" ? 0x7 : 0x4)
-      .operator(".SHL")
+      //.int16(units === "tiles" ? 0x7 : 0x4)
+      .operator(units === "tiles" ? ".SHL7" : ".SHL4") //.operator(".SHL")
       .refSet(this._localRef(actorRef, 1))
       .refVariable(variableY)
-      .int16(units === "tiles" ? 0x7 : 0x4)
-      .operator(".SHL")
+      //.int16(units === "tiles" ? 0x7 : 0x4)
+      .operator(units === "tiles" ? ".SHL7" : ".SHL4") //.operator(".SHL")
       .refSet(this._localRef(actorRef, 2))
       .stop();
 
@@ -2858,12 +2894,12 @@ extern void __mute_mask_${symbol};
 
     this._rpn() //
       .ref(this._localRef(actorRef, 1))
-      .int16((units === "tiles" ? 8 : 1) * 16)
-      .operator(".DIV")
+      //.int16(units === "tiles" ? 7 : 4)
+      .operator(units === "tiles" ? ".ASR7" : ".ASR4") //.operator(".ASR")
       .refSetVariable(variableX)
       .ref(this._localRef(actorRef, 2))
-      .int16((units === "tiles" ? 8 : 1) * 16)
-      .operator(".DIV")
+      //.int16(units === "tiles" ? 7 : 4)
+      .operator(units === "tiles" ? ".ASR7" : ".ASR4") //.operator(".ASR")
       .refSetVariable(variableY)
       .stop();
 
@@ -2880,8 +2916,8 @@ extern void __mute_mask_${symbol};
 
     this._rpn() //
       .ref(this._localRef(actorRef, 1))
-      .int16((units === "tiles" ? 8 : 1) * 16)
-      .operator(".DIV")
+      //.int16(units === "tiles" ? 7 : 4)
+      .operator(units === "tiles" ? ".ASR7" : ".ASR4") //.operator(".ASR")
       .refSetVariable(variableX)
       .stop();
 
@@ -2898,8 +2934,8 @@ extern void __mute_mask_${symbol};
 
     this._rpn() //
       .ref(this._localRef(actorRef, 2))
-      .int16((units === "tiles" ? 8 : 1) * 16)
-      .operator(".DIV")
+      //.int16(units === "tiles" ? 7 : 4)
+      .operator(units === "tiles" ? ".ASR7" : ".ASR4") //.operator(".ASR")
       .refSetVariable(variableY)
       .stop();
 
@@ -3434,13 +3470,13 @@ extern void __mute_mask_${symbol};
       .ref(this._localRef(otherActorRef, 2))
       .ref(this._localRef(actorRef, 2))
       .operator(".SUB")
-      .int16(8 * 16)
-      .operator(".DIV")
+      //.int16(7)
+      .operator(".ASR7") //.operator(".ASR")
       .ref(this._localRef(otherActorRef, 1))
       .ref(this._localRef(actorRef, 1))
       .operator(".SUB")
-      .int16(8 * 16)
-      .operator(".DIV")
+      //.int16(7)
+      .operator(".ASR7") //.operator(".ASR")
       .operator(".ATAN2")
       .int16(toProjectileFlags(destroyOnHit, loopAnim))
       .stop();
@@ -3490,8 +3526,9 @@ extern void __mute_mask_${symbol};
 
     const initialNumLines = input.map(this.textNumLines);
     const maxNumLines = Math.max(2, Math.max.apply(null, initialNumLines));
+    const textBoxWidth = 32;
     const textBoxHeight = Math.min(maxNumLines, MAX_DIALOGUE_LINES) + 2;
-    const textBoxY = 18 - textBoxHeight;
+    const textBoxY = 30 - textBoxHeight - 2;  // extra 2 rows for overscan
 
     this._addComment("Text Dialogue");
     input.forEach((text, textIndex) => {
@@ -3505,7 +3542,7 @@ extern void __mute_mask_${symbol};
       }
 
       this._loadStructuredText(text, avatarIndex, MAX_DIALOGUE_LINES);
-      this._overlayClear(0, 0, 20, textBoxHeight, ".UI_COLOR_WHITE", true);
+      this._overlayClear(0, 0, textBoxWidth, textBoxHeight, ".UI_COLOR_WHITE", true);
       if (textIndex === 0) {
         this._overlayMoveTo(0, textBoxY, ".OVERLAY_IN_SPEED");
       }
@@ -3516,7 +3553,7 @@ extern void __mute_mask_${symbol};
         ".UI_WAIT_BTN_A",
       ]);
       if (textIndex === input.length - 1) {
-        this._overlayMoveTo(0, 18, ".OVERLAY_OUT_SPEED");
+        this._overlayMoveTo(0, 30, ".OVERLAY_OUT_SPEED");
         this._overlayWait(true, [".UI_WAIT_WINDOW", ".UI_WAIT_TEXT"]);
       }
     });
@@ -3549,6 +3586,7 @@ extern void __mute_mask_${symbol};
     const gotoSecondLine = textCodeGoto(3, 3);
     const choiceText = `${speedInstant}${gotoFirstLine}${trueText}\n${gotoSecondLine}${falseText}`;
     const numLines = choiceText.split("\n").length;
+    const textBoxWidth = 32;
 
     this._addComment("Text Multiple Choice");
 
@@ -3559,14 +3597,14 @@ extern void __mute_mask_${symbol};
     }
 
     this._loadStructuredText(choiceText);
-    this._overlayClear(0, 0, 20, numLines + 2, ".UI_COLOR_WHITE", true);
-    this._overlayMoveTo(0, 18 - numLines - 2, ".OVERLAY_IN_SPEED");
+    this._overlayClear(0, 0, textBoxWidth, numLines + 2, ".UI_COLOR_WHITE", true);
+    this._overlayMoveTo(0, 30 - numLines - 2 - 2, ".OVERLAY_IN_SPEED"); // extra 2 rows for overscan
     this._displayText();
     this._overlayWait(true, [".UI_WAIT_WINDOW", ".UI_WAIT_TEXT"]);
     this._choice(dest, [".UI_MENU_LAST_0", ".UI_MENU_CANCEL_B"], 2);
     this._menuItem(1, 1, 0, 0, 0, 2);
     this._menuItem(1, 2, 0, 0, 1, 0);
-    this._overlayMoveTo(0, 18, ".OVERLAY_OUT_SPEED");
+    this._overlayMoveTo(0, 30, ".OVERLAY_OUT_SPEED");
     this._overlayWait(true, [".UI_WAIT_WINDOW", ".UI_WAIT_TEXT"]);
 
     if (this._isIndirectVariable(variable)) {
@@ -3589,6 +3627,7 @@ extern void __mute_mask_${symbol};
     );
     const height =
       layout === "menu" ? options.length : Math.min(options.length, 4);
+    const width = 32;
     const menuText =
       textCodeSetSpeed(0) +
       textCodeGoto(3, 2) +
@@ -3621,11 +3660,11 @@ extern void __mute_mask_${symbol};
     }
 
     this._loadStructuredText(menuText);
-    this._overlayClear(0, 0, 20 - x, height + 2, ".UI_COLOR_WHITE", true);
+    this._overlayClear(0, 0, width - x, height + 2, ".UI_COLOR_WHITE", true);
     if (layout === "menu") {
-      this._overlayMoveTo(10, 18, ".OVERLAY_SPEED_INSTANT");
+      this._overlayMoveTo(10, 30, ".OVERLAY_SPEED_INSTANT");
     }
-    this._overlayMoveTo(x, 18 - height - 2, ".OVERLAY_IN_SPEED");
+    this._overlayMoveTo(x, 30 - height - 2, ".OVERLAY_IN_SPEED");
     this._displayText();
     this._overlayWait(true, [".UI_WAIT_WINDOW", ".UI_WAIT_TEXT"]);
     this._choice(dest, choiceFlags, numLines);
@@ -3664,10 +3703,10 @@ extern void __mute_mask_${symbol};
       }
     }
 
-    this._overlayMoveTo(x, 18, ".OVERLAY_OUT_SPEED");
+    this._overlayMoveTo(x, 30, ".OVERLAY_OUT_SPEED");
     this._overlayWait(true, [".UI_WAIT_WINDOW", ".UI_WAIT_TEXT"]);
     if (layout === "menu") {
-      this._overlayMoveTo(0, 18, ".OVERLAY_SPEED_INSTANT");
+      this._overlayMoveTo(0, 30, ".OVERLAY_SPEED_INSTANT");
     }
 
     if (this._isIndirectVariable(variable)) {
@@ -3689,7 +3728,7 @@ extern void __mute_mask_${symbol};
     this._addNL();
   };
 
-  overlayMoveTo = (x = 0, y = 18, speed = 0) => {
+  overlayMoveTo = (x = 0, y = 30, speed = 0) => {
     this._addComment("Overlay Move To");
     this._overlayMoveTo(x, y, speed);
     this._overlayWait(true, [".UI_WAIT_WINDOW"]);
@@ -3740,13 +3779,13 @@ extern void __mute_mask_${symbol};
     if (units === "tiles") {
       this._rpn() //
         .refVariable(variableX)
-        .int16(0x7) // Multiply 128
-        .operator(".SHL")
+        //.int16(0x7) // Multiply 128
+        .operator(".SHL7") //.operator(".SHL")
         .int16(80 * 16)
         .operator(".ADD")
         .refVariable(variableY)
-        .int16(0x7) // Multiply 128
-        .operator(".SHL")
+        //.int16(0x7) // Multiply 128
+        .operator(".SHL7") //.operator(".SHL")
         .int16(72 * 16)
         .operator(".ADD")
         .stop();
@@ -5035,8 +5074,10 @@ extern void __mute_mask_${symbol};
       const numberValue = Number(newValue);
       this._addComment(`Engine Field Set To Value`);
       if (is16BitCType(cType)) {
+        console.log(`engineFieldSetToValue: _setConstMemInt16(${key}, ${numberValue})`); // DEBUGHACK
         this._setConstMemInt16(key, numberValue);
       } else {
+        console.log(`engineFieldSetToValue: _setConstMemInt8(${key}, ${numberValue})`); // DEBUGHACK
         this._setConstMemInt8(key, numberValue);
       }
       this._addNL();
