@@ -60,6 +60,7 @@ const save_point_t save_points[] = {
 size_t save_blob_size;
 
 void data_init(void) BANKED {
+/*
     ENABLE_RAM_MBC5;
     SWITCH_RAM_BANK(0, RAM_BANKS_ONLY);
     // calculate save blob size
@@ -71,9 +72,11 @@ void data_init(void) BANKED {
     // load from FLASH ROM
     for (UBYTE i = 0; i < SRAM_BANKS_TO_SAVE; i++) restore_sram_bank(i);
 #endif
+*/
 }
 
 UBYTE * data_slot_address(UBYTE slot, UBYTE *bank) {
+/*
     UWORD res = 0, res_bank = 0;
     for (UBYTE i = 0; i < slot; i++) {
         res += save_blob_size;
@@ -84,9 +87,12 @@ UBYTE * data_slot_address(UBYTE slot, UBYTE *bank) {
     }
     *bank = res_bank;
     return (UBYTE *)0xA000u + res;
+*/
+    return NULL;
 }
 
 void data_save(UBYTE slot) BANKED {
+/*
     UBYTE data_bank, *save_data = data_slot_address(slot, &data_bank);
     if (save_data == NULL) return;
     SWITCH_RAM_BANK(data_bank, RAM_BANKS_ONLY);
@@ -101,9 +107,11 @@ void data_save(UBYTE slot) BANKED {
     // save to FLASH ROM
     save_sram(SRAM_BANKS_TO_SAVE);
 #endif
+*/
 }
 
 UBYTE data_load(UBYTE slot) BANKED {
+/*
     UBYTE data_bank, *save_data = data_slot_address(slot, &data_bank);
     if (save_data == NULL) return FALSE;
     SWITCH_RAM_BANK(data_bank, RAM_BANKS_ONLY);
@@ -120,10 +128,12 @@ UBYTE data_load(UBYTE slot) BANKED {
     } else {
         music_sound_cut();
     }
+*/
     return TRUE;
 }
 
 void data_clear(UBYTE slot) BANKED {
+/*
     UBYTE data_bank, *save_data = data_slot_address(slot, &data_bank);
     if (save_data == NULL) return;
     SWITCH_RAM_BANK(data_bank, RAM_BANKS_ONLY);
@@ -132,14 +142,17 @@ void data_clear(UBYTE slot) BANKED {
     // save to FLASH ROM
     save_sram(SRAM_BANKS_TO_SAVE);
 #endif
+*/
 }
 
 UBYTE data_peek(UBYTE slot, UINT16 idx, UWORD count, UINT16 * dest) BANKED {
+/*
     UBYTE data_bank, *save_data = data_slot_address(slot, &data_bank);
     if (save_data == NULL) return FALSE;
     SWITCH_RAM_BANK(data_bank, RAM_BANKS_ONLY);
     if (SIGN_BY_PTR(save_data) != save_signature) return FALSE;
 
     if (count) memcpy(dest, save_data + sizeof(save_signature) + (idx << 1), count << 1);
+*/
     return TRUE;
 }

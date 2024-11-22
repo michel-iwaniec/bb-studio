@@ -1,0 +1,650 @@
+ASxxxx Linker V03.00/V05.40 + sdld,  page 1.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_FONT_HEADER0                       00000000    00000003 =           3. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00000000  l_VECTORS                       
+     00000000  l__BASE                         
+     00000000  l__CABS                         
+     00000000  l__DABS                         
+     00000000  l__FONT_HEADER                  
+     00000000  l__GSFINAL                      
+     00000000  l__GSINIT                       
+     00000000  l__HEAP                         
+     00000000  l__HEAP_END                     
+     00000000  l__INITIALIZED                  
+     00000000  l__INITIALIZER                  
+     00000000  l__LIT                          
+     00000000  l__OSEG                         
+     00000000  l__RODATA                       
+     00000000  s_OSEG                          
+     00000000  s_VECTORS                       
+     00000000  s_VECTORS0                      
+     00000000  s__CABS                         
+     00000000  s__DABS                         
+     00000000  s__FONT_HEADER                  
+     00000000  s__FONT_HEADER0                 
+     00000003  l__FONT_HEADER0                 
+     00000004  l_OSEG                          
+     00000006  l_VECTORS0                      
+     0000000D  l_GBDKOVR                       
+     00000010  s_GBDKOVR                       
+     00000013  l__DATA                         
+     00000013  l__XINIT                        
+     00000020  s__ZP                           
+     0000003F  l__ZP                           
+     0000005F  s__OSEG                         
+     000000BC  l__BSS                          
+     00000B6F  l__HOME                         
+     00001007  l__CODE                         
+     00006000  s__DATA                         
+     00006013  s__BSS                          
+     000060CF  s__HEAP                         
+     000060CF  s__HEAP_END                     
+     000060CF  s__INITIALIZED                  
+     0000C000  s__CODE                         
+     0000D007  s__HOME                         
+     0000DB76  s__BASE                         
+     0000DB76  s__INITIALIZER                  
+     0000DB76  s__LIT                          
+     0000DB76  s__RODATA                       
+     0000DB76  s__XINIT                        
+     0000DB89  s__GSFINAL                      
+     0000DB89  s__GSINIT                       
+ASxxxx Linker V03.00/V05.40 + sdld,  page 2.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+VECTORS0                            00000000    00000006 =           6. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00/V05.40 + sdld,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+.  .ABS.                            00000000    00000000 =           0. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00000000  .__.ABS.                           _divuint
+     00000100  __vram_transfer_buffer             colors
+     00000200  _shadow_OAM                        crt0
+     00002000  G$PPUCTRL$0_0$0                    text_scroller
+     00002000  _PPUCTRL                           text_scroller
+     00002001  G$PPUMASK$0_0$0                    text_scroller
+     00002001  _PPUMASK                           text_scroller
+     00002002  G$PPUSTATUS$0_0$0                  text_scroller
+     00002002  _PPUSTATUS                         text_scroller
+     00002003  G$OAMADDR$0_0$0                    text_scroller
+     00002003  _OAMADDR                           text_scroller
+     00002004  G$OAMDATA$0_0$0                    text_scroller
+     00002004  _OAMDATA                           text_scroller
+     00002005  G$PPUSCROLL$0_0$0                  text_scroller
+     00002005  _PPUSCROLL                         text_scroller
+     00002006  G$PPUADDR$0_0$0                    text_scroller
+     00002006  _PPUADDR                           text_scroller
+     00002007  G$PPUDATA$0_0$0                    text_scroller
+     00002007  _PPUDATA                           text_scroller
+     00004014  G$OAMDMA$0_0$0                     text_scroller
+     00004014  _OAMDMA                            text_scroller
+     00007F00  _attribute_shadow                  crt0
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 4.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               0000C000    00001007 =        4103. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000C000  .identity                          crt0
+     0000C000  _identity                          crt0
+     0000C368  .wait_vbl_done                     crt0
+     0000C368  _vsync                             crt0
+     0000C368  _wait_vbl_done                     crt0
+     0000C43C  .display_off                       crt0
+     0000C43C  _display_off                       crt0
+     0000C449  .display_on                        crt0
+     0000C449  _display_on                        crt0
+     0000C595  A$text_scroller$153                text_scroller
+     0000C595  C$text_scroller.c$16$0_0$101       text_scroller
+     0000C595  C$text_scroller.c$18$1_0$101       text_scroller
+     0000C595  G$scanline_isr$0$0                 text_scroller
+     0000C595  _scanline_isr                      text_scroller
+     0000C598  A$text_scroller$154                text_scroller
+     0000C59A  A$text_scroller$155                text_scroller
+     0000C59D  A$text_scroller$156                text_scroller
+     0000C59F  A$text_scroller$157                text_scroller
+     0000C5A1  A$text_scroller$158                text_scroller
+     0000C5A4  A$text_scroller$159                text_scroller
+     0000C5A6  A$text_scroller$160                text_scroller
+     0000C5A8  A$text_scroller$161                text_scroller
+     0000C5AB  A$text_scroller$166                text_scroller
+     0000C5AB  C$text_scroller.c$19$2_0$102       text_scroller
+     0000C5AD  A$text_scroller$167                text_scroller
+     0000C5B0  A$text_scroller$168                text_scroller
+     0000C5B3  A$text_scroller$171                text_scroller
+     0000C5B3  C$text_scroller.c$21$2_0$102       text_scroller
+     0000C5B5  A$text_scroller$172                text_scroller
+     0000C5B8  A$text_scroller$175                text_scroller
+     0000C5B8  C$text_scroller.c$22$2_0$102       text_scroller
+     0000C5BB  A$text_scroller$180                text_scroller
+     0000C5BB  C$text_scroller.c$23$2_0$102       text_scroller
+     0000C5BE  A$text_scroller$181                text_scroller
+     0000C5C1  A$text_scroller$183                text_scroller
+     0000C5C3  A$text_scroller$184                text_scroller
+     0000C5C6  A$text_scroller$187                text_scroller
+     0000C5C6  C$text_scroller.c$25$2_0$102       text_scroller
+     0000C5C8  A$text_scroller$188                text_scroller
+     0000C5CB  A$text_scroller$191                text_scroller
+     0000C5CB  C$text_scroller.c$26$2_0$102       text_scroller
+     0000C5CE  A$text_scroller$196                text_scroller
+     0000C5CE  C$text_scroller.c$27$2_0$102       text_scroller
+     0000C5D0  A$text_scroller$197                text_scroller
+     0000C5D3  A$text_scroller$198                text_scroller
+     0000C5D5  A$text_scroller$199                text_scroller
+     0000C5D8  A$text_scroller$202                text_scroller
+     0000C5D8  C$text_scroller.c$29$2_0$102       text_scroller
+     0000C5DA  A$text_scroller$203                text_scroller
+     0000C5DD  A$text_scroller$211                text_scroller
+ASxxxx Linker V03.00/V05.40 + sdld,  page 5.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               0000C000    00001007 =        4103. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000C5DD  C$text_scroller.c$31$1_0$101       text_scroller
+     0000C5DD  C$text_scroller.c$55$1_0$101       text_scroller
+     0000C5DD  XG$scanline_isr$0$0                text_scroller
+     0000C5DE  A$text_scroller$232                text_scroller
+     0000C5DE  C$text_scroller.c$66$1_0$113       text_scroller
+     0000C5DE  C$text_scroller.c$67$1_0$113       text_scroller
+     0000C5DE  G$main$0$0                         text_scroller
+     0000C5DE  _main                              text_scroller
+     0000C5E1  A$text_scroller$235                text_scroller
+     0000C5E1  C$text_scroller.c$69$1_0$113       text_scroller
+     0000C5E4  A$text_scroller$238                text_scroller
+     0000C5E4  C$text_scroller.c$70$1_0$113       text_scroller
+     0000C5E6  A$text_scroller$239                text_scroller
+     0000C5E8  A$text_scroller$240                text_scroller
+     0000C5EB  A$text_scroller$241                text_scroller
+     0000C5EE  A$text_scroller$244                text_scroller
+     0000C5EE  C$text_scroller.c$72$1_0$113       text_scroller
+     0000C5F0  A$text_scroller$245                text_scroller
+     0000C5F3  A$text_scroller$246                text_scroller
+     0000C5F5  A$text_scroller$247                text_scroller
+     0000C5F8  A$text_scroller$248                text_scroller
+     0000C5FA  A$text_scroller$249                text_scroller
+     0000C5FD  A$text_scroller$250                text_scroller
+     0000C5FF  A$text_scroller$251                text_scroller
+     0000C600  A$text_scroller$252                text_scroller
+     0000C603  A$text_scroller$255                text_scroller
+     0000C603  C$text_scroller.c$73$1_0$113       text_scroller
+     0000C606  A$text_scroller$258                text_scroller
+     0000C606  C$text_scroller.c$75$1_0$113       text_scroller
+     0000C608  A$text_scroller$259                text_scroller
+     0000C609  A$text_scroller$260                text_scroller
+     0000C60B  A$text_scroller$261                text_scroller
+     0000C60C  A$text_scroller$262                text_scroller
+     0000C60E  A$text_scroller$263                text_scroller
+     0000C60F  A$text_scroller$264                text_scroller
+     0000C611  A$text_scroller$265                text_scroller
+     0000C612  A$text_scroller$266                text_scroller
+     0000C615  A$text_scroller$267                text_scroller
+     0000C616  A$text_scroller$268                text_scroller
+     0000C617  A$text_scroller$269                text_scroller
+     0000C618  A$text_scroller$270                text_scroller
+     0000C619  A$text_scroller$273                text_scroller
+     0000C619  C$text_scroller.c$82$1_0$113       text_scroller
+     0000C61A  A$text_scroller$274                text_scroller
+     0000C61B  A$text_scroller$277                text_scroller
+     0000C61B  C$text_scroller.c$78$2_0$114       text_scroller
+     0000C61D  A$text_scroller$278                text_scroller
+     0000C61F  A$text_scroller$279                text_scroller
+     0000C622  A$text_scroller$280                text_scroller
+     0000C623  A$text_scroller$283                text_scroller
+     0000C623  C$text_scroller.c$89$1_0$113       text_scroller
+ASxxxx Linker V03.00/V05.40 + sdld,  page 6.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               0000C000    00001007 =        4103. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000C626  A$text_scroller$284                text_scroller
+     0000C628  A$text_scroller$285                text_scroller
+     0000C62B  A$text_scroller$288                text_scroller
+     0000C62B  C$text_scroller.c$90$1_0$113       text_scroller
+     0000C62D  A$text_scroller$289                text_scroller
+     0000C62F  A$text_scroller$290                text_scroller
+     0000C632  A$text_scroller$291                text_scroller
+     0000C634  A$text_scroller$292                text_scroller
+     0000C636  A$text_scroller$293                text_scroller
+     0000C638  A$text_scroller$294                text_scroller
+     0000C63B  A$text_scroller$295                text_scroller
+     0000C63E  A$text_scroller$298                text_scroller
+     0000C63E  C$text_scroller.c$91$1_0$113       text_scroller
+     0000C640  A$text_scroller$299                text_scroller
+     0000C642  A$text_scroller$300                text_scroller
+     0000C643  A$text_scroller$301                text_scroller
+     0000C645  A$text_scroller$302                text_scroller
+     0000C647  A$text_scroller$303                text_scroller
+     0000C648  A$text_scroller$305                text_scroller
+     0000C64B  A$text_scroller$306                text_scroller
+     0000C64E  A$text_scroller$309                text_scroller
+     0000C64E  C$text_scroller.c$93$1_0$113       text_scroller
+     0000C651  A$text_scroller$310                text_scroller
+     0000C654  A$text_scroller$313                text_scroller
+     0000C654  C$text_scroller.c$94$1_0$113       text_scroller
+     0000C657  A$text_scroller$314                text_scroller
+     0000C658  A$text_scroller$315                text_scroller
+     0000C65B  A$text_scroller$316                text_scroller
+     0000C65E  A$text_scroller$317                text_scroller
+     0000C661  A$text_scroller$318                text_scroller
+     0000C663  A$text_scroller$319                text_scroller
+     0000C665  A$text_scroller$320                text_scroller
+     0000C668  A$text_scroller$321                text_scroller
+     0000C66A  A$text_scroller$322                text_scroller
+     0000C66D  A$text_scroller$326                text_scroller
+     0000C66D  C$text_scroller.c$96$1_0$113       text_scroller
+     0000C670  A$text_scroller$327                text_scroller
+     0000C672  A$text_scroller$328                text_scroller
+     0000C675  A$text_scroller$329                text_scroller
+     0000C677  A$text_scroller$330                text_scroller
+     0000C679  A$text_scroller$331                text_scroller
+     0000C67B  A$text_scroller$332                text_scroller
+     0000C67C  A$text_scroller$333                text_scroller
+     0000C67E  A$text_scroller$334                text_scroller
+     0000C681  A$text_scroller$335                text_scroller
+     0000C684  A$text_scroller$336                text_scroller
+     0000C687  A$text_scroller$337                text_scroller
+     0000C68A  A$text_scroller$343                text_scroller
+     0000C68A  C$text_scroller.c$98$1_0$113       text_scroller
+     0000C68A  C$text_scroller.c$99$2_0$115       text_scroller
+     0000C68D  A$text_scroller$346                text_scroller
+ASxxxx Linker V03.00/V05.40 + sdld,  page 7.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               0000C000    00001007 =        4103. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000C68D  C$text_scroller.c$100$2_0$115      text_scroller
+     0000C690  A$text_scroller$347                text_scroller
+     0000C692  A$text_scroller$348                text_scroller
+     0000C694  A$text_scroller$351                text_scroller
+     0000C694  C$text_scroller.c$102$3_0$116      text_scroller
+     0000C697  A$text_scroller$352                text_scroller
+     0000C699  A$text_scroller$353                text_scroller
+     0000C69C  A$text_scroller$357                text_scroller
+     0000C69C  C$text_scroller.c$103$3_0$116      text_scroller
+     0000C69F  A$text_scroller$358                text_scroller
+     0000C6A1  A$text_scroller$359                text_scroller
+     0000C6A4  A$text_scroller$360                text_scroller
+     0000C6A6  A$text_scroller$361                text_scroller
+     0000C6A8  A$text_scroller$362                text_scroller
+     0000C6AA  A$text_scroller$363                text_scroller
+     0000C6AC  A$text_scroller$364                text_scroller
+     0000C6AE  A$text_scroller$365                text_scroller
+     0000C6B1  A$text_scroller$366                text_scroller
+     0000C6B3  A$text_scroller$367                text_scroller
+     0000C6B6  A$text_scroller$371                text_scroller
+     0000C6B6  C$text_scroller.c$106$3_0$116      text_scroller
+     0000C6B9  A$text_scroller$372                text_scroller
+     0000C6BB  A$text_scroller$373                text_scroller
+     0000C6BE  A$text_scroller$377                text_scroller
+     0000C6BE  C$text_scroller.c$107$3_0$116      text_scroller
+     0000C6C1  A$text_scroller$378                text_scroller
+     0000C6C2  A$text_scroller$379                text_scroller
+     0000C6C5  A$text_scroller$380                text_scroller
+     0000C6C8  A$text_scroller$381                text_scroller
+     0000C6CB  A$text_scroller$382                text_scroller
+     0000C6CD  A$text_scroller$383                text_scroller
+     0000C6D0  A$text_scroller$384                text_scroller
+     0000C6D3  A$text_scroller$385                text_scroller
+     0000C6D6  A$text_scroller$386                text_scroller
+     0000C6D9  A$text_scroller$390                text_scroller
+     0000C6D9  C$text_scroller.c$110$3_0$116      text_scroller
+     0000C6DC  A$text_scroller$391                text_scroller
+     0000C6DE  A$text_scroller$392                text_scroller
+     0000C6E1  A$text_scroller$393                text_scroller
+     0000C6E3  A$text_scroller$394                text_scroller
+     0000C6E5  A$text_scroller$395                text_scroller
+     0000C6E7  A$text_scroller$396                text_scroller
+     0000C6E8  A$text_scroller$397                text_scroller
+     0000C6EA  A$text_scroller$398                text_scroller
+     0000C6ED  A$text_scroller$399                text_scroller
+     0000C6F0  A$text_scroller$400                text_scroller
+     0000C6F3  A$text_scroller$401                text_scroller
+     0000C6F6  A$text_scroller$404                text_scroller
+     0000C6F8  A$text_scroller$405                text_scroller
+     0000C6FB  A$text_scroller$406                text_scroller
+     0000C6FE  A$text_scroller$409                text_scroller
+ASxxxx Linker V03.00/V05.40 + sdld,  page 8.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               0000C000    00001007 =        4103. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000C6FE  C$text_scroller.c$115$2_0$115      text_scroller
+     0000C701  A$text_scroller$412                text_scroller
+     0000C701  C$text_scroller.c$117$2_0$115      text_scroller
+     0000C704  A$text_scroller$413                text_scroller
+     0000C707  A$text_scroller$418                text_scroller
+     0000C707  C$text_scroller.c$119$1_0$113      text_scroller
+     0000C707  XG$main$0$0                        text_scroller
+     0000C708  G$scanline_offsets_tbl$0_0$0       text_scroller
+     0000C708  _scanline_offsets_tbl              text_scroller
+     0000C718  G$scroller_text$0_0$0              text_scroller
+     0000C718  _scroller_text                     text_scroller
+     0000C881  Ftext_scroller$__str_0$0_0$0       text_scroller
+     0000C895  ___memcpy                          ___memcpy
+     0000C8C7  .add_TIM                           
+     0000C8C7  _add_TIM                           
+     0000C8CB  .add_VBL                           
+     0000C8CB  _add_VBL                           
+     0000C8CF  .add_LCD                           
+     0000C8CF  _add_LCD                           
+     0000C8E1  .remove_TIM                        
+     0000C8E1  _remove_TIM                        
+     0000C8E5  .remove_VBL                        
+     0000C8E5  _remove_VBL                        
+     0000C8E9  .remove_LCD                        
+     0000C8E9  _remove_LCD                        
+     0000C8F3  _printf                            printf
+     0000C95A  ___printf                          sprintf
+     0000CDE6  _sprintf                           sprintf
+     0000CE58  ___uitoa                           __itoa
+     0000CF3F  _uitoa                             __itoa
+     0000CF5B  _itoa                              __itoa
+     0000CFCB  __sdcc_indirect_jsr                
+     0000CFCE  __moduint                          _moduint
+     0000CFD6  __divuint                          _divuint
+     0000CFDE  ___udivmod16                       _divuint
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 9.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_HOME                               0000D007    00000B6F =        2927. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000D007  .ppu_stripe_begin_horizontal       VRAMBuffer
+     0000D01C  .ppu_stripe_begin_vertical         VRAMBuffer
+     0000D069  .ppu_stripe_end                    VRAMBuffer
+     0000D097  .ppu_stripe_write_byte             VRAMBuffer
+     0000D0AB  .ppu_stripe_append                 VRAMBuffer
+     0000D0AB  _set_vram_byte                     VRAMBuffer
+     0000D19D  _font_load_ibm                     font.ms
+     0000D1A5  font_load                          font.ms
+     0000D20D  font_copy_current                  font.ms
+     0000D260  font_set                           font.ms
+     0000D279  .put_char                          font.ms
+     0000D28E  .out_char                          font.ms
+     0000D294  .del_char                          font.ms
+     0000D2E3  _putchar                           font.ms
+     0000D2E6  _setchar                           font.ms
+     0000D2E9  _font_load                         font.ms
+     0000D2EC  _font_set                          font.ms
+     0000D2F0  _font_init                         font.ms
+     0000D30E  .cls                               font.ms
+     0000D30E  _cls                               font.ms
+     0000D317  _gotoxy                            font.ms
+     0000D31E  _posx                              font.ms
+     0000D32C  _posy                              font.ms
+     0000D352  .cr_curs                           font.ms
+     0000D368  .adv_curs                          font.ms
+     0000D39E  .tmode                             font.ms
+     0000D3A8  .tmode_out                         font.ms
+     0000D3B1  _fill_bkg_rect                     
+     0000D42D  _fill_win_rect                     
+     0000D43D  _set_bkg_1bpp_data                 
+     0000D4C8  .flush_shadow_attributes           
+     0000D4C8  _flush_shadow_attributes           
+     0000D64E  _hide_sprites_range                Sprites
+     0000D666  _set_bkg_data                      SetData
+     0000D678  _set_sprite_data                   SetData
+     0000D790  _get_bkg_xy_addr                   
+     0000D7A9  _set_bkg_tile_xy                   
+     0000D7AF  _set_win_tile_xy                   
+     0000D7C4  _font_ibm                          
+ASxxxx Linker V03.00/V05.40 + sdld,  page 10.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_XINIT                              0000DB76    00000013 =          19. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000DB76  Ftext_scroller$__xinit_scanline_   text_scroller
+     0000DB78  Ftext_scroller$__xinit_scroller_   text_scroller
+     0000DB79  Ftext_scroller$__xinit_scroller_   text_scroller
+ASxxxx Linker V03.00/V05.40 + sdld,  page 11.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_DATA                               00006000    00000013 =          19. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00006000  G$scanline_offsets$0_0$0           text_scroller
+     00006000  _scanline_offsets                  text_scroller
+     00006002  G$scroller_x$0_0$0                 text_scroller
+     00006002  _scroller_x                        text_scroller
+     00006003  G$scroller_next_char$0_0$0         text_scroller
+     00006003  _scroller_next_char                text_scroller
+     00006005  .curx                              font.ms
+     00006006  .cury                              font.ms
+     00006007  ___render_shadow_OAM               Sprites
+     00006008  .jmp_to_TIM_isr                    
+     00006008  .jmp_to_xyz_isr                    
+     0000600B  .jmp_to_VBL_isr                    
+     0000600E  .jmp_to_LCD_isr                    
+     00006011  .fg_colour                         colors
+     00006011  __current_1bpp_colors              colors
+     00006012  .bg_colour                         colors
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 12.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_BSS                                00006013    000000BC =         188. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00006013  __crt0_paletteShadow               crt0
+     0000602C  __shadow_OAM_base                  crt0
+     0000602D  .mode                              crt0
+     00006077  _attribute_row_dirty_planes        crt0
+     0000607B  _attribute_column_dirty_planes     crt0
+     00006080  G$scroller_vram_addr$0_0$0         text_scroller
+     00006080  _scroller_vram_addr                text_scroller
+     00006082  G$base$0_0$0                       text_scroller
+     00006082  _base                              text_scroller
+     00006084  G$limit$0_0$0                      text_scroller
+     00006084  _limit                             text_scroller
+     00006086  font_current                       font.ms
+     00006089  font_first_free_tile               font.ms
+     0000608A  font_table                         font.ms
+     000060A0  ___printf_PARM_2                   sprintf
+     000060A2  ___printf_PARM_3                   sprintf
+     000060A4  ___printf_PARM_4                   sprintf
+     000060BF  ___uitoa_PARM_2                    __itoa
+     000060C1  ___uitoa_PARM_3                    __itoa
+     000060C5  _uitoa_PARM_2                      __itoa
+     000060C7  _uitoa_PARM_3                      __itoa
+     000060C8  _itoa_PARM_2                       __itoa
+     000060CA  _itoa_PARM_3                       __itoa
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 13.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+OSEG                                00000000    00000004 =           4. bytes (REL,OVR,PAG)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00000000  ___memcpy_PARM_2                   ___memcpy
+     00000000  __divsint_PARM_2                   _divuint
+     00000000  __divuint_PARM_2                   _divuint
+     00000000  __modsint_PARM_2                   _divuint
+     00000000  __moduint_PARM_2                   _divuint
+     00000002  ___memcpy_PARM_3                   ___memcpy
+ASxxxx Linker V03.00/V05.40 + sdld,  page 14.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+GBDKOVR                             00000010    0000000D =          13. bytes (REL,OVR,PAG)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00000010  _fill_bkg_rect_PARM_3              
+     00000010  _fill_win_rect_PARM_3              
+     00000010  _set_bkg_1bpp_data_PARM_3          
+     00000010  _set_bkg_data_PARM_3               SetData
+     00000010  _set_bkg_tile_xy_PARM_3            
+     00000010  _set_sprite_data_PARM_3            SetData
+     00000010  _set_vram_byte_PARM_2              VRAMBuffer
+     00000010  _set_win_tile_xy_PARM_3            
+     00000011  .bkg_tile_ppu_addr                 
+     00000011  _fill_bkg_rect_PARM_4              
+     00000011  _fill_win_rect_PARM_4              
+     00000012  _fill_bkg_rect_PARM_5              
+     00000012  _fill_win_rect_PARM_5              
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 15.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_ZP                                 00000020    0000003F =          63. bytes (REL,CON,PAG)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00000020  __current_bank                     crt0
+     00000021  _sys_time                          crt0
+     00000023  _sys_time_old                      crt0
+     00000024  _shadow_PPUCTRL                    crt0
+     00000025  _shadow_PPUMASK                    crt0
+     00000026  __crt0_spritePageValid             crt0
+     00000028  _bkg_scroll_x                      crt0
+     00000029  _bkg_scroll_y                      crt0
+     0000002A  _attribute_row_dirty               crt0
+     0000002B  _attribute_column_dirty            crt0
+     0000002C  _attribute_shadow_offset           crt0
+     0000002D  .crt0_forced_blanking              crt0
+     0000002E  __SYSTEM                           crt0
+     00000034  Ltext_scroller.main$sloc0$0_1$0    text_scroller
+     00000036  __vram_transfer_buffer_valid       VRAMBuffer
+     00000037  __vram_transfer_buffer_num_cycle   VRAMBuffer
+     00000038  __vram_transfer_buffer_pos_w       VRAMBuffer
+     00000039  __vram_transfer_buffer_pos_old     VRAMBuffer
+     0000003A  __vram_transfer_mapper_bits        VRAMBuffer
+     0000003B  __vram_transfer_ppu_hi_mask        VRAMBuffer
+     0000003C  REGTEMP                            
+     00000044  __lcd_scanline                     
+     00000045  ___SDCC_m6502_ret0                 _ret01
+     00000046  ___SDCC_m6502_ret1                 _ret01
+     00000047  ___SDCC_m6502_ret2                 _ret23
+     00000048  ___SDCC_m6502_ret3                 _ret23
+     00000049  ___SDCC_m6502_ret4                 _ret4567
+     0000004A  ___SDCC_m6502_ret5                 _ret4567
+     0000004B  ___SDCC_m6502_ret6                 _ret4567
+     0000004C  ___SDCC_m6502_ret7                 _ret4567
+     0000004D  DPTR                               
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 16.
+
+Files Linked                              [ module(s) ]
+
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/crt0.o
+                                          [ crt0 ]
+obj/nes/text_scroller.rel                 [ text_scroller ]
+
+
+Libraries Linked                          [ object file ]
+
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ vram_transfer_buffer.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ font.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ fill_rect_bk.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ _memcpy.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ set_1bit_data.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ flush_attributes.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ metasprites_hide_spr.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ _temp.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ lcd.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ set_data.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ set_tile.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ color.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ _ret01.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/nes/nes.lib
+                                          [ f_ibm_sh.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ _ret23.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ _ret4567.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ printf.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ _dptr.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ sprintf.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ __itoa.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ __sdcc_indirect_jsr.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ _moduint.o ]
+C:\geeky\gbdk-2020\build\gbdk\lib/mos6502/mos6502.lib
+                                          [ _divuint.o ]
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 17.
+
+User Base Address Definitions
+
+_DATA=0x6000
+_CODE=0xC000
+VECTORS=0xFFFA
+OSEG=0x00
+GBDKOVR=0x10
+_ZP=0x20
+
+

@@ -1,0 +1,54 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80)                   Page 1
+Hexadecimal [24-Bits]
+
+Symbol Table
+
+    .__.$$$.                                                    =  002710 L
+    .__.ABS.                                                    =  000000 G
+    .__.CPU.                                                    =  000000 L
+    .__.H$L.                                                    =  000000 L
+    _AUDIOCTRL                                                  =  0000F2 
+    _FMADDRESS                                                  =  0000F0 
+    _FMDATA                                                     =  0000F1 
+    _HCOUNTER                                                   =  00007F 
+    _JOY_CTL                                                    =  00003F 
+    _JOY_PORT1                                                  =  0000DC 
+    _JOY_PORT2                                                  =  0000DD 
+    _MAP_FRAME0                                                 =  0000FC 
+    _MAP_FRAME1                                                 =  0000FD 
+    _MAP_FRAME2                                                 =  0000FE 
+    _MAP_FRAME3                                                 =  0000FF 
+    _MEMORY_CTL                                                 =  00003E 
+    _PSG                                                        =  00007F 
+    _VCOUNTER                                                   =  00007E 
+    _VDP_CMD                                                    =  000099 
+    _VDP_DATA                                                   =  000098 
+    _VDP_STATUS                                                 =  000099 
+    ___bank_sprite                                              =  000000 G
+  0 ___func_sprite                                                 000000 GR
+  0 _sprite_metasprite0                                            000304 GR
+  0 _sprite_metasprite1                                            000384 GR
+  0 _sprite_metasprite2                                            00040C GR
+  0 _sprite_metasprite3                                            000494 GR
+  0 _sprite_metasprite4                                            000518 GR
+  0 _sprite_metasprites                                            00059C GR
+  0 _sprite_palettes                                               000000 GR
+  0 _sprite_tiles                                                  000004 GR
+    b___func_sprite                                             =  000000 L
+
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80)                   Page 2
+Hexadecimal [24-Bits]
+
+Area Table
+
+   0 _CODE                                      size    5A6   flags    0
+   1 _DATA                                      size      0   flags    0
+   2 _INITIALIZED                               size      0   flags    0
+   3 _DABS                                      size      0   flags    8
+   4 _HOME                                      size      0   flags    0
+   5 _GSINIT                                    size      0   flags    0
+   6 _GSFINAL                                   size      0   flags    0
+   7 _INITIALIZER                               size      0   flags    0
+   8 _CABS                                      size      0   flags    8
+

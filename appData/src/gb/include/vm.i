@@ -245,13 +245,21 @@ OP_VM_RPN          = 0x15
 .B_XOR             = '^'
 .B_NOT             = '~'
 .SHL               = 'L'
+.SHL4              = 0x10
+.SHL7              = 0x11
 .SHR               = 'R'
+.SHR4              = 0x12
+.SHR7              = 0x13
 .ABS               = '@'
 .MIN               = 'm'
 .MAX               = 'M'
 .ISQRT             = 'Q'
 .ATAN2             = 'T'
 .RND               = 'r'
+.ASR               = 'A'
+.ASR4              = 0x14
+.ASR7              = 0x15
+.CLAMP0            = 0x16
 ;.EQ                = 1
 ;.LT                = 2
 ;.LTE               = 3
@@ -262,8 +270,9 @@ OP_VM_RPN          = 0x15
 .OR                = 8
 .NOT               = 9
 ;-- Reverse Polish Notation (RPN) calculator, returns result(s) on the VM stack.
-.macro VM_RPN
+.macro VM_RPN LENGTH
         .db OP_VM_RPN
+        .db #<LENGTH
 .endm
 .macro .R_INT8 ARG0
         .db -1
@@ -358,90 +367,90 @@ OP_VM_IF_CONST  = 0x1A
 ; @param IDXA Target variable.
 ; @param ADDR Address of the unsigned 8-bit value in WRAM.
 .macro VM_GET_UINT8 IDXA, ADDR
-        VM_RPN
-            .R_REF_MEM .MEM_U8, ^!ADDR!
-            .R_REF_SET ^!IDXA!
-            .R_STOP
+        VM_RPN 9
+            .R_REF_MEM .MEM_U8, ^!ADDR!     ; +4
+            .R_REF_SET ^!IDXA!              ; +3
+            .R_STOP                         ; +1
 .endm
 
 ;-- Gets signed int8 from WRAM.
 ; @param IDXA Target variable.
 ; @param ADDR Address of the signed 8-bit value in WRAM.
 .macro VM_GET_INT8 IDXA, ADDR
-        VM_RPN
-            .R_REF_MEM .MEM_I8, ^!ADDR!
-            .R_REF_SET ^!IDXA!
-            .R_STOP
+        VM_RPN 9
+            .R_REF_MEM .MEM_I8, ^!ADDR!     ; +4
+            .R_REF_SET ^!IDXA!              ; +3
+            .R_STOP                         ; +1
 .endm
 
 ;-- Gets signed int16 from WRAM.
 ; @param IDXA Target variable.
 ; @param ADDR Address of the signed 16-bit value in WRAM.
 .macro VM_GET_INT16 IDXA, ADDR
-        VM_RPN
-            .R_REF_MEM .MEM_I16, ^!ADDR!
-            .R_REF_SET ^!IDXA!
-            .R_STOP
+        VM_RPN 9
+            .R_REF_MEM .MEM_I16, ^!ADDR!    ; +4
+            .R_REF_SET ^!IDXA!              ; +3
+            .R_STOP                         ; +1
 .endm
 
 ;-- Sets unsigned int8 in WRAM from variable.
 ; @param ADDR Address of the unsigned 8-bit value in WRAM.
 ; @param IDXA Source variable.
 .macro VM_SET_UINT8 ADDR, IDXA
-        VM_RPN
-            .R_REF ^!IDXA!
-            .R_REF_MEM_SET .MEM_U8, ^!ADDR!
-            .R_STOP
+        VM_RPN 9
+            .R_REF ^!IDXA!                  ; +3
+            .R_REF_MEM_SET .MEM_U8, ^!ADDR! ; +4
+            .R_STOP                         ; +1
 .endm
 
 ;-- Sets signed int8 in WRAM from variable.
 ; @param ADDR Address of the signed 8-bit value in WRAM.
 ; @param IDXA Source variable.
 .macro VM_SET_INT8 ADDR, IDXA
-        VM_RPN
-            .R_REF ^!IDXA!
-            .R_REF_MEM_SET .MEM_I8, ^!ADDR!
-            .R_STOP
+        VM_RPN 9
+            .R_REF ^!IDXA!                  ; +3
+            .R_REF_MEM_SET .MEM_I8, ^!ADDR! ; +4
+            .R_STOP                         ; +7
 .endm
 
 ;-- Sets signed int16 in WRAM from variable.
 ; @param ADDR Address of the signed 16-bit value in WRAM.
 ; @param IDXA Source variable.
 .macro VM_SET_INT16 ADDR, IDXA
-        VM_RPN
-            .R_REF ^!IDXA!
-            .R_REF_MEM_SET .MEM_I16, ^!ADDR!
-            .R_STOP
+        VM_RPN 9
+            .R_REF ^!IDXA!                   ; +3
+            .R_REF_MEM_SET .MEM_I16, ^!ADDR! ; +4
+            .R_STOP                          ; +1
 .endm
 
 ;-- Sets signed int8 in WRAM to the immediate value.
 ; @param ADDR Address of the signed 8-bit value in WRAM.
 ; @param VAL Immediate value.
 .macro VM_SET_CONST_INT8 ADDR, VAL
-        VM_RPN
-            .R_INT8 ^!VAL!
-            .R_REF_MEM_SET .MEM_I8, ^!ADDR!
-            .R_STOP
+        VM_RPN 8
+            .R_INT8 ^!VAL!                  ; +2
+            .R_REF_MEM_SET .MEM_I8, ^!ADDR! ; +4
+            .R_STOP                         ; +1
 .endm
 
 ;-- Sets unsigned int8 in WRAM to the immediate value.
 ; @param ADDR Address of the unsigned 8-bit value in WRAM.
 ; @param VAL Immediate value.
 .macro VM_SET_CONST_UINT8 ADDR, VAL
-        VM_RPN
-            .R_INT8 ^!VAL!
-            .R_REF_MEM_SET .MEM_U8, ^!ADDR!
-            .R_STOP
+        VM_RPN 8
+            .R_INT8 ^!VAL!                  ; +2
+            .R_REF_MEM_SET .MEM_U8, ^!ADDR! ; +4
+            .R_STOP                         ; +1
 .endm
 
 ;-- Sets signed int16 in WRAM to the immediate value.
 ; @param ADDR Address of the signed 16-bit value in WRAM.
 ; @param VAL Immediate value.
 .macro VM_SET_CONST_INT16 ADDR, VAL
-        VM_RPN
-            .R_INT16 ^!VAL!
-            .R_REF_MEM_SET .MEM_I16, ^!ADDR!
-            .R_STOP
+        VM_RPN 9
+            .R_INT16 ^!VAL!                     ; +3
+            .R_REF_MEM_SET .MEM_I16, ^!ADDR!    ; +4
+            .R_STOP                             ; +1
 .endm
 
 OP_VM_INIT_RNG        = 0x23
@@ -453,13 +462,13 @@ OP_VM_INIT_RNG        = 0x23
 
 ;-- Initializes RNG seed.
 .macro VM_RANDOMIZE
-        VM_RPN
-            .R_REF_MEM .MEM_U8, _DIV_REG
-            .R_REF_MEM .MEM_U8, _game_time
-            .R_INT16    256
-            .R_OPERATOR .MUL
-            .R_OPERATOR .ADD
-            .R_STOP
+        VM_RPN 15
+            .R_REF_MEM .MEM_U8, _DIV_REG        ; +4
+            .R_REF_MEM .MEM_U8, _game_time      ; +4
+            .R_INT16    256                     ; +3
+            .R_OPERATOR .MUL                    ; +1
+            .R_OPERATOR .ADD                    ; +1
+            .R_STOP                             ; +1
         VM_INIT_RNG     .ARG0
         VM_POP          1
 .endm

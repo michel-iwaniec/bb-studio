@@ -1,10 +1,12 @@
         ;; Maximum number of times LCD ISR can be repeatedly called
         .MAX_LCD_ISR_CALLS = 4
+        ;; Total number is +1 to support VBL ISR with the same logic
+        .MAX_DEFERRED_ISR_CALLS = .MAX_LCD_ISR_CALLS+1
 
         ;; Transfer buffer (lower half of hardware stack)
         __vram_transfer_buffer = 0x100
         ;; Number of 8-cycles available each frame for transfer buffer
-        VRAM_DELAY_CYCLES_X8  = 171
+        VRAM_DELAY_CYCLES_X8  = 169 ; 171
 
         ;;  Keypad
         .UP             = 0x08
@@ -39,6 +41,19 @@
         ATTRIBUTE_MASK_TR = 0b00001100
         ATTRIBUTE_MASK_BL = 0b00110000
         ATTRIBUTE_MASK_BR = 0b11000000
+        
+        GBDK_NES_8X8_ATTRIBUTES = 1
+        GBDK_NES_EVERY_SCANLINE_IRQ = 1
+        CFG_REG = 0x8000
+        PRG_REG = 0xC000
+        CFG_CHR_A12         = 0b00000001
+        CFG_CHR_A13         = 0b00000010
+        CFG_CHR_A14         = 0b00000100
+        CFG_4S_DISABLE      = 0b00001000
+        CFG_SWP_SPR_4S      = 0b00010000
+        CFG_WRAM_ENABLE     = 0b00100000
+        CFG_WRAM_BANK       = 0b01000000
+        CFG_IRQ_ENABLE      = 0b10000000
 
         ;; Hardware registers / masks
         PPUCTRL             = 0x2000
@@ -119,6 +134,7 @@
         .globl _bkg_scroll_x, _bkg_scroll_y
         .globl __crt0_paletteShadow
         .globl _attribute_shadow, _attribute_row_dirty
+        .globl _attribute_shadow_offset
         
         ;; Identity table for register-to-register-adds and bankswitching
         .globl .identity, _identity

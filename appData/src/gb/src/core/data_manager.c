@@ -27,12 +27,25 @@ unsigned char* image_ptr;
 
 UBYTE image_attr_bank;
 unsigned char* image_attr_ptr;
+unsigned char* image_attr_nes_ptr;
 
 UBYTE collision_bank;
 unsigned char* collision_ptr;
 
+extern UBYTE collision_row_addr_lo[128];
+extern UBYTE collision_row_addr_hi[128];
+//extern UBYTE image_row_offs_lo[128];
+//extern UBYTE image_row_offs_hi[128];
+extern UBYTE image_row_addr_lo[128];
+extern UBYTE image_row_addr_hi[128];
+
+UBYTE scene_scroll_x_adjust;
+int16_t scene_scroll_y_adjust;
+int16_t scene_sprite_px_offset_x_compensate;
+int16_t scene_sprite_px_offset_y_compensate;
 UBYTE image_tile_width;
 UBYTE image_tile_height;
+UINT16 image_attr_size;
 UINT16 image_width;
 UINT16 image_height;
 UBYTE sprites_len;
@@ -41,6 +54,7 @@ UBYTE projectiles_len;
 UBYTE player_sprite_len;
 scene_type_e scene_type;
 LCD_isr_e scene_LCD_type;
+UBYTE scene_SHOW_LC;
 
 const far_ptr_t spritesheet_none_far = TO_FAR_PTR_T(spritesheet_none);
 
@@ -55,7 +69,15 @@ void load_init(void) BANKED {
     scene_stack_ptr = scene_stack;
 }
 
-void load_bkg_tileset(const tileset_t* tiles, UBYTE bank) BANKED {
+// gbdk-nes: Helper function to try and find a suitable blank tile
+UBYTE FindBlankTile(const tileset_t* tiles, UBYTE bank)
+{
+    UBYTE n_tiles = ReadBankedUWORD(&(tiles->n_tiles), bank);
+    UBYTE blank_idx = find_blank_tile(tiles->tiles, bank, n_tiles, 0x00, 0x00);
+    return blank_idx;
+}
+
+void load_bkg_tileset(const tileset_t* tiles, UBYTE bank) BANKED REENTRANT {
     if ((!bank) || (!tiles)) return;
 
     UWORD n_tiles = ReadBankedUWORD(&(tiles->n_tiles), bank);
@@ -92,31 +114,67 @@ void load_bkg_tileset(const tileset_t* tiles, UBYTE bank) BANKED {
     if ((UBYTE)n_tiles) SetBankedSpriteData(0, n_tiles, data, bank);
 }
 
-void load_background(const background_t* background, UBYTE bank) BANKED {
+void load_background(const background_t* background, UBYTE bank) BANKED REENTRANT {
     background_t bkg;
+    DISPLAY_OFF;
+    
     MemcpyBanked(&bkg, background, sizeof(bkg), bank);
+
+    UBYTE blank_tile = FindBlankTile(bkg.tileset.ptr, bkg.tileset.bank);
+
+    // Clear screen (TODO: Do it less hacky...)
+    // Fill the screen background with a single tile pattern
+    fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, blank_tile);
 
     image_bank = bkg.tilemap.bank;
     image_ptr = bkg.tilemap.ptr;
 
     image_attr_bank = bkg.cgb_tilemap_attr.bank;
     image_attr_ptr = bkg.cgb_tilemap_attr.ptr;
+    image_attr_nes_ptr = bkg.cgb_tilemap_attr.ptr; //bkg.cgb_tilemap_attr_nes.ptr;
 
     image_tile_width = bkg.width;
     image_tile_height = bkg.height;
     image_width = image_tile_width * 8;
-    scroll_x_max = image_width - ((UINT16)SCREENWIDTH);
-    image_height = image_tile_height * 8;
-    scroll_y_max = image_height - ((UINT16)SCREENHEIGHT);
+    image_attr_size = bkg.attr_nes_width * bkg.attr_nes_height;
 
+    if(image_width > (UINT16)SCREENWIDTH)
+    {
+        scroll_x_max = image_width - ((UINT16)SCREENWIDTH);
+    }
+    else
+    {
+        // image smaller than screen width - just set to SCREENWIDTH.
+        scroll_x_max = SCREENWIDTH;
+    }
+    image_height = image_tile_height * 8;
+    if(image_height > (UINT16)SCREENHEIGHT)
+    {
+        scroll_y_max = image_height - ((UINT16)SCREENHEIGHT);
+    }
+    else
+    {
+        // image smaller than screen height - just set to SCREENHEIGHT.
+        scroll_y_max = SCREENHEIGHT;
+    }
     load_bkg_tileset(bkg.tileset.ptr, bkg.tileset.bank);
 #ifdef CGB
     if ((_is_CGB) && (bkg.cgb_tileset.ptr)) {
-        VBK_REG = 1;
-        load_bkg_tileset(bkg.cgb_tileset.ptr, bkg.cgb_tileset.bank);
-        VBK_REG = 0;
+        // TODO: gbdk-nes attributes
+        //VBK_REG = 1;
+        //load_bkg_tileset(bkg.cgb_tileset.ptr, bkg.cgb_tileset.bank);
+        //VBK_REG = 0;
     }
 #endif
+    DISPLAY_ON;
+    // Clear all attribute planes to zero
+    for(UBYTE y = 0; y < DEVICE_SCREEN_HEIGHT; y++)
+    {
+        for(UBYTE x = 0; x < DEVICE_SCREEN_WIDTH; x++)
+        {
+            set_attribute_xy(x, y, 0);
+        }
+    }
 }
 
 inline UBYTE load_sprite_tileset(UBYTE base_tile, const tileset_t * tileset, UBYTE bank) {
@@ -133,9 +191,9 @@ UBYTE load_sprite(UBYTE sprite_offset, const spritesheet_t * sprite, UBYTE bank)
     if (_is_CGB) {
         ReadBankedFarPtr(&data, (void *)&sprite->cgb_tileset, bank);
         if (data.ptr) {
-            VBK_REG = 1;
+            //VBK_REG = 1;
             UBYTE n_cgb_tiles = load_sprite_tileset(sprite_offset, data.ptr, data.bank);
-            VBK_REG = 0;
+            //VBK_REG = 0;
             if (n_cgb_tiles > n_tiles) return n_cgb_tiles;
         }
     }
@@ -143,18 +201,18 @@ UBYTE load_sprite(UBYTE sprite_offset, const spritesheet_t * sprite, UBYTE bank)
     return n_tiles;
 }
 
-void load_animations(const spritesheet_t *sprite, UBYTE bank, UWORD animation_set, animation_t * res_animations) NONBANKED {
+void load_animations(const spritesheet_t *sprite, UBYTE bank, UWORD animation_set, animation_t * res_animations) NONBANKED  REENTRANT {
     UBYTE _save = CURRENT_BANK;
     SWITCH_ROM(bank);
     memcpy(res_animations, sprite->animations + sprite->animations_lookup[animation_set], sizeof(animation_t) * 8);
     SWITCH_ROM(_save);
 }
 
-void load_bounds(const spritesheet_t *sprite, UBYTE bank, bounding_box_t * res_bounds) BANKED {
+void load_bounds(const spritesheet_t *sprite, UBYTE bank, bounding_box_t * res_bounds) BANKED REENTRANT {
     MemcpyBanked(res_bounds, &sprite->bounds, sizeof(sprite->bounds), bank);
 }
 
-UBYTE do_load_palette(palette_entry_t * dest, const palette_t * palette, UBYTE bank) BANKED {
+UBYTE do_load_palette(palette_entry_t * dest, const palette_t * palette, UBYTE bank) BANKED REENTRANT {
     UBYTE mask = ReadBankedUBYTE(&palette->mask, bank);
     palette_entry_t * sour = palette->cgb_palette;
     for (UBYTE i = mask; (i); i >>= 1, dest++) {
@@ -185,9 +243,9 @@ inline void load_sprite_palette(const palette_t * palette, UBYTE bank) {
     DMG_palette[2] = (UBYTE)(data >> 8);
 }
 
-UBYTE load_scene(const scene_t * scene, UBYTE bank, UBYTE init_data) BANKED {
+UBYTE load_scene(const scene_t * scene, UBYTE bank, UBYTE init_data) BANKED REENTRANT {
     UBYTE i;
-    scene_t scn;
+    static scene_t scn;
 
     MemcpyBanked(&scn, scene, sizeof(scn), bank);
 
@@ -209,6 +267,22 @@ UBYTE load_scene(const scene_t * scene, UBYTE bank, UBYTE init_data) BANKED {
 
     // Load background + tiles
     load_background(scn.background.ptr, scn.background.bank);
+
+    // gbdk-nes optimization: Create lookup-table for tile_at(..., ...) calls to avoid multiplies
+    for(i = 0; i < 128; i++)
+    {
+        unsigned char* c = collision_ptr + i * image_tile_width;
+        collision_row_addr_lo[i] = (((UWORD)c) & 0xFF);
+        collision_row_addr_hi[i] = ((((UWORD)c) >> 8) & 0xFF);
+        //
+        c = image_ptr + i * image_tile_width;
+        image_row_addr_lo[i] = (((UWORD)c) & 0xFF);
+        image_row_addr_hi[i] = ((((UWORD)c) >> 8) & 0xFF);
+        //
+        //c = i * image_tile_width;
+        //image_row_offs_lo[i] = (((UWORD)c) & 0xFF);
+        //image_row_offs_hi[i] = ((((UWORD)c) >> 8) & 0xFF);
+    }
 
     load_bkg_palette(scn.palette.ptr, scn.palette.bank);
     load_sprite_palette(scn.sprite_palette.ptr, scn.sprite_palette.bank);
@@ -262,6 +336,7 @@ UBYTE load_scene(const scene_t * scene, UBYTE bank, UBYTE init_data) BANKED {
 
         // Add player to inactive, then activate
         PLAYER.active = FALSE;
+        actor_update_bounds_x16(&PLAYER);
         actors_active_tail = &PLAYER;
         DL_PUSH_HEAD(actors_inactive_head, actors_active_tail);
         activate_actor(&PLAYER);
@@ -271,6 +346,7 @@ UBYTE load_scene(const scene_t * scene, UBYTE bank, UBYTE init_data) BANKED {
             actor_t * actor = actors + 1;
             MemcpyBanked(actor, scn.actors.ptr, sizeof(actor_t) * (actors_len - 1), scn.actors.bank);
             for (i = actors_len - 1; i != 0; i--, actor++) {
+                actor_update_bounds_x16(actor);
                 if (actor->reserve_tiles) {
                     // exclusive sprites allocated separately to avoid overwriting if modified
                     actor->base_tile = allocated_sprite_tiles;
@@ -314,6 +390,7 @@ UBYTE load_scene(const scene_t * scene, UBYTE bank, UBYTE init_data) BANKED {
         projectile_def_t * projectile_def = projectile_defs;
         MemcpyBanked(projectile_def, scn.projectiles.ptr, sizeof(projectile_def_t) * projectiles_len, scn.projectiles.bank);
         for (i = projectiles_len; i != 0; i--, projectile_def++) {
+            projectile_def_update_bounds_x16(projectile_def);
             // resolve and set base_tile for each projectile
             UBYTE idx = IndexOfFarPtr(scn.sprites.ptr, scn.sprites.bank, sprites_len, &projectile_def->sprite);
             projectile_def->base_tile = (idx < sprites_len) ? scene_sprites_base_tiles[idx] : 0;
@@ -329,6 +406,18 @@ UBYTE load_scene(const scene_t * scene, UBYTE bank, UBYTE init_data) BANKED {
     trigger_reset();
 
     emote_actor = NULL;
+    
+    // gbdk-nes: For non-scrolling backgrounds, there's no need to hide leftmost column
+    scene_SHOW_LC &= ~(PPUMASK_SHOW_BG_LC | PPUMASK_SHOW_SPR_LC);
+    scene_SHOW_LC = (image_tile_width <= 32) ? (PPUMASK_SHOW_BG_LC | PPUMASK_SHOW_SPR_LC) : 0;
+    // gbdk-nes: For non-scrolling backgrounds, there's no need to offset scroll coordinates
+    scene_scroll_x_adjust = (image_tile_width <= 32) ? 0 : (uint8_t)-8;
+    scene_sprite_px_offset_x_compensate = 
+        (image_tile_width <= 32) ?   
+        DEVICE_SPRITE_PX_OFFSET_X_COMPENSATE :
+        DEVICE_SPRITE_PX_OFFSET_X_COMPENSATE + 8;
+    scene_scroll_y_adjust = (image_tile_height <= 30) ? 0 : -4;
+    scene_sprite_px_offset_y_compensate = DEVICE_SPRITE_PX_OFFSET_Y_COMPENSATE - scene_scroll_y_adjust;
 
     if ((init_data) && (scn.script_init.ptr != NULL)) {
         return (script_execute(scn.script_init.bank, scn.script_init.ptr, 0, 0) != 0);

@@ -1,8 +1,12 @@
 #pragma bank 255
 
+#include <types.h>
+#include <stdint.h>
+
 #include "actor.h"
 
 #include <gbdk/platform.h>
+#include <nes/nes.h>
 #include <gbdk/metasprites.h>
 
 #include <string.h>
@@ -18,16 +22,18 @@
 #include "vm.h"
 
 #ifdef STRICT
-    #include <gb/bgb_emu.h>
-    #include <gb/crash_handler.h>
+    //#include <gb/bgb_emu.h>
+    //#include <gb/crash_handler.h>
 #endif
 
 #define EMOTE_BOUNCE_FRAMES        15
 #define ANIM_PAUSED                255
 
 #define TILE16_OFFSET              64u
-#define SCREEN_TILE16_W            10u
-#define SCREEN_TILE16_H            9u
+//#define SCREEN_TILE16_W            10u
+#define SCREEN_TILE16_W            16u
+//#define SCREEN_TILE16_H            9u
+#define SCREEN_TILE16_H            15u
 #define ACTOR_BOUNDS_TILE16        6u
 #define ACTOR_BOUNDS_TILE16_HALF   3u
 
@@ -44,7 +50,8 @@ actor_t * actors_active_head;
 actor_t * actors_active_tail;
 actor_t * actors_inactive_head;
 
-UBYTE screen_x, screen_y;
+//UBYTE screen_x, screen_y;
+int16_t screen_x, screen_y;
 actor_t * invalid;
 UBYTE player_moving;
 UBYTE player_iframes;
@@ -54,6 +61,9 @@ UBYTE emote_timer;
 
 UBYTE allocated_sprite_tiles;
 UBYTE allocated_hardware_sprites;
+
+extern int16_t scene_sprite_px_offset_x_compensate;
+extern int16_t scene_sprite_px_offset_y_compensate;
 
 void actors_init(void) BANKED {
     actors_active_tail = actors_active_head = actors_inactive_head = NULL;
@@ -65,14 +75,15 @@ void actors_init(void) BANKED {
     memset(actors, 0, sizeof(actors));
 }
 
-void player_init(void) BANKED {
+void player_init(void) BANKED REENTRANT {
     actor_set_anim_idle(&PLAYER);
     PLAYER.hidden = FALSE;
     PLAYER.disabled = FALSE;
 }
 
 void actors_update(void) NONBANKED {
-    UBYTE _save = CURRENT_BANK;
+    //UBYTE _save = CURRENT_BANK;
+    uint8_t _save = CURRENT_BANK;
     static actor_t *actor;
     static uint8_t screen_tile16_x, screen_tile16_y;
     static uint8_t actor_tile16_x, actor_tile16_y;
@@ -96,18 +107,18 @@ void actors_update(void) NONBANKED {
         }
         allocated_hardware_sprites += move_metasprite(
             emote_metasprite,
-            allocated_sprite_tiles,
+            allocated_sprite_tiles | 1,
             allocated_hardware_sprites,
-            screen_x,
-            screen_y
+            screen_x + scene_sprite_px_offset_x_compensate, //DEVICE_SPRITE_PX_OFFSET_X_COMPENSATE,
+            screen_y + scene_sprite_px_offset_y_compensate //DEVICE_SPRITE_PX_OFFSET_Y_COMPENSATE
         );
     }
 
     static bool window_hide_actors;
 #ifdef CGB
-    window_hide_actors = (!_is_CGB) && ((overlay_priority & S_PRIORITY) == 0) && (!show_actors_on_overlay) && (WX_REG > DEVICE_WINDOW_PX_OFFSET_X);
+    window_hide_actors = FALSE; // (!_is_CGB) && ((overlay_priority & S_PRIORITY) == 0) && (!show_actors_on_overlay) && (WX_REG > DEVICE_WINDOW_PX_OFFSET_X);
 #else
-    window_hide_actors = (!show_actors_on_overlay) && (WX_REG > DEVICE_WINDOW_PX_OFFSET_X);
+    window_hide_actors = FALSE; // (!show_actors_on_overlay) && (WX_REG > DEVICE_WINDOW_PX_OFFSET_X);
 #endif
 
     actor = actors_active_tail;
@@ -115,6 +126,7 @@ void actors_update(void) NONBANKED {
         if (actor->pinned) {
             screen_x = (actor->pos.x >> 4) + 8, screen_y = (actor->pos.y >> 4) + 8;
         } else {
+            //PPUMASK = shadow_PPUMASK | 0x81; // DEBUGHACK: Make actors/projectiles update color screen blue-gray (ON)
             // Bottom right coordinate of actor in 16px tile coordinates
             // Subtract bounding box estimate width/height
             // and offset by 64 to allow signed comparisons with screen tiles
@@ -141,13 +153,14 @@ void actors_update(void) NONBANKED {
                 actor = prev;
                 continue;
             }
+            //PPUMASK = shadow_PPUMASK | 0x20; // DEBUGHACK: Make actors/projectiles update color screen red (ON)
             // calculate screen coordinates
             screen_x = ((actor->pos.x >> 4) + 8) - draw_scroll_x, screen_y = ((actor->pos.y >> 4) + 8) - draw_scroll_y;
         }
         if (actor->hidden) {
             actor = actor->prev;
             continue;
-        } else if ((window_hide_actors) && (((screen_x + 8) > WX_REG) && ((screen_y - 8) > WY_REG))) {
+        } else if (0) { //((window_hide_actors) && (((screen_x + 8) > WX_REG) && ((screen_y - 8) > WY_REG))) {
             // Hide if under window (don't deactivate)
             actor = actor->prev;
             continue;
@@ -169,22 +182,24 @@ void actors_update(void) NONBANKED {
 
         SWITCH_ROM(actor->sprite.bank);
         spritesheet_t *sprite = actor->sprite.ptr;
-
+        //PPUMASK = shadow_PPUMASK | 0x21; // DEBUGHACK: Make actors/projectiles update color screen red (ON)
+        
         allocated_hardware_sprites += move_metasprite(
             *(sprite->metasprites + actor->frame),
-            actor->base_tile,
+            actor->base_tile | 1,
             allocated_hardware_sprites,
-            screen_x,
-            screen_y
+            screen_x + scene_sprite_px_offset_x_compensate, //DEVICE_SPRITE_PX_OFFSET_X_COMPENSATE,
+            screen_y + scene_sprite_px_offset_y_compensate //DEVICE_SPRITE_PX_OFFSET_Y_COMPENSATE
         );
 
+        //PPUMASK = shadow_PPUMASK | 0x21; // DEBUGHACK: Make actors/projectiles update color screen red (ON)
         actor = actor->prev;
     }
 
     SWITCH_ROM(_save);
 }
 
-void deactivate_actor(actor_t *actor) BANKED {
+void deactivate_actor(actor_t *actor) BANKED REENTRANT {
 #ifdef STRICT
     // Check exists in inactive list
     UBYTE found = 0;
@@ -210,7 +225,7 @@ void deactivate_actor(actor_t *actor) BANKED {
     }
 }
 
-void activate_actor(actor_t *actor) BANKED {
+void activate_actor(actor_t *actor) BANKED REENTRANT {
 #ifdef STRICT
     // Check exists in inactive list
     UBYTE found = 0;
@@ -235,7 +250,7 @@ void activate_actor(actor_t *actor) BANKED {
     actor->hscript_hit = SCRIPT_TERMINATED;
 }
 
-void activate_actors_in_row(UBYTE x, UBYTE y) BANKED {
+void activate_actors_in_row(UBYTE x, UBYTE y) BANKED REENTRANT {
     static actor_t *actor;
     actor = actors_inactive_head;
 
@@ -254,7 +269,7 @@ void activate_actors_in_row(UBYTE x, UBYTE y) BANKED {
     }
 }
 
-void activate_actors_in_col(UBYTE x, UBYTE y) BANKED {
+void activate_actors_in_col(UBYTE x, UBYTE y) BANKED REENTRANT {
     static actor_t *actor;
     actor = actors_inactive_head;
     while (actor) {
@@ -272,7 +287,7 @@ void activate_actors_in_col(UBYTE x, UBYTE y) BANKED {
     }
 }
 
-void actor_set_frames(actor_t *actor, UBYTE frame_start, UBYTE frame_end) BANKED {
+void actor_set_frames(actor_t *actor, UBYTE frame_start, UBYTE frame_end) NONBANKED {
     if ((actor->frame_start != frame_start) || (actor->frame_end != frame_end)) {
         actor->frame = frame_start;
         actor->frame_start = frame_start;
@@ -280,32 +295,35 @@ void actor_set_frames(actor_t *actor, UBYTE frame_start, UBYTE frame_end) BANKED
     }
 }
 
-void actor_set_frame_offset(actor_t *actor, UBYTE frame_offset) BANKED {
+void actor_set_frame_offset(actor_t *actor, UBYTE frame_offset) BANKED REENTRANT {
     actor->frame = actor->frame_start + (frame_offset % (actor->frame_end - actor->frame_start));
 }
+// gbdk-nes: Changed to inline as simple function
+//UBYTE actor_get_frame_offset(actor_t *actor) BANKED REENTRANT {
+//    return actor->frame - actor->frame_start;
+//}
 
-UBYTE actor_get_frame_offset(actor_t *actor) BANKED {
-    return actor->frame - actor->frame_start;
-}
+// gbdk-nes: Changed to inline as simple 1-line wrapper function
+//void actor_set_anim_idle(actor_t *actor) BANKED {
+//    actor_set_anim(actor, actor->dir);
+//}
 
-void actor_set_anim_idle(actor_t *actor) BANKED {
-    actor_set_anim(actor, actor->dir);
-}
+// gbdk-nes: Changed to inline as simple 1-line wrapper function 
+//void actor_set_anim_moving(actor_t *actor) BANKED REENTRANT {
+//    actor_set_anim(actor, actor->dir + N_DIRECTIONS);
+//}
 
-void actor_set_anim_moving(actor_t *actor) BANKED {
-    actor_set_anim(actor, actor->dir + N_DIRECTIONS);
-}
+// gbdk-nes: Change to inline function for speed (costly as duplicated in many places!)
+//void actor_set_dir(actor_t *actor, direction_e dir, UBYTE moving) BANKED REENTRANT {
+//    actor->dir = dir;
+//    if (moving) {
+//        actor_set_anim(actor, dir + N_DIRECTIONS);
+//    } else {
+//        actor_set_anim(actor, dir);
+//    }
+//}
 
-void actor_set_dir(actor_t *actor, direction_e dir, UBYTE moving) BANKED {
-    actor->dir = dir;
-    if (moving) {
-        actor_set_anim(actor, dir + N_DIRECTIONS);
-    } else {
-        actor_set_anim(actor, dir);
-    }
-}
-
-actor_t *actor_at_tile(UBYTE tx, UBYTE ty, UBYTE inc_noclip) BANKED {
+actor_t *actor_at_tile(UBYTE tx, UBYTE ty, UBYTE inc_noclip) BANKED REENTRANT {
     for (actor_t *actor = actors_active_head; (actor); actor = actor->next) {
         if ((!inc_noclip && !actor->collision_enabled))
             continue;
@@ -316,12 +334,12 @@ actor_t *actor_at_tile(UBYTE tx, UBYTE ty, UBYTE inc_noclip) BANKED {
     return NULL;
 }
 
-actor_t *actor_in_front_of_player(UBYTE grid_size, UBYTE inc_noclip) BANKED {
+actor_t *actor_in_front_of_player(UBYTE grid_size, UBYTE inc_noclip) BANKED REENTRANT {
     upoint16_t offset;
     offset.x = PLAYER.pos.x;
     offset.y = PLAYER.pos.y;
     point_translate_dir_word(&offset, PLAYER.dir, grid_size << 4);
-    return actor_overlapping_bb(&PLAYER.bounds, &offset, &PLAYER, inc_noclip);
+    return actor_overlapping_bb(&PLAYER.bounds_x16, &offset, &PLAYER, inc_noclip);
 }
 
 actor_t *actor_overlapping_player(UBYTE inc_noclip) BANKED {
@@ -333,7 +351,7 @@ actor_t *actor_overlapping_player(UBYTE inc_noclip) BANKED {
             continue;
         };
 
-        if (bb_intersects(&PLAYER.bounds, &PLAYER.pos, &actor->bounds, &actor->pos)) {
+        if (bb_intersects(&PLAYER.bounds_x16, &PLAYER.pos, &actor->bounds_x16, &actor->pos)) {
             return actor;
         }
 
@@ -343,7 +361,7 @@ actor_t *actor_overlapping_player(UBYTE inc_noclip) BANKED {
     return NULL;
 }
 
-actor_t *actor_overlapping_bb(bounding_box_t *bb, upoint16_t *offset, actor_t *ignore, UBYTE inc_noclip) BANKED {
+actor_t *actor_overlapping_bb(bounding_box_16_t *bb_x16, upoint16_t *offset, actor_t *ignore, UBYTE inc_noclip) BANKED REENTRANT {
     actor_t *actor = &PLAYER;
 
     while (actor) {
@@ -352,7 +370,7 @@ actor_t *actor_overlapping_bb(bounding_box_t *bb, upoint16_t *offset, actor_t *i
             continue;
         };
 
-        if (bb_intersects(bb, offset, &actor->bounds, &actor->pos)) {
+        if (bb_intersects(bb_x16, offset, &actor->bounds_x16, &actor->pos)) {
             return actor;
         }
 
@@ -362,7 +380,7 @@ actor_t *actor_overlapping_bb(bounding_box_t *bb, upoint16_t *offset, actor_t *i
     return NULL;
 }
 
-void actors_handle_player_collision(void) BANKED {
+void actors_handle_player_collision(void) BANKED REENTRANT {
     if (player_iframes == 0 && player_collision_actor != NULL) {
         if (player_collision_actor->collision_group) {
             // Execute scene player hit scripts based on actor's collision group
@@ -384,7 +402,9 @@ void actors_handle_player_collision(void) BANKED {
     player_collision_actor = NULL;
 }
 
-UWORD check_collision_in_direction(UWORD start_x, UWORD start_y, bounding_box_t *bounds, UWORD end_pos, col_check_dir_e check_dir) BANKED {
+// moved to vm_actor.c
+/*
+UWORD check_collision_in_direction(UWORD start_x, UWORD start_y, bounding_box_t *bounds, UWORD end_pos, col_check_dir_e check_dir) BANKED REENTRANT {
     WORD tx1, ty1, tx2, ty2, tt;
     switch (check_dir) {
         case CHECK_DIR_LEFT:  // Check left
@@ -453,4 +473,13 @@ UWORD check_collision_in_direction(UWORD start_x, UWORD start_y, bounding_box_t 
             return end_pos;
     }
     return end_pos;
+}
+*/
+
+void actor_update_bounds_x16(actor_t *actor)
+{
+    actor->bounds_x16.left = actor->bounds.left << 4;
+    actor->bounds_x16.right = actor->bounds.right << 4;
+    actor->bounds_x16.top = actor->bounds.top << 4;
+    actor->bounds_x16.bottom = actor->bounds.bottom << 4;
 }

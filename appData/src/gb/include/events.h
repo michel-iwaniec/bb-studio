@@ -7,6 +7,7 @@ typedef struct script_event_t {
     UWORD handle;
     UBYTE script_bank;
     void * script_addr;
+    UBYTE _padding[3];
 } script_event_t;
 
 extern script_event_t input_events[8];
@@ -21,7 +22,7 @@ typedef struct timer_time_t {
 extern script_event_t timer_events[MAX_CONCURRENT_TIMERS];
 extern timer_time_t timer_values[MAX_CONCURRENT_TIMERS];
 
-void events_init(UBYTE preserve) BANKED;
+void events_init(UBYTE preserve) BANKED REENTRANT;
 void events_update(void) NONBANKED;
 
 void timers_init(UBYTE preserve) BANKED;

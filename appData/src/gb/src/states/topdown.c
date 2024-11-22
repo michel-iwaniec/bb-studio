@@ -20,10 +20,10 @@
 UBYTE topdown_grid;
 
 void topdown_init(void) BANKED {
-    camera_offset_x = 0;
-    camera_offset_y = 0;
-    camera_deadzone_x = 0;
-    camera_deadzone_y = 0;
+    camera_offset_x_x16 = 0;
+    camera_offset_y_x16 = 0;
+    camera_deadzone_x_x16 = 0;
+    camera_deadzone_y_x16 = 0;
 
     if (topdown_grid == 16) {
         // Snap to 16px grid
@@ -48,7 +48,7 @@ void topdown_update(void) BANKED {
         player_moving = FALSE;
 
         // Check for trigger collisions
-        if (trigger_activate_at_intersection(&PLAYER.bounds, &PLAYER.pos, FALSE)) {
+        if (trigger_activate_at_intersection_PLAYER(FALSE)) {
             // Landed on a trigger
             return;
         }

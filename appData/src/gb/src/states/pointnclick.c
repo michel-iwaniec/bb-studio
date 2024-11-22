@@ -18,10 +18,10 @@
 UBYTE last_hit_trigger = MAX_TRIGGERS;
 
 void pointnclick_init(void) BANKED {
-    camera_offset_x = 0;
-    camera_offset_y = 0;
-    camera_deadzone_x = POINT_N_CLICK_CAMERA_DEADZONE;
-    camera_deadzone_y = POINT_N_CLICK_CAMERA_DEADZONE;
+    camera_offset_x_x16 = 0;
+    camera_offset_y_x16 = 0;
+    camera_deadzone_x_x16 = POINT_N_CLICK_CAMERA_DEADZONE << 4;
+    camera_deadzone_y_x16 = POINT_N_CLICK_CAMERA_DEADZONE << 4;
     PLAYER.dir = DIR_RIGHT;
     actor_set_anim(&PLAYER, ANIM_CURSOR);
 }

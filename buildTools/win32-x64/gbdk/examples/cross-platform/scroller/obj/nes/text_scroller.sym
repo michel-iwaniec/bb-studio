@@ -1,0 +1,313 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Rockwell 6502/6510/65C02) Page 1
+Hexadecimal [32-Bits]
+
+Symbol Table
+
+    .__.$$$.                                                    =   00002710 L
+    .__.ABS.                                                    =   00000000 G
+    .__.CPU.                                                    =   00000000 L
+    .__.H$L.                                                    =   00000000 L
+  0 A$text_scroller$153                                             00000000 GR
+  0 A$text_scroller$154                                             00000003 GR
+  0 A$text_scroller$155                                             00000005 GR
+  0 A$text_scroller$156                                             00000008 GR
+  0 A$text_scroller$157                                             0000000A GR
+  0 A$text_scroller$158                                             0000000C GR
+  0 A$text_scroller$159                                             0000000F GR
+  0 A$text_scroller$160                                             00000011 GR
+  0 A$text_scroller$161                                             00000013 GR
+  0 A$text_scroller$166                                             00000016 GR
+  0 A$text_scroller$167                                             00000018 GR
+  0 A$text_scroller$168                                             0000001B GR
+  0 A$text_scroller$171                                             0000001E GR
+  0 A$text_scroller$172                                             00000020 GR
+  0 A$text_scroller$175                                             00000023 GR
+  0 A$text_scroller$180                                             00000026 GR
+  0 A$text_scroller$181                                             00000029 GR
+  0 A$text_scroller$183                                             0000002C GR
+  0 A$text_scroller$184                                             0000002E GR
+  0 A$text_scroller$187                                             00000031 GR
+  0 A$text_scroller$188                                             00000033 GR
+  0 A$text_scroller$191                                             00000036 GR
+  0 A$text_scroller$196                                             00000039 GR
+  0 A$text_scroller$197                                             0000003B GR
+  0 A$text_scroller$198                                             0000003E GR
+  0 A$text_scroller$199                                             00000040 GR
+  0 A$text_scroller$202                                             00000043 GR
+  0 A$text_scroller$203                                             00000045 GR
+  0 A$text_scroller$211                                             00000048 GR
+  0 A$text_scroller$232                                             00000049 GR
+  0 A$text_scroller$235                                             0000004C GR
+  0 A$text_scroller$238                                             0000004F GR
+  0 A$text_scroller$239                                             00000051 GR
+  0 A$text_scroller$240                                             00000053 GR
+  0 A$text_scroller$241                                             00000056 GR
+  0 A$text_scroller$244                                             00000059 GR
+  0 A$text_scroller$245                                             0000005B GR
+  0 A$text_scroller$246                                             0000005E GR
+  0 A$text_scroller$247                                             00000060 GR
+  0 A$text_scroller$248                                             00000063 GR
+  0 A$text_scroller$249                                             00000065 GR
+  0 A$text_scroller$250                                             00000068 GR
+  0 A$text_scroller$251                                             0000006A GR
+  0 A$text_scroller$252                                             0000006B GR
+  0 A$text_scroller$255                                             0000006E GR
+  0 A$text_scroller$258                                             00000071 GR
+  0 A$text_scroller$259                                             00000073 GR
+  0 A$text_scroller$260                                             00000074 GR
+  0 A$text_scroller$261                                             00000076 GR
+  0 A$text_scroller$262                                             00000077 GR
+  0 A$text_scroller$263                                             00000079 GR
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Rockwell 6502/6510/65C02) Page 2
+Hexadecimal [32-Bits]
+
+Symbol Table
+
+  0 A$text_scroller$264                                             0000007A GR
+  0 A$text_scroller$265                                             0000007C GR
+  0 A$text_scroller$266                                             0000007D GR
+  0 A$text_scroller$267                                             00000080 GR
+  0 A$text_scroller$268                                             00000081 GR
+  0 A$text_scroller$269                                             00000082 GR
+  0 A$text_scroller$270                                             00000083 GR
+  0 A$text_scroller$273                                             00000084 GR
+  0 A$text_scroller$274                                             00000085 GR
+  0 A$text_scroller$277                                             00000086 GR
+  0 A$text_scroller$278                                             00000088 GR
+  0 A$text_scroller$279                                             0000008A GR
+  0 A$text_scroller$280                                             0000008D GR
+  0 A$text_scroller$283                                             0000008E GR
+  0 A$text_scroller$284                                             00000091 GR
+  0 A$text_scroller$285                                             00000093 GR
+  0 A$text_scroller$288                                             00000096 GR
+  0 A$text_scroller$289                                             00000098 GR
+  0 A$text_scroller$290                                             0000009A GR
+  0 A$text_scroller$291                                             0000009D GR
+  0 A$text_scroller$292                                             0000009F GR
+  0 A$text_scroller$293                                             000000A1 GR
+  0 A$text_scroller$294                                             000000A3 GR
+  0 A$text_scroller$295                                             000000A6 GR
+  0 A$text_scroller$298                                             000000A9 GR
+  0 A$text_scroller$299                                             000000AB GR
+  0 A$text_scroller$300                                             000000AD GR
+  0 A$text_scroller$301                                             000000AE GR
+  0 A$text_scroller$302                                             000000B0 GR
+  0 A$text_scroller$303                                             000000B2 GR
+  0 A$text_scroller$305                                             000000B3 GR
+  0 A$text_scroller$306                                             000000B6 GR
+  0 A$text_scroller$309                                             000000B9 GR
+  0 A$text_scroller$310                                             000000BC GR
+  0 A$text_scroller$313                                             000000BF GR
+  0 A$text_scroller$314                                             000000C2 GR
+  0 A$text_scroller$315                                             000000C3 GR
+  0 A$text_scroller$316                                             000000C6 GR
+  0 A$text_scroller$317                                             000000C9 GR
+  0 A$text_scroller$318                                             000000CC GR
+  0 A$text_scroller$319                                             000000CE GR
+  0 A$text_scroller$320                                             000000D0 GR
+  0 A$text_scroller$321                                             000000D3 GR
+  0 A$text_scroller$322                                             000000D5 GR
+  0 A$text_scroller$326                                             000000D8 GR
+  0 A$text_scroller$327                                             000000DB GR
+  0 A$text_scroller$328                                             000000DD GR
+  0 A$text_scroller$329                                             000000E0 GR
+  0 A$text_scroller$330                                             000000E2 GR
+  0 A$text_scroller$331                                             000000E4 GR
+  0 A$text_scroller$332                                             000000E6 GR
+  0 A$text_scroller$333                                             000000E7 GR
+  0 A$text_scroller$334                                             000000E9 GR
+  0 A$text_scroller$335                                             000000EC GR
+  0 A$text_scroller$336                                             000000EF GR
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Rockwell 6502/6510/65C02) Page 3
+Hexadecimal [32-Bits]
+
+Symbol Table
+
+  0 A$text_scroller$337                                             000000F2 GR
+  0 A$text_scroller$343                                             000000F5 GR
+  0 A$text_scroller$346                                             000000F8 GR
+  0 A$text_scroller$347                                             000000FB GR
+  0 A$text_scroller$348                                             000000FD GR
+  0 A$text_scroller$351                                             000000FF GR
+  0 A$text_scroller$352                                             00000102 GR
+  0 A$text_scroller$353                                             00000104 GR
+  0 A$text_scroller$357                                             00000107 GR
+  0 A$text_scroller$358                                             0000010A GR
+  0 A$text_scroller$359                                             0000010C GR
+  0 A$text_scroller$360                                             0000010F GR
+  0 A$text_scroller$361                                             00000111 GR
+  0 A$text_scroller$362                                             00000113 GR
+  0 A$text_scroller$363                                             00000115 GR
+  0 A$text_scroller$364                                             00000117 GR
+  0 A$text_scroller$365                                             00000119 GR
+  0 A$text_scroller$366                                             0000011C GR
+  0 A$text_scroller$367                                             0000011E GR
+  0 A$text_scroller$371                                             00000121 GR
+  0 A$text_scroller$372                                             00000124 GR
+  0 A$text_scroller$373                                             00000126 GR
+  0 A$text_scroller$377                                             00000129 GR
+  0 A$text_scroller$378                                             0000012C GR
+  0 A$text_scroller$379                                             0000012D GR
+  0 A$text_scroller$380                                             00000130 GR
+  0 A$text_scroller$381                                             00000133 GR
+  0 A$text_scroller$382                                             00000136 GR
+  0 A$text_scroller$383                                             00000138 GR
+  0 A$text_scroller$384                                             0000013B GR
+  0 A$text_scroller$385                                             0000013E GR
+  0 A$text_scroller$386                                             00000141 GR
+  0 A$text_scroller$390                                             00000144 GR
+  0 A$text_scroller$391                                             00000147 GR
+  0 A$text_scroller$392                                             00000149 GR
+  0 A$text_scroller$393                                             0000014C GR
+  0 A$text_scroller$394                                             0000014E GR
+  0 A$text_scroller$395                                             00000150 GR
+  0 A$text_scroller$396                                             00000152 GR
+  0 A$text_scroller$397                                             00000153 GR
+  0 A$text_scroller$398                                             00000155 GR
+  0 A$text_scroller$399                                             00000158 GR
+  0 A$text_scroller$400                                             0000015B GR
+  0 A$text_scroller$401                                             0000015E GR
+  0 A$text_scroller$404                                             00000161 GR
+  0 A$text_scroller$405                                             00000163 GR
+  0 A$text_scroller$406                                             00000166 GR
+  0 A$text_scroller$409                                             00000169 GR
+  0 A$text_scroller$412                                             0000016C GR
+  0 A$text_scroller$413                                             0000016F GR
+  0 A$text_scroller$418                                             00000172 GR
+  0 C$text_scroller.c$100$2_0$115                               =   000000F8 GR
+  0 C$text_scroller.c$102$3_0$116                               =   000000FF GR
+  0 C$text_scroller.c$103$3_0$116                               =   00000107 GR
+  0 C$text_scroller.c$106$3_0$116                               =   00000121 GR
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Rockwell 6502/6510/65C02) Page 4
+Hexadecimal [32-Bits]
+
+Symbol Table
+
+  0 C$text_scroller.c$107$3_0$116                               =   00000129 GR
+  0 C$text_scroller.c$110$3_0$116                               =   00000144 GR
+  0 C$text_scroller.c$115$2_0$115                               =   00000169 GR
+  0 C$text_scroller.c$117$2_0$115                               =   0000016C GR
+  0 C$text_scroller.c$119$1_0$113                               =   00000172 GR
+  0 C$text_scroller.c$16$0_0$101                                =   00000000 GR
+  0 C$text_scroller.c$18$1_0$101                                =   00000000 GR
+  0 C$text_scroller.c$19$2_0$102                                =   00000016 GR
+  0 C$text_scroller.c$21$2_0$102                                =   0000001E GR
+  0 C$text_scroller.c$22$2_0$102                                =   00000023 GR
+  0 C$text_scroller.c$23$2_0$102                                =   00000026 GR
+  0 C$text_scroller.c$25$2_0$102                                =   00000031 GR
+  0 C$text_scroller.c$26$2_0$102                                =   00000036 GR
+  0 C$text_scroller.c$27$2_0$102                                =   00000039 GR
+  0 C$text_scroller.c$29$2_0$102                                =   00000043 GR
+  0 C$text_scroller.c$31$1_0$101                                =   00000048 GR
+  0 C$text_scroller.c$55$1_0$101                                =   00000048 GR
+  0 C$text_scroller.c$66$1_0$113                                =   00000049 GR
+  0 C$text_scroller.c$67$1_0$113                                =   00000049 GR
+  0 C$text_scroller.c$69$1_0$113                                =   0000004C GR
+  0 C$text_scroller.c$70$1_0$113                                =   0000004F GR
+  0 C$text_scroller.c$72$1_0$113                                =   00000059 GR
+  0 C$text_scroller.c$73$1_0$113                                =   0000006E GR
+  0 C$text_scroller.c$75$1_0$113                                =   00000071 GR
+  0 C$text_scroller.c$78$2_0$114                                =   00000086 GR
+  0 C$text_scroller.c$82$1_0$113                                =   00000084 GR
+  0 C$text_scroller.c$89$1_0$113                                =   0000008E GR
+  0 C$text_scroller.c$90$1_0$113                                =   00000096 GR
+  0 C$text_scroller.c$91$1_0$113                                =   000000A9 GR
+  0 C$text_scroller.c$93$1_0$113                                =   000000B9 GR
+  0 C$text_scroller.c$94$1_0$113                                =   000000BF GR
+  0 C$text_scroller.c$96$1_0$113                                =   000000D8 GR
+  0 C$text_scroller.c$98$1_0$113                                =   000000F5 GR
+  0 C$text_scroller.c$99$2_0$115                                =   000000F5 GR
+    DPTR                                                            ******** GX
+  0 Ftext_scroller$__str_0$0_0$0                                =   000002EC GR
+  6 Ftext_scroller$__xinit_scanline_offsets$0_0$0               =   00000000 GR
+  6 Ftext_scroller$__xinit_scroller_next_char$0_0$0             =   00000003 GR
+  6 Ftext_scroller$__xinit_scroller_x$0_0$0                     =   00000002 GR
+    G$OAMADDR$0_0$0                                             =   00002003 G
+    G$OAMDATA$0_0$0                                             =   00002004 G
+    G$OAMDMA$0_0$0                                              =   00004014 G
+    G$PPUADDR$0_0$0                                             =   00002006 G
+    G$PPUCTRL$0_0$0                                             =   00002000 G
+    G$PPUDATA$0_0$0                                             =   00002007 G
+    G$PPUMASK$0_0$0                                             =   00002001 G
+    G$PPUSCROLL$0_0$0                                           =   00002005 G
+    G$PPUSTATUS$0_0$0                                           =   00002002 G
+  8 G$base$0_0$0                                                =   00000002 GR
+  8 G$limit$0_0$0                                               =   00000004 GR
+  0 G$main$0$0                                                  =   00000049 GR
+  0 G$scanline_isr$0$0                                          =   00000000 GR
+  7 G$scanline_offsets$0_0$0                                    =   00000000 GR
+  0 G$scanline_offsets_tbl$0_0$0                                =   00000173 GR
+  7 G$scroller_next_char$0_0$0                                  =   00000003 GR
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Rockwell 6502/6510/65C02) Page 5
+Hexadecimal [32-Bits]
+
+Symbol Table
+
+  0 G$scroller_text$0_0$0                                       =   00000183 GR
+  8 G$scroller_vram_addr$0_0$0                                  =   00000000 GR
+  7 G$scroller_x$0_0$0                                          =   00000002 GR
+  1 Ltext_scroller.main$sloc0$0_1$0                             =   00000000 GR
+  0 XG$main$0$0                                                 =   00000172 GR
+  0 XG$scanline_isr$0$0                                         =   00000048 GR
+    _OAMADDR                                                    =   00002003 G
+    _OAMDATA                                                    =   00002004 G
+    _OAMDMA                                                     =   00004014 G
+    _PPUADDR                                                    =   00002006 G
+    _PPUCTRL                                                    =   00002000 G
+    _PPUDATA                                                    =   00002007 G
+    _PPUMASK                                                    =   00002001 G
+    _PPUSCROLL                                                  =   00002005 G
+    _PPUSTATUS                                                  =   00002002 G
+  0 ___str_0                                                        000002EC R
+    __lcd_scanline                                                  ******** GX
+  6 __xinit__scanline_offsets                                       00000000 R
+  6 __xinit__scroller_next_char                                     00000003 R
+  6 __xinit__scroller_x                                             00000002 R
+    _add_LCD                                                        ******** GX
+  8 _base                                                           00000002 GR
+    _bkg_scroll_x                                                   ******** GX
+    _bkg_scroll_y                                                   ******** GX
+    _display_off                                                    ******** GX
+    _display_on                                                     ******** GX
+    _fill_bkg_rect                                                  ******** GX
+    _fill_bkg_rect_PARM_3                                           ******** GX
+    _fill_bkg_rect_PARM_4                                           ******** GX
+    _fill_bkg_rect_PARM_5                                           ******** GX
+    _font_ibm                                                       ******** GX
+    _font_init                                                      ******** GX
+    _font_load                                                      ******** GX
+    _font_set                                                       ******** GX
+    _get_bkg_xy_addr                                                ******** GX
+  8 _limit                                                          00000004 GR
+  0 _main                                                           00000049 GR
+  1 _main_sloc0_1_0                                                 00000000 R
+    _printf                                                         ******** GX
+  0 _scanline_isr                                                   00000000 GR
+  7 _scanline_offsets                                               00000000 GR
+  0 _scanline_offsets_tbl                                           00000173 GR
+  7 _scroller_next_char                                             00000003 GR
+  0 _scroller_text                                                  00000183 GR
+  8 _scroller_vram_addr                                             00000000 GR
+  7 _scroller_x                                                     00000002 GR
+    _set_vram_byte                                                  ******** GX
+    _set_vram_byte_PARM_2                                           ******** GX
+    _shadow_PPUMASK                                                 ******** GX
+    _vsync                                                          ******** GX
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Rockwell 6502/6510/65C02) Page 6
+Hexadecimal [32-Bits]
+
+Area Table
+
+   0 _CODE                                      size      300   flags    0
+   1 _ZP                                        size        2   flags   10
+   2 _OSEG                                      size        0   flags   14
+   3 _HOME                                      size        0   flags    0
+   4 _GSINIT                                    size        0   flags    0
+   5 _GSFINAL                                   size        0   flags    0
+   6 _XINIT                                     size        5   flags    0
+   7 _DATA                                      size        5   flags    0
+   8 _BSS                                       size        6   flags    0
+   9 _DABS                                      size        0   flags    8
+   A _CABS                                      size        0   flags    8
+

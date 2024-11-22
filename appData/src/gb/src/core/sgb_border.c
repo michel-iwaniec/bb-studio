@@ -18,6 +18,7 @@
 void set_sgb_border(unsigned char * tiledata, size_t tiledata_size, UBYTE tiledata_bank,
                     unsigned char * tilemap,  size_t tilemap_size,  UBYTE tilemap_bank,
                     unsigned char * palette,  size_t palette_size,  UBYTE palette_bank) BANKED {
+/*
     unsigned char map_buf[20];
     memset(map_buf, 0, sizeof(map_buf));
 
@@ -68,4 +69,5 @@ void set_sgb_border(unsigned char * tiledata, size_t tiledata_size, UBYTE tileda
     fill_bkg_rect(0, 0, 20, 18, 0);
     
     SGB_TRANSFER((SGB_MASK_EN << 3) | 1, SGB_SCR_UNFREEZE); 
+*/
 }

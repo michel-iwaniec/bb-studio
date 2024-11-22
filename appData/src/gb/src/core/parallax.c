@@ -4,7 +4,10 @@
 
 #include <string.h>
 
+#include "scroll.h"
 #include "parallax.h"
+#include "interrupts.h"
+#include "ui.h"
 
 parallax_row_t parallax_rows[3];
 parallax_row_t * parallax_row;
@@ -15,52 +18,54 @@ void parallax_init(void) BANKED {
     memcpy(parallax_rows, parallax_rows_defaults, sizeof(parallax_rows)); 
 }
 
-void parallax_LCD_isr(void) NONBANKED NAKED {
-__asm
-        ld hl, #_parallax_row
-        ld a, (hl+)
-        ld h, (hl)
-        ld l, a
+extern uint8_t _lcd_scanline;
 
-        ld a, (hl+)             ; scx
-        ld e, a
-        ld a, (hl+)             ; next_y
-        ldh (#_LYC_REG), a
-        or a
-        jr z, 1$
-        ld d, #0
-        jr 2$
-1$:
-        ld a, (#_draw_scroll_y)
-        ld d, a
-2$:
-        ldh a, (#_STAT_REG)
-        bit STATF_B_BUSY, a
-        jr nz, 2$
-
-        ld a, e
-        ld (#_SCX_REG), a
-        ld a, d
-        ldh (#_SCY_REG), a
-
-        ldh a, (#_LYC_REG)
-        or a
-        jr z, 3$
-
-        ld  de, #4
-        add  hl, de             ; skip shift, tile_start, tile_height, shadow_scx 
-
-        ld d, h
-        ld a, l   
-        ld hl,#_parallax_row 
-        ld (hl+), a
-        ld (hl), d
-        ret
-3$:
-        ld hl,#_parallax_row 
-        ld a, #<_parallax_rows
-        ld (hl+), a
-        ld (hl), #>_parallax_rows
-        ret
-__endasm;
+void parallax_LCD_isr(void) NONBANKED {
+    uint8_t y;
+    bool is_overlay_active = win_pos_y < 144;
+    if(is_overlay_active) {
+        uint8_t win_height = 144 - win_pos_y;
+        if(_lcd_scanline == 0)
+        {
+            move_bkg(parallax_row->scx, draw_scroll_y);
+            _lcd_scanline = OVERLAY_START_Y;
+            return;
+        }
+        else if(_lcd_scanline == OVERLAY_START_Y)
+        {
+            // Run the simple_LCD_isr for handling the overlay logic
+            simple_LCD_isr();
+            return;
+        }
+        else if(_lcd_scanline == OVERLAY_START_Y + win_height)
+        {
+            // Run the simple_LCD_isr for handling the overlay logic
+            simple_LCD_isr();
+            // Reset _lcd_scanline back to original
+            _lcd_scanline = OVERLAY_START_Y + win_height;
+            // ...and finally potentially skip entries if parallax_row, if overlay went past them
+            // (...TODO!)
+        }
+    }
+    if(_lcd_scanline == 0)
+        y = draw_scroll_y;
+    else
+        y = _lcd_scanline;
+    move_bkg(parallax_row->scx, y);
+    _lcd_scanline = parallax_row->next_y + 1;
+    //
+    if(parallax_row->next_y == 0)
+        parallax_row = parallax_rows;
+    else
+        parallax_row++;
 }
+
+
+//typedef struct parallax_row_t {
+//    UBYTE scx;      // x scroll position for current slice
+//    UBYTE next_y;   // y position of next LYC
+//    INT8  shift;    // shift of scroll position within the world
+//    UBYTE start_tile;
+//    UBYTE tile_height;
+//    UBYTE shadow_scx;
+//} parallax_row_t;
