@@ -15,7 +15,7 @@ typedef struct camera_position_t {
     INT16 X, Y;
 } camera_position_t;
 
-void vm_camera_move_to(SCRIPT_CTX * THIS, INT16 idx, UBYTE speed, UBYTE after_lock_camera) OLDCALL BANKED {
+void vm_camera_move_to(SCRIPT_CTX * THIS, INT16 idx, UBYTE speed, UBYTE after_lock_camera) OLDCALL BANKED REENTRANT {
 
     // indicate waitable state of context
     THIS->waitable = 1;
@@ -73,7 +73,7 @@ void vm_camera_move_to(SCRIPT_CTX * THIS, INT16 idx, UBYTE speed, UBYTE after_lo
     return;
 }
 
-void vm_camera_set_pos(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED {
+void vm_camera_set_pos(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED REENTRANT {
     camera_position_t * params = VM_REF_TO_PTR(idx);
     camera_x = params->X;
     camera_y = params->Y;
@@ -85,19 +85,23 @@ void vm_camera_set_pos(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED {
     return;
 }
 
+extern UBYTE needs_full_update;
 // VM_INVOKE handler
-UBYTE camera_shake_frames(void * THIS, UBYTE start, UWORD * stack_frame) OLDCALL BANKED {
+UBYTE camera_shake_frames(void * THIS, UBYTE start, UWORD * stack_frame) OLDCALL BANKED REENTRANT {
     if (start) *((SCRIPT_CTX *)THIS)->stack_ptr = sys_time;
     if (((UWORD)sys_time - *((SCRIPT_CTX *)THIS)->stack_ptr) < stack_frame[0]) {
+        // gbdk-nes: Use simplified shake calculations to avoid mul
+        // TODO: Mimic original shake better
         if (stack_frame[1] & CAMERA_SHAKE_X) {
-            scroll_offset_x = ((rand() * ((stack_frame[2] << 1) + 1)) >> 8) - stack_frame[2];
+            scroll_offset_x = (rand() & 0xF) - 0x8; //((rand() * ((stack_frame[2] << 1) + 1)) >> 8) - stack_frame[2];
         }
         if (stack_frame[1] & CAMERA_SHAKE_Y) {
-            scroll_offset_y = ((rand() * ((stack_frame[2] << 1) + 1)) >> 8) - stack_frame[2];
+            scroll_offset_y = (rand() & 0xF) - 0x8; //((rand() * ((stack_frame[2] << 1) + 1)) >> 8) - stack_frame[2];
         }
         ((SCRIPT_CTX *)THIS)->waitable = TRUE;
         return FALSE;
     }
     scroll_offset_x = scroll_offset_y = 0;
+    needs_full_update = TRUE; // Force full update of scroll to prevent glitches. TODO: Figure out why...
     return TRUE;
 }

@@ -23,28 +23,28 @@ direction_e shooter_direction;
 
 void shmup_init(void) BANKED {
 
-    camera_offset_x = 0;
-    camera_offset_y = 0;
-    camera_deadzone_x = 0;
-    camera_deadzone_y = 0;
+    camera_offset_x_x16 = 0;
+    camera_offset_y_x16 = 0;
+    camera_deadzone_x_x16 = 0;
+    camera_deadzone_y_x16 = 0;
 
     shooter_direction = PLAYER.dir;
 
     if (shooter_direction == DIR_LEFT) {
         // Right to left scrolling
-        camera_offset_x = 48;
+        camera_offset_x_x16 = 48 << 4;
         shooter_dest = (SCREEN_WIDTH_HALF + 48) << 4;
     } else if (shooter_direction == DIR_RIGHT) {
         // Left to right scrolling
-        camera_offset_x = -64;
+        camera_offset_x_x16 = (-64) << 4;
         shooter_dest = (image_width - SCREEN_WIDTH_HALF - 64) << 4;
     } else if (shooter_direction == DIR_UP) {
         // Bottom to top scrolling
-        camera_offset_y = 48;
+        camera_offset_y_x16 = 48 << 4;
         shooter_dest = (SCREEN_WIDTH_HALF + 40) << 4;
     } else {
         // Top to bottom scrolling
-        camera_offset_y = -48;
+        camera_offset_y_x16 = (-48) << 4;
         shooter_dest = (image_height - SCREEN_WIDTH_HALF - 40) << 4;
     }
 
@@ -167,7 +167,7 @@ void shmup_update(void) BANKED {
 
     if (IS_FRAME_ODD) {
         // Check for trigger collisions
-        if (trigger_activate_at_intersection(&PLAYER.bounds, &PLAYER.pos, FALSE)) {
+        if (trigger_activate_at_intersection_PLAYER(FALSE)) {
             // Landed on a trigger
             return;
         }

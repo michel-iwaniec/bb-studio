@@ -5,7 +5,7 @@
 
 extern volatile UBYTE SIO_status;
 void SIO_send_byte(UBYTE data) OLDCALL PRESERVES_REGS(b, c, d, e, h, l);
-void SIO_receive(void) PRESERVES_REGS(b, c, d, e, h, l);
+//void SIO_receive(void) PRESERVES_REGS(b, c, d, e, h, l);
 
 UBYTE link_operation_mode;
 
@@ -22,6 +22,7 @@ const UBYTE * link_packet_snd_ptr;
 UBYTE link_packet_sent;
 
 void on_SIO_receive(UBYTE data) OLDCALL NONBANKED {
+/*
     if (link_packet_len) {
         link_packet_len--;
         *link_packet_ptr++ = data;
@@ -36,9 +37,11 @@ void on_SIO_receive(UBYTE data) OLDCALL NONBANKED {
         link_packet_ptr = link_packet;
         SIO_receive();
     }
+*/
 }
 
 UBYTE SIO_update(void) OLDCALL NONBANKED {
+/*
     if (SIO_status == IO_ERROR) {
         link_operation_mode = LINK_MODE_NONE;
         link_packet_len = link_packet_snd_len = 0;
@@ -58,9 +61,11 @@ UBYTE SIO_update(void) OLDCALL NONBANKED {
         }
     }
     return TRUE;
+*/
 }
 
 void SIO_init(void) BANKED {
+/*
     link_operation_mode = LINK_MODE_NONE;
 
     link_packet_len = 0;
@@ -70,4 +75,5 @@ void SIO_init(void) BANKED {
     link_packet_snd_len = 0;
     link_packet_snd_ptr = link_packet;
     link_packet_sent = FALSE;
+*/
 }

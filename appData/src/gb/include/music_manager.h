@@ -4,6 +4,8 @@
 #include "events.h"
 #include "sfx_player.h"
 
+#define TRACK_T void
+
 #ifdef GBT_PLAYER
 #undef HUGE_TRACKER
 #define TRACK_T uint8_t
@@ -50,6 +52,62 @@ inline void music_setpos(UBYTE pattern, UBYTE row) {
 }
 #endif
 
+#ifdef FAMISTUDIO
+#undef GBT_PLAYER
+#undef HUGE_TRACKER
+#define TRACK_T uint8_t
+#include "famistudio_sdcc.h"
+
+#define MUSIC_BANK 5
+
+
+inline void driver_reset_wave(void)
+{
+}
+
+inline void driver_update(void)
+{
+    famistudio_update();
+    famistudio_update_apu_regs();
+}
+
+inline void driver_init(uint8_t bank, const TRACK_T * track, uint8_t loop) {
+    famistudio_init(FAMISTUDIO_PLATFORM_NTSC, track);
+    famistudio_music_play(0);
+}
+
+inline uint8_t driver_set_mute_mask(uint8_t mute_mask) {
+    //gbt_enable_channels(~mute_mask & 0x0f);
+    return mute_mask;
+}
+
+inline void music_setpos(UBYTE pattern, UBYTE row) {
+    pattern, row;
+}
+#endif
+
+#if !defined(GBT_PLAYER) && !defined(HUGE_TRACKER) && !defined(FAMISTUDIO)
+inline void music_setpos(UBYTE pattern, UBYTE row) {
+    pattern, row;
+}
+
+inline uint8_t driver_set_mute_mask(uint8_t mute_mask) {
+    return mute_mask;
+}
+
+inline void driver_init(uint8_t bank, const TRACK_T * track, uint8_t loop) {
+    bank; loop;
+}
+
+inline void driver_reset_wave(void)
+{
+}
+
+inline void driver_update(void)
+{
+}
+#endif
+
 extern script_event_t music_events[4];
 
 #define MUSIC_SFX_PRIORITY_MINIMAL  0
@@ -67,15 +125,13 @@ extern const TRACK_T * music_current_track;
 extern uint8_t music_global_mute_mask;
 extern uint8_t music_sfx_priority;
 
-void music_init_driver(void) BANKED;
+void music_init_driver(void) NONBANKED REENTRANT;
 
-void music_init_events(uint8_t preserve) BANKED;
-void music_events_update(void) NONBANKED;
-uint8_t music_events_poll(void) BANKED;
+void music_init_events(uint8_t preserve) BANKED REENTRANT;
+void music_events_update(void) NONBANKED REENTRANT;
+uint8_t music_events_poll(void) BANKED REENTRANT;
 
-inline void music_sound_cut(void) {
-    sfx_sound_cut();
-}
+void music_sound_cut(void) NONBANKED;
 
 #define MUSIC_CH_1 SFX_CH_1
 #define MUSIC_CH_2 SFX_CH_2
@@ -100,8 +156,8 @@ inline void music_stop(void) {
 }
 
 inline void music_setup_timer(void) {
-    TMA_REG = ((_cpu == CGB_TYPE) && (*(uint8_t *)0x0143 & 0x80)) ? 0x80u : 0xC0u;
-    TAC_REG = 0x07u;
+    //TMA_REG = ((_cpu == CGB_TYPE) && (*(uint8_t *)0x0143 & 0x80)) ? 0x80u : 0xC0u;
+    //TAC_REG = 0x07u;
 }
 
 inline void music_init(void) {
@@ -122,5 +178,7 @@ inline void music_play_sfx(uint8_t bank, const uint8_t * sample, uint8_t mute_ma
     music_mute_mask = mute_mask;
     sfx_set_sample(bank, sample);
 }
+
+void music_update_driver(void) NONBANKED;
 
 #endif

@@ -15,13 +15,13 @@ extern uint8_t sfx_frame_skip;
 #define SFX_CH_ENABLE     0b10000000
 
 inline void sfx_sound_init(void) {
-    NR52_REG = SFX_CH_ENABLE, NR51_REG = 0xFF, NR50_REG = 0x77;  // enable sound
+    //NR52_REG = SFX_CH_ENABLE, NR51_REG = 0xFF, NR50_REG = 0x77;  // enable sound
 }
 
 inline void sfx_sound_cut(void) {
-    NR12_REG = NR22_REG = NR32_REG = NR42_REG = 0;
-    NR14_REG = NR24_REG = NR44_REG = SFX_CH_RETRIGGER;
-    NR51_REG = 0xFF;
+    //NR12_REG = NR22_REG = NR32_REG = NR42_REG = 0;
+    //NR14_REG = NR24_REG = NR44_REG = SFX_CH_RETRIGGER;
+    //NR51_REG = 0xFF;
 }
 
 #define SFX_CH_1 1
@@ -30,11 +30,11 @@ inline void sfx_sound_cut(void) {
 #define SFX_CH_4 8
 
 inline uint8_t sfx_sound_cut_mask(uint8_t mask) {
-    if (mask & SFX_CH_1) NR12_REG = 0, NR14_REG = SFX_CH_RETRIGGER;
-    if (mask & SFX_CH_2) NR22_REG = 0, NR24_REG = SFX_CH_RETRIGGER;
-    if (mask & SFX_CH_3) NR32_REG = 0;
-    if (mask & SFX_CH_4) NR42_REG = 0, NR44_REG = SFX_CH_RETRIGGER;
-    NR51_REG = 0xFF;
+    //if (mask & SFX_CH_1) NR12_REG = 0, NR14_REG = SFX_CH_RETRIGGER;
+    //if (mask & SFX_CH_2) NR22_REG = 0, NR24_REG = SFX_CH_RETRIGGER;
+    //if (mask & SFX_CH_3) NR32_REG = 0;
+    //if (mask & SFX_CH_4) NR42_REG = 0, NR44_REG = SFX_CH_RETRIGGER;
+    //NR51_REG = 0xFF;
     return mask;
 }
 

@@ -11,7 +11,7 @@
 
 BANKREF(VM_PALETTE)
 
-void vm_load_palette(SCRIPT_CTX * THIS, UBYTE mask, UBYTE options) OLDCALL BANKED {
+void vm_load_palette(SCRIPT_CTX * THIS, UBYTE mask, UBYTE options) OLDCALL BANKED REENTRANT {
     UBYTE bank = THIS->bank;
     #ifdef SGB
         UBYTE sgb_changes = SGB_PALETTES_NONE;
@@ -24,6 +24,7 @@ void vm_load_palette(SCRIPT_CTX * THIS, UBYTE mask, UBYTE options) OLDCALL BANKE
         if ((_is_CGB) || (nb > 1)) {
             MemcpyBanked(dest, sour, sizeof(palette_entry_t), bank);
         } else {
+            /*
             UBYTE DMGPal;
             switch (nb) {
                 case 0:
@@ -45,6 +46,7 @@ void vm_load_palette(SCRIPT_CTX * THIS, UBYTE mask, UBYTE options) OLDCALL BANKE
                     }
                     break;
             }
+            */
         }
         if (is_commit) {
             #ifdef CGB
@@ -68,4 +70,10 @@ void vm_load_palette(SCRIPT_CTX * THIS, UBYTE mask, UBYTE options) OLDCALL BANKE
         if ((sgb_changes) && (_is_SGB)) SGBTransferPalettes(sgb_changes);
     #endif
     THIS->PC = (UBYTE *)sour;
+
+//__asm
+//1$:
+//    lda #0x25
+//    bne 1$
+//__endasm;
 }

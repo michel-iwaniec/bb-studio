@@ -23,9 +23,12 @@ extern UINT8 erase_flash(void) OLDCALL BANKED;              // erases FLASH sect
 extern UINT8 save_sram_banks(UINT8 count) OLDCALL BANKED;   // copies up to count SRAM banks to FLASH
 
 UINT8 save_sram(UINT8 count) BANKED {
+/*
     UINT8 _save = _current_ram_bank;
     if (!erase_flash()) return 0;
     UINT8 res = save_sram_banks(count);
     SWITCH_RAM_BANK(_save, RAM_BANKS_AND_FLAGS);
     return res;
+*/
+    return 0;
 }

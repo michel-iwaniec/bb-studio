@@ -7,15 +7,21 @@
 #include "parallax.h"
 
 #define SCROLL_BANK 1
-#define SCREEN_TILES_W 20  // 160 >> 3 = 20
-#define SCREEN_TILES_H 18  // 144 >> 3 = 18
-#define SCREEN_PAD_LEFT 1
-#define SCREEN_PAD_RIGHT 2
-#define SCREEN_PAD_TOP 1
-#define SCREEN_PAD_BOTTOM 2
+//#define SCREEN_TILES_W 20  // 160 >> 3 = 20
+#define SCREEN_TILES_W 32  // 256 >> 3 = 32
+//#define SCREEN_TILES_H 18  // 144 >> 3 = 18
+#define SCREEN_TILES_H 30  // 240 >> 3 = 30
+//#define SCREEN_PAD_LEFT 1
+#define SCREEN_PAD_LEFT 0
+//#define SCREEN_PAD_RIGHT 2
+#define SCREEN_PAD_RIGHT 0
+//#define SCREEN_PAD_TOP 1
+#define SCREEN_PAD_TOP 0
+//#define SCREEN_PAD_BOTTOM 2
+#define SCREEN_PAD_BOTTOM 0
 #define SCREEN_TILE_REFRES_W (SCREEN_TILES_W + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
 #define SCREEN_TILE_REFRES_H (SCREEN_TILES_H + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
-#define PENDING_BATCH_SIZE 7
+#define PENDING_BATCH_SIZE 32 //7
 
 extern INT16 scroll_x;
 extern INT16 scroll_y;
@@ -51,12 +57,12 @@ void scroll_repaint(void) BANKED;
 /**
  * Get base address of window map
  */
-UINT8 * GetWinAddr(void) OLDCALL PRESERVES_REGS(b, c, h, l);
+UINT8 * GetWinAddr(void) OLDCALL;
 
 /**
  * Get base address of background map
  */
-UINT8 * GetBkgAddr(void) OLDCALL PRESERVES_REGS(b, c, h, l);
+UINT8 * GetBkgAddr(void) OLDCALL;
 
 /**
  * Scrolls rectangle area of VRAM filemap by base address 1 row up

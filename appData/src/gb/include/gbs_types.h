@@ -7,10 +7,18 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "data/scene_types.h"
 #include "bankdata.h"
 #include "parallax.h"
 #include "collision.h"
+
+typedef enum {
+    SCENE_TYPE_TOPDOWN = 0,
+    SCENE_TYPE_PLATFORM,
+    SCENE_TYPE_ADVENTURE,
+    SCENE_TYPE_SHMUP,
+    SCENE_TYPE_POINTNCLICK,
+    SCENE_TYPE_LOGO
+} scene_type_e;
 
 typedef enum {
     LCD_simple,
@@ -64,15 +72,24 @@ typedef struct actor_t
     // Linked list
     struct actor_t *next;
     struct actor_t *prev;
+    
+    // use padding space for collision optimization: Pre-shift bounds to avoid shifts by 4 in collision
+    bounding_box_16_t bounds_x16;
+    uint8_t padding[4];
+/*
+    // pad with 12 bytes to make structure 64-byte, to avoid __muluchar call when indexing
+    uint8_t padding[12];
+*/
 } actor_t;
 
 #define TRIGGER_HAS_ENTER_SCRIPT    1
 #define TRIGGER_HAS_LEAVE_SCRIPT    2
 
 typedef struct trigger_t {
-    uint8_t x, y, width, height;
+    uint8_t x, y, xend, yend;
     far_ptr_t script;
     uint8_t script_flags;
+    //uint8_t padding[6];
 } trigger_t;
 
 typedef struct scene_t {
@@ -97,6 +114,9 @@ typedef struct background_t {
     far_ptr_t cgb_tileset;
     far_ptr_t tilemap;              // far pointer to array of bytes with map
     far_ptr_t cgb_tilemap_attr;     // far pointer to array of bytes with CGB attributes (may be NULL)
+    far_ptr_t cgb_tilemap_attr_nes;     // far pointer to array of bytes with NES attributes (may be NULL)
+    uint8_t attr_nes_width;
+    uint8_t attr_nes_height;
 } background_t;
 
 typedef struct tileset_t {
@@ -127,6 +147,9 @@ typedef struct projectile_def_t
     uint16_t initial_offset;
     collision_group_e collision_group;
     uint8_t collision_mask;
+    // use padding space for collision optimization: Pre-shift bounds to avoid shifts by 4 in collision
+    bounding_box_16_t bounds_x16;
+    uint8_t padding;
 } projectile_def_t;
 
 typedef struct projectile_t
@@ -176,10 +199,12 @@ typedef struct menu_item_t {
 #endif
 
 #define CGB_PALETTE(C0, C1, C2, C3) {C0, C1, C2, C3}
-#define CGB_COLOR(R, G, B) ((uint16_t)(((R) & 0x1f) | (((G) & 0x1f) << 5) | (((B) & 0x1f) << 10)))
+//#define CGB_COLOR(R, G, B) ((uint16_t)(((R) & 0x1f) | (((G) & 0x1f) << 5) | (((B) & 0x1f) << 10)))
+#define CGB_COLOR(R, G, B) RGB8((R << 3), (G << 3), (B << 3))
+
 
 typedef struct palette_entry_t {
-    uint16_t c0, c1, c2, c3;
+    uint8_t c0, c1, c2, c3;
 } palette_entry_t;
 
 typedef struct palette_t {

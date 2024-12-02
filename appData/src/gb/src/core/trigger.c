@@ -41,6 +41,8 @@ UBYTE trigger_activate_at(UBYTE tx, UBYTE ty, UBYTE force) BANKED {
     return FALSE;
 }
 
+// gbdk-nes: Changed to inline function
+/*
 UBYTE trigger_at_intersection(bounding_box_t *bb, upoint16_t *offset) BANKED {
     UBYTE tile_left   = ((offset->x >> 4) + bb->left)   >> 3;
     UBYTE tile_right  = ((offset->x >> 4) + bb->right)  >> 3;
@@ -64,11 +66,54 @@ UBYTE trigger_at_intersection(bounding_box_t *bb, upoint16_t *offset) BANKED {
 
     return NO_TRIGGER_COLLISON;
 }
+*/
 
-
+/*
 UBYTE trigger_activate_at_intersection(bounding_box_t *bb, upoint16_t *offset, UBYTE force) BANKED {
-    UBYTE hit_trigger = trigger_at_intersection(bb, offset);
+    UBYTE hit_trigger = trigger_at_intersection_PLAYER(); //bb, offset);
     UBYTE trigger_script_called = FALSE;
+
+    // Don't reactivate trigger if not changed tile
+    if (!force && (last_trigger == hit_trigger)) {
+        return FALSE;
+    }
+
+    if (last_trigger != NO_TRIGGER_COLLISON && 
+        (hit_trigger == NO_TRIGGER_COLLISON || hit_trigger != last_trigger)) {
+        
+        if (hit_trigger != NO_TRIGGER_COLLISON && triggers[hit_trigger].script_flags & TRIGGER_HAS_ENTER_SCRIPT) {
+            script_execute(triggers[hit_trigger].script.bank, triggers[hit_trigger].script.ptr, 0, 1, 1);
+            trigger_script_called = TRUE;
+        }
+
+        if (triggers[last_trigger].script_flags & TRIGGER_HAS_LEAVE_SCRIPT) {
+            script_execute(
+                triggers[last_trigger].script.bank, 
+                triggers[last_trigger].script.ptr, 0, 1, 2);
+            trigger_script_called = TRUE;
+        }
+
+        last_trigger = hit_trigger;
+
+        return trigger_script_called;
+    }
+    
+    last_trigger = hit_trigger;
+
+    if (hit_trigger != NO_TRIGGER_COLLISON && triggers[hit_trigger].script_flags & TRIGGER_HAS_ENTER_SCRIPT) {
+        script_execute(triggers[hit_trigger].script.bank, triggers[hit_trigger].script.ptr, 0, 1, 1);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+*/
+
+// gbdk-nes: Specialization that hard-codes PLAYER for bb and offset (as this is the only current use-case)
+UBYTE trigger_activate_at_intersection_PLAYER(UBYTE force) BANKED {
+    UBYTE hit_trigger = trigger_at_intersection_PLAYER(); //bb, offset);
+    UBYTE trigger_script_called = FALSE;
+    //PPUMASK = shadow_PPUMASK | 0x61; // DEBUGHACK: Make events update color screen yellow-gray
 
     // Don't reactivate trigger if not changed tile
     if (!force && (last_trigger == hit_trigger)) {
@@ -111,8 +156,8 @@ UBYTE trigger_at_tile(UBYTE tx_a, UBYTE ty_a) BANKED {
     for (i = 0; i != triggers_len; i++) {
         tx_b = triggers[i].x;
         ty_b = triggers[i].y;
-        tx_c = tx_b + triggers[i].width - 1;
-        ty_c = ty_b + triggers[i].height - 1;
+        tx_c = triggers[i].xend;
+        ty_c = triggers[i].yend;
 
         if ((tx_a + 1) >= tx_b && tx_a <= tx_c && ty_a >= ty_b && ty_a <= ty_c) {
             return i;
