@@ -1,10 +1,12 @@
 # BB Studio Drag-n-Drop Game Creator for NES/Famicom
 
+![BB Studio](sampleproject_nes_photo.jpg)
+
 ## What is this?
 
 "BB Studio" is a heavily-hacked version of the awesome GB Studio by Chris Maltby. 
 
-The original GB Studio can be found [HERE](https://github.com/chrismaltby/gb-studio)
+The original GB Studio can be found [HERE](https://www.gbstudio.dev) for friendly donwloadables and [HERE](https://github.com/chrismaltby/gb-studio) for the source code on github.
 
 It replaces the Game Boy target with the NES (the Game Boy's "Big Brother").
 
