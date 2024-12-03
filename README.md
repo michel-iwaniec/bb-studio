@@ -22,6 +22,16 @@ It may crash-and-burn on you - and you shall remain patient and courteous.
 
 Other than that, the MIT license [MIT license](https://opensource.org/licenses/MIT) applies.
 
+## Where to get it
+
+Download the alpha version from the [Release Page](https://github.com/michel-iwaniec/bb-studio/releases) for your operating system.
+
+(currently only Windows-x64 and Linux-x64 are supported)
+
+Load it up, and create a new project from the Sample Project template.
+
+This Sample Project has been slightly tweaked for NES screen size / color restrictions. And the music re-created with FamiTracker + FamiStudio.
+
 ## How to use it
 
 There are a few key things to consider to make your GBC game run well on the NES.
