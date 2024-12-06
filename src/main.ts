@@ -193,7 +193,7 @@ export const createSplash = async (forceTab?: SplashTab) => {
       splashWindow?.show();
       if (!hasCheckedForUpdate) {
         hasCheckedForUpdate = true;
-        checkForUpdate();
+        //checkForUpdate();
       }
     }, 40);
   });
@@ -1735,9 +1735,9 @@ menu.on("pasteInPlace", () => {
   sendToProjectWindow("menu:paste-in-place");
 });
 
-menu.on("checkUpdates", () => {
-  checkForUpdate(true);
-});
+//menu.on("checkUpdates", () => {
+//  checkForUpdate(true);
+//});
 
 menu.on("openMusic", () => {
   if (musicWindow) {

@@ -537,12 +537,12 @@ const buildMenu = async (plugins: MenuItemConstructorOptions[] = []) => {
             openAbout();
           },
         },
-        {
-          label: l10n("MENU_CHECK_FOR_UPDATES"),
-          click: () => {
-            notifyListeners("checkUpdates");
-          },
-        },
+        //{
+        //  label: l10n("MENU_CHECK_FOR_UPDATES"),
+        //  click: () => {
+        //    notifyListeners("checkUpdates");
+        //  },
+        //},
         { type: "separator" },
         {
           label: l10n("MENU_PREFERENCES"),
