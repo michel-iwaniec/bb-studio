@@ -19,22 +19,25 @@
 #include "shadow.h"
 #include "music_manager.h"
 
-#define ui_frame_tl_tiles 0xC0u
-#define ui_frame_bl_tiles 0xC6u
-#define ui_frame_tr_tiles 0xC2u
-#define ui_frame_br_tiles 0xC8u
-#define ui_frame_t_tiles  0xC1u
-#define ui_frame_b_tiles  0xC7u
-#define ui_frame_l_tiles  0xC3u
-#define ui_frame_r_tiles  0xC5u
-#define ui_frame_bg_tiles 0xC4u
+#define MENU_CURSOR_OFFSET_Y 0
+
+#define ui_frame_tl_tiles 0x80u //0xC0u
+#define ui_frame_bl_tiles 0x86u //0xC6u
+#define ui_frame_tr_tiles 0x82u //0xC2u
+#define ui_frame_br_tiles 0x88u //0xC8u
+#define ui_frame_t_tiles  0x81u //0xC1u
+#define ui_frame_b_tiles  0x87u //0xC7u
+#define ui_frame_l_tiles  0x83u //0xC3u
+#define ui_frame_r_tiles  0x85u //0xC5u
+#define ui_frame_bg_tiles 0x84u //0xC4u
 
 UBYTE win_pos_x, win_dest_pos_x;
-UBYTE win_pos_y, win_dest_pos_y;
+UBYTE win_pos_y = DEVICE_SCREEN_PX_HEIGHT, win_dest_pos_y = DEVICE_SCREEN_PX_HEIGHT;
 UBYTE win_speed;
 
 UBYTE text_drawn;
 UBYTE current_text_speed;
+UBYTE text_wait;
 
 UBYTE text_options;
 UBYTE text_in_speed;
@@ -78,6 +81,8 @@ const UBYTE * text_sound_data;
 UBYTE overlay_priority;
 UBYTE text_palette;
 
+extern uint8_t _vram_transfer_mapper_bits;
+
 void ui_init(void) BANKED {
     vwf_direction               = UI_PRINT_LEFTTORIGHT;
     vwf_current_font_idx        = 0;
@@ -99,7 +104,7 @@ void ui_init(void) BANKED {
     ui_prev_tile                = TEXT_BUFFER_START;
     ui_prev_tile_bank           = 0;
 
-    ui_set_pos(0, MENU_CLOSED_Y);
+    //ui_set_pos(0, MENU_CLOSED_Y);
 
     win_speed                   = 1;
     text_drawn                  = TRUE;
@@ -109,7 +114,7 @@ void ui_init(void) BANKED {
     ui_dest_ptr = ui_dest_base  = (text_render_base_addr = GetWinAddr()) + 32 + 1;
 
     text_scroll_addr            = GetWinAddr();
-    text_scroll_width           = 20;
+    text_scroll_width           = SCREEN_TILES_W;
     text_scroll_height          = 8;
     text_scroll_fill            = ui_white_tile;
 
@@ -125,20 +130,33 @@ void ui_init(void) BANKED {
 
 void ui_load_tiles(void) BANKED {
     // load frame
+    _vram_transfer_mapper_bits |= (CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
     SetBankedBkgData(ui_frame_tl_tiles, 9, frame_image, BANK(frame_image));
+    _vram_transfer_mapper_bits &= ~(CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
+    //SetBankedSpriteData(ui_frame_tl_tiles, 9, frame_image, BANK(frame_image)); // gbdk-nes: Upload to SPR bank too
     // load cursor
+    _vram_transfer_mapper_bits |= (CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
     SetBankedBkgData(ui_cursor_tile, 1, cursor_image, BANK(cursor_image));
+    _vram_transfer_mapper_bits &= ~(CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
+    //SetBankedSpriteData(ui_cursor_tile, 1, cursor_image, BANK(cursor_image)); // gbdk-nes: Upload to SPR bank too
 
     memset(vwf_tile_data, TEXT_BKG_FILL_W, 16);
+    _vram_transfer_mapper_bits |= (CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
     set_bkg_data(ui_white_tile, 1, vwf_tile_data);
+    _vram_transfer_mapper_bits &= ~(CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
+    //set_sprite_data(ui_white_tile, 1, vwf_tile_data); // gbdk-nes: Upload to SPR bank too
     memset(vwf_tile_data, TEXT_BKG_FILL_B, 16);
+    _vram_transfer_mapper_bits |= (CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
     set_bkg_data(ui_black_tile, 1, vwf_tile_data);
+    _vram_transfer_mapper_bits &= ~(CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
+    //set_sprite_data(ui_black_tile, 1, vwf_tile_data); // gbdk-nes: Upload to SPR bank too
 }
 
-void ui_draw_frame_row(void * dest, UBYTE tile, UBYTE width) OLDCALL;
+void ui_draw_frame_row(void * dest, UBYTE tile, UBYTE width);
 
 void ui_draw_frame(UBYTE x, UBYTE y, UBYTE width, UBYTE height) BANKED {
     if (height == 0) return;
+/*
 #ifdef CGB
     if (_is_CGB) {
         VBK_REG = 1;
@@ -146,9 +164,12 @@ void ui_draw_frame(UBYTE x, UBYTE y, UBYTE width, UBYTE height) BANKED {
         VBK_REG = 0;
     }
 #endif
+*/
     UBYTE * base_addr = GetWinAddr() + (y << 5) + x;
+    //_vram_transfer_mapper_bits |= CFG_SWP_SPR_4S;  // Set window layer for VRAM transfers
     ui_draw_frame_row(base_addr, ui_frame_tl_tiles, width);
     if (--height == 0) return;
+    height += 2; // += 2 for overscan
     if (height > 1)
         for (UBYTE i = height - 1; i != 0; i--) {
             base_addr += 32;
@@ -156,31 +177,54 @@ void ui_draw_frame(UBYTE x, UBYTE y, UBYTE width, UBYTE height) BANKED {
         }
     base_addr += 32;
     ui_draw_frame_row(base_addr, ui_frame_bl_tiles, width);
+    //_vram_transfer_mapper_bits &= ~CFG_SWP_SPR_4S; // Set window layer for VRAM transfers
 }
 
 inline void ui_load_tile(const UBYTE * tiledata, UBYTE bank) {
+/*
 #ifdef CGB
     VBK_REG = ui_current_tile_bank;
 #endif
+*/
+    _vram_transfer_mapper_bits |= (CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
     SetBankedBkgData(ui_current_tile, 1, tiledata, bank);
+    _vram_transfer_mapper_bits &= ~(CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
+    //SetBankedSpriteData(ui_current_tile, 1, tiledata, bank); // gbdk-nes: Upload to SPR bank too
+/*
 #ifdef CGB
     VBK_REG = 0;
 #endif
+*/
+
+//__asm
+//1$:
+//    lda #0x15
+//    bne 1$
+//__endasm;
 }
+
 inline void ui_load_wram_tile(const UBYTE * tiledata) {
+/*
 #ifdef CGB
     VBK_REG = ui_current_tile_bank;
 #endif
+*/
+    _vram_transfer_mapper_bits |= (CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
     set_bkg_data(ui_current_tile, 1, tiledata);
+    _vram_transfer_mapper_bits &= ~(CFG_CHR_A14 | CFG_CHR_A13 | CFG_CHR_A12);
+    //set_sprite_data(ui_current_tile, 1, tiledata); // gbdk-nes: Upload to SPR bank too
+/*
 #ifdef CGB
     VBK_REG = 0;
 #endif
+*/
 }
 
 inline void ui_next_tile(void) {
     ui_prev_tile_bank = ui_current_tile_bank;
     ui_prev_tile = ui_current_tile++;
-    if (ui_current_tile) return;
+    if (ui_current_tile < TEXT_BUFFER_START + TEXT_BUFFER_LEN) return; // gbdk-nes: last 4 tiles are reserved - do full range check!
+/*
 #ifdef CGB
     if (_is_CGB) {
         ui_current_tile_bank++;
@@ -190,8 +234,11 @@ inline void ui_next_tile(void) {
         ui_current_tile = TEXT_BUFFER_START;
     }
 #else
+*/
     ui_current_tile = TEXT_BUFFER_START;
+/*
 #endif
+*/
 }
 
 void ui_print_reset(void) {
@@ -262,7 +309,10 @@ UBYTE ui_print_render(const unsigned char ch) {
     }
 }
 
+extern uint8_t _vram_transfer_mapper_bits;
+
 inline void ui_set_tile(UBYTE * addr, UBYTE tile, UBYTE bank) {
+/*
 #ifdef CGB
     if (_is_CGB) {
         VBK_REG = 1;
@@ -270,13 +320,26 @@ inline void ui_set_tile(UBYTE * addr, UBYTE tile, UBYTE bank) {
         VBK_REG = 0;
     }
 #else
+*/
     bank;
+/*
 #endif
+*/
+    _vram_transfer_mapper_bits = CFG_SWP_SPR_4S;
     set_vram_byte(addr, tile);
+    _vram_transfer_mapper_bits = 0x00;
 }
 
-UBYTE ui_draw_text_buffer_char(void) BANKED {
+UBYTE ui_draw_text_buffer_char(void) BANKED REENTRANT {
+
     static UBYTE current_font_idx, current_text_bkg_fill, current_vwf_direction, current_text_ff_joypad, current_text_draw_speed;
+
+//    if ((text_ff_joypad) && (INPUT_A_OR_B_PRESSED)) text_ff = TRUE;
+
+    if ((!text_ff) && (text_wait)) {
+        text_wait--;
+        return FALSE;
+    }
 
     if (ui_text_ptr == 0) {
         // set the delay mask
@@ -367,11 +430,9 @@ UBYTE ui_draw_text_buffer_char(void) BANKED {
                     } else {
                         // go back to 0x06 control code
                         ui_text_ptr--;
-                        current_text_speed = 0;
                         return FALSE;
                     }
                 }
-                current_text_speed = ui_time_masks[text_draw_speed];
                 break;
             case 0x07:
                 // set text color
@@ -394,12 +455,12 @@ UBYTE ui_draw_text_buffer_char(void) BANKED {
             case '\r':  // 0x0d
                 // line feed
                 if ((ui_dest_ptr + 32u) > (UBYTE *)((((UWORD)text_scroll_addr + ((UWORD)text_scroll_height << 5)) & 0xFFE0) - 1)) {
-                    scroll_rect(text_scroll_addr, text_scroll_width, text_scroll_height, text_scroll_fill);
+                    // gbdk-nes-TODO: scroll_rect(text_scroll_addr, text_scroll_width, text_scroll_height, text_scroll_fill);
 #ifdef CGB
                     if (_is_CGB) {
-                        VBK_REG = 1;
-                        scroll_rect(text_scroll_addr, text_scroll_width, text_scroll_height, overlay_priority | (text_palette & 0x07u));
-                        VBK_REG = 0;
+                        //VBK_REG = 1;
+                        // gbdk-nes-TODO: scroll_rect(text_scroll_addr, text_scroll_width, text_scroll_height, overlay_priority | (text_palette & 0x07u));
+                        //VBK_REG = 0;
                     }
 #endif
                     ui_dest_ptr = ui_dest_base;
@@ -425,7 +486,7 @@ UBYTE ui_draw_text_buffer_char(void) BANKED {
     }
 }
 
-void ui_update(void) NONBANKED {
+void ui_update(void) BANKED REENTRANT {
     UBYTE flag = FALSE;
 
     // y should always move first
@@ -460,25 +521,29 @@ void ui_update(void) NONBANKED {
     do {
         flag = ui_draw_text_buffer_char();
     } while (((text_ff) || (text_draw_speed == 0)) && (!text_drawn));
+    /* TODO: SFX
     // play sound
     if ((flag) && (text_sound_bank != SFX_STOP_BANK)) music_play_sfx(text_sound_bank, text_sound_data, text_sound_mask, MUSIC_SFX_PRIORITY_NORMAL);
+    */
 }
 
-UBYTE ui_run_menu(menu_item_t * start_item, UBYTE bank, UBYTE options, UBYTE count, UBYTE start_index) BANKED {
+UBYTE ui_run_menu(menu_item_t * start_item, UBYTE bank, UBYTE options, UBYTE count, UBYTE start_index) BANKED REENTRANT {
     menu_item_t current_menu_item;
     UBYTE current_index = ((options & MENU_SET_START) ? start_index : 1u), next_index = 0u;
     // copy first menu item
     MemcpyBanked(&current_menu_item, start_item + (current_index - 1u), sizeof(menu_item_t), bank);
 
     // draw menu cursor
+/*
 #ifdef CGB
     if (_is_CGB) {
         VBK_REG = 1;
-        set_win_tile_xy(current_menu_item.X, current_menu_item.Y, overlay_priority | (text_palette & 0x07u));
+        set_win_tile_xy(current_menu_item.X, current_menu_item.Y + MENU_CURSOR_OFFSET_Y, overlay_priority | (text_palette & 0x07u));
         VBK_REG = 0;
     }
 #endif
-    set_win_tile_xy(current_menu_item.X, current_menu_item.Y, ui_cursor_tile);
+*/
+    set_win_tile_xy(current_menu_item.X, current_menu_item.Y + MENU_CURSOR_OFFSET_Y, ui_cursor_tile);
 
     // menu loop
     while (TRUE) {
@@ -516,25 +581,29 @@ UBYTE ui_run_menu(menu_item_t * start_item, UBYTE bank, UBYTE options, UBYTE cou
         // update current index
         current_index = next_index;
         // erase old cursor
+/*
 #ifdef CGB
         if (_is_CGB) {
             VBK_REG = 1;
-            set_win_tile_xy(current_menu_item.X, current_menu_item.Y, overlay_priority | (text_palette & 0x07u));
+            set_win_tile_xy(current_menu_item.X, current_menu_item.Y + MENU_CURSOR_OFFSET_Y, overlay_priority | (text_palette & 0x07u));
             VBK_REG = 0;
         }
 #endif
-        set_win_tile_xy(current_menu_item.X, current_menu_item.Y, ui_bg_tile);
+*/
+        set_win_tile_xy(current_menu_item.X, current_menu_item.Y + MENU_CURSOR_OFFSET_Y, ui_bg_tile);
         // read menu data
         MemcpyBanked(&current_menu_item, start_item + current_index - 1u, sizeof(menu_item_t), bank);
         // put new cursor
+/*
 #ifdef CGB
         if (_is_CGB) {
             VBK_REG = 1;
-            set_win_tile_xy(current_menu_item.X, current_menu_item.Y, overlay_priority | (text_palette & 0x07u));
+            set_win_tile_xy(current_menu_item.X, current_menu_item.Y + MENU_CURSOR_OFFSET_Y, overlay_priority | (text_palette & 0x07u));
             VBK_REG = 0;
         }
 #endif
-        set_win_tile_xy(current_menu_item.X, current_menu_item.Y, ui_cursor_tile);
+*/
+        set_win_tile_xy(current_menu_item.X, current_menu_item.Y + MENU_CURSOR_OFFSET_Y, ui_cursor_tile);
         // reset next index
         next_index = 0;
     };

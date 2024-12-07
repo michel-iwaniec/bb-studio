@@ -56,4 +56,16 @@ __REG(0x4014) OAMDMA;
 __SHADOW_REG bkg_scroll_x;
 __SHADOW_REG bkg_scroll_y;
 
+// GBDK 8x8 mapper defines
+//CFG_REG = 0x8000
+//PRG_REG = 0xC000
+#define CFG_CHR_A12         0b00000001
+#define CFG_CHR_A13         0b00000010
+#define CFG_CHR_A14         0b00000100
+#define CFG_4S_DISABLE      0b00001000
+#define CFG_SWP_SPR_4S      0b00010000
+#define CFG_WRAM_ENABLE     0b00100000
+#define CFG_WRAM_BANK       0b01000000
+#define CFG_IRQ_ENABLE      0b10000000
+
 #endif

@@ -11,7 +11,7 @@ UBYTE input_slots[8];
 script_event_t timer_events[MAX_CONCURRENT_TIMERS];
 timer_time_t timer_values[MAX_CONCURRENT_TIMERS];
 
-void events_init(UBYTE preserve) BANKED {
+void events_init(UBYTE preserve) BANKED REENTRANT {
     if (preserve) {
         for (UBYTE i = 0; i < 8; i++) 
             input_events[i].handle = 0;

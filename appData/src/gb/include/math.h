@@ -96,13 +96,29 @@ extern const point8_t dir_lookup[4];
 extern const uint8_t dir_angle_lookup[4];
 
 inline void point_translate_dir(upoint16_t *point, direction_e dir, uint8_t speed) {
-    point->x += (int16_t)(dir_lookup[dir].x * speed);
-    point->y += (int16_t)(dir_lookup[dir].y * speed);
+    //point->x += (int16_t)(dir_lookup[dir].x * speed);
+    //point->y += (int16_t)(dir_lookup[dir].y * speed);
+    if(dir == DIR_RIGHT)
+        point->x += speed;
+    else if(dir == DIR_LEFT)
+        point->x -= speed;
+    else if(dir == DIR_DOWN)
+        point->y += speed;
+    else if(dir == DIR_UP)
+        point->y -= speed;
 }
 
 inline void point_translate_dir_word(upoint16_t *point, direction_e dir, uint16_t speed) {
-    point->x += (int16_t)(dir_lookup[dir].x * speed);
-    point->y += (int16_t)(dir_lookup[dir].y * speed);
+    //point->x += (int16_t)(dir_lookup[dir].x * speed);
+    //point->y += (int16_t)(dir_lookup[dir].y * speed);
+    if(dir == DIR_RIGHT)
+        point->x += speed;
+    else if(dir == DIR_LEFT)
+        point->x -= speed;
+    else if(dir == DIR_DOWN)
+        point->y += speed;
+    else if(dir == DIR_UP)
+        point->y -= speed;
 }
 
 inline void point_translate_angle(upoint16_t *point, uint8_t angle, uint8_t speed) {
@@ -116,6 +132,6 @@ inline void point_translate_angle_to_delta(point16_t *point, uint8_t angle, uint
 }
 
 uint8_t isqrt(uint16_t x) NONBANKED;
-uint8_t atan2(int16_t y, int16_t x) BANKED;
+uint8_t atan2(int8_t y, int8_t x) BANKED;
 
 #endif

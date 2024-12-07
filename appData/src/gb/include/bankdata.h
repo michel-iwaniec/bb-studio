@@ -47,7 +47,7 @@ typedef struct far_ptr_t {
  * @param ptr memory address of tile data within bank
  * @param bank bank to read from
  */
-void SetBankedBkgData(UBYTE i, UBYTE l, const unsigned char *ptr, UBYTE bank) OLDCALL;
+void SetBankedBkgData(UBYTE i, UBYTE l, const unsigned char *ptr, UBYTE bank) OLDCALL NO_OVERLAY_LOCALS;
 
 /**
  * Call set_sprite_data with data stored in banked memory (non-reentrant!)
@@ -57,7 +57,7 @@ void SetBankedBkgData(UBYTE i, UBYTE l, const unsigned char *ptr, UBYTE bank) OL
  * @param ptr memory address of tile data within bank
  * @param bank bank to read from
  */
-void SetBankedSpriteData(UBYTE i, UBYTE l, const unsigned char *ptr, UBYTE bank) OLDCALL;
+void SetBankedSpriteData(UBYTE i, UBYTE l, const unsigned char *ptr, UBYTE bank) OLDCALL NO_OVERLAY_LOCALS;
 
 /**
  * Sets a rectangular region of Tile Map entries for the Background layer (non-reentrant!)
@@ -100,7 +100,7 @@ void ReadBankedFarPtr(far_ptr_t * dest, const unsigned char *ptr, UBYTE bank);
  * @param bank bank to read from
  * @return value stored in banked location
  */
-UWORD ReadBankedUWORD(const unsigned char *ptr, UBYTE bank);
+UWORD ReadBankedUWORD(const unsigned char *ptr, UBYTE bank) NONBANKED NAKED NO_OVERLAY_LOCALS;
 
 /**
  * Read UBYTE from banked memory location (non-reentrant!)
@@ -109,9 +109,7 @@ UWORD ReadBankedUWORD(const unsigned char *ptr, UBYTE bank);
  * @param bank bank to read from
  * @return value stored in banked location
  */
-inline UBYTE ReadBankedUBYTE(const unsigned char *ptr, UBYTE bank) {
-    return (UBYTE)ReadBankedUWORD(ptr, bank);
-}
+UBYTE ReadBankedUBYTE(const unsigned char *ptr, UBYTE bank) NONBANKED NAKED NO_OVERLAY_LOCALS;
 
 /**
  * memcpy data from banked memory location (non-reentrant!)
@@ -142,6 +140,8 @@ void MemcpyVRAMBanked(void* to, const void* from, size_t n, UBYTE bank);
  * @param item pointer the the item in WRAM being searched
  * @return index in the array or count if not found
  */
-UBYTE IndexOfFarPtr(const far_ptr_t * list, UBYTE bank, UBYTE count, const far_ptr_t * item);
+UBYTE IndexOfFarPtr(const far_ptr_t * list, UBYTE bank, UBYTE count, const far_ptr_t * item) NONBANKED REENTRANT;
+
+UBYTE find_blank_tile(const void* tiles, UBYTE bank, UBYTE l, UBYTE p0, UBYTE p1) NONBANKED NAKED;
 
 #endif
