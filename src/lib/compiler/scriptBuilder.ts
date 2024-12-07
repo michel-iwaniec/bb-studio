@@ -78,6 +78,9 @@ import {
 import { calculateAutoFadeEventId } from "shared/lib/scripts/eventHelpers";
 import keyBy from "lodash/keyBy";
 
+import { rgb555_to_rgb222 } from "lib/compiler/rgb_to_nes";
+import { rgb222_to_nes } from "lib/compiler/rgb_to_nes";
+
 export type ScriptOutput = string[];
 
 export interface ScriptBuilderEntity {
@@ -2158,7 +2161,15 @@ extern void __mute_mask_${symbol};
     g4: number,
     b4: number
   ) => {
-    this._addCmd(".CGB_PAL", r1, g1, b1, r2, g2, b2, r3, g3, b3, r4, g4, b4);
+    var c0_rgb222: number = rgb555_to_rgb222(r1, g1, b1);
+    var c1_rgb222: number = rgb555_to_rgb222(r2, g2, b2);
+    var c2_rgb222: number = rgb555_to_rgb222(r3, g3, b3);
+    var c3_rgb222: number = rgb555_to_rgb222(r4, g4, b4);
+    var c0: number = rgb222_to_nes(c0_rgb222);
+    var c1: number = rgb222_to_nes(c1_rgb222);
+    var c2: number = rgb222_to_nes(c2_rgb222);
+    var c3: number = rgb222_to_nes(c3_rgb222);
+    this._addCmd(".CGB_PAL", c0, c1, c2, c3);
   };
 
   _replaceTile = (
