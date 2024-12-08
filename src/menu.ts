@@ -214,13 +214,13 @@ const buildMenu = async (plugins: MenuItemConstructorOptions[] = []) => {
             notifyListeners("run", false);
           },
         },
-        {
-          label: l10n("MENU_RUN_WITH_DEBUGGING"),
-          accelerator: "CommandOrControl+Alt+B",
-          click: () => {
-            notifyListeners("run", true);
-          },
-        },
+        //{
+        //  label: l10n("MENU_RUN_WITH_DEBUGGING"),
+        //  accelerator: "CommandOrControl+Alt+B",
+        //  click: () => {
+        //    notifyListeners("run", true);
+        //  },
+        //},
         {
           label: l10n("MENU_EXPORT_AS"),
           submenu: [
@@ -231,20 +231,20 @@ const buildMenu = async (plugins: MenuItemConstructorOptions[] = []) => {
                 notifyListeners("build", "rom");
               },
             },
-            {
-              label: l10n("MENU_EXPORT_WEB"),
-              accelerator: "CommandOrControl+Shift+N",
-              click() {
-                notifyListeners("build", "web");
-              },
-            },
-            {
-              label: l10n("MENU_EXPORT_POCKET"),
-              accelerator: "CommandOrControl+Shift+M",
-              click() {
-                notifyListeners("build", "pocket");
-              },
-            },
+            //{
+            //  label: l10n("MENU_EXPORT_WEB"),
+            //  accelerator: "CommandOrControl+Shift+N",
+            //  click() {
+            //    notifyListeners("build", "web");
+            //  },
+            //},
+            //{
+            //  label: l10n("MENU_EXPORT_POCKET"),
+            //  accelerator: "CommandOrControl+Shift+M",
+            //  click() {
+            //    notifyListeners("build", "pocket");
+            //  },
+            //},
           ],
         },
         { type: "separator" },
