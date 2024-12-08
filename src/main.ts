@@ -112,6 +112,7 @@ import { fileExists } from "lib/helpers/fs/fileExists";
 import confirmDeleteAsset from "lib/electron/dialog/confirmDeleteAsset";
 import { getPatronsFromGithub } from "lib/credits/getPatronsFromGithub";
 import ensureBuildTools from "lib/compiler/ensureBuildTools";
+import childProcess from "child_process";
 
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -567,6 +568,44 @@ export const createPlay = async (
   playWindow.on("closed", () => {
     playWindow = null;
     sendToProjectWindow("debugger:disconnected");
+  });
+};
+
+export const createPlayNES = async (
+  filename: string
+) => {
+  const buildToolsPath = await ensureBuildTools(getTmp());
+  const MesenExe =
+    process.platform === "win32"
+      ? `"${buildToolsPath}\\mesen\\Mesen.exe"`
+      : `"${buildToolsPath}/mesen/Mesen"`;
+
+  buildLog(`Starting NES emulator ${MesenExe}`);
+
+  const env = Object.create(process.env);
+  const options = {
+    cwd: "",
+    env,
+    shell: true,
+  };
+
+  await new Promise<void>((resolve, reject) => {
+    const child = childProcess.spawn(MesenExe,
+                                      [filename, "--doNotSaveSettings"],
+                                      options);
+    child.on("error", (err) => {
+    });
+
+    child.stdout.on("data", (data) => {
+    });
+
+    child.stderr.on("data", (data) => {
+    });
+
+    child.on("close", (code) => {
+      if (code === 0) resolve();
+      else reject(code);
+    });
   });
 };
 
@@ -1306,11 +1345,7 @@ ipcMain.handle(
             gbvmScripts,
           });
         }
-        createPlay(
-          `file://${outputRoot}/build/web/index.html`,
-          sgbEnabled && colorMode === "mono",
-          debuggerEnabled
-        );
+        createPlayNES(`${outputRoot}/build/rom/game.nes`);
       }
 
       const buildTime = Date.now() - buildStartTime;
