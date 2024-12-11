@@ -6,11 +6,11 @@
 
 "BB Studio" is a heavily-hacked version of the awesome GB Studio by Chris Maltby. 
 
-The original GB Studio can be found [HERE](https://www.gbstudio.dev) for friendly donwloadables and [HERE](https://github.com/chrismaltby/gb-studio) for the source code on github.
-
 It replaces the Game Boy target with the NES (the Game Boy's "Big Brother").
 
 You are strongly advised to already be familiar with the original GB Studio, before trying out BB Studio.
+
+If you are looking for the original GB Studio, the friendly downloadables can be found [HERE](https://www.gbstudio.dev) and the source code can be found [HERE](https://github.com/chrismaltby/gb-studio).
 
 ## End User License Agreement
 
@@ -32,7 +32,23 @@ Load it up, and create a new project from the Sample Project template.
 
 This Sample Project has been slightly tweaked for NES screen size / color restrictions. And the music re-created with FamiTracker + FamiStudio.
 
+## Pre-requisite software to install
+
+Both Mesen and FamiStudio depend on .NET runtime which will need installing.
+
+You can download this from [HERE](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+
+On Linux you can use the package manager for a simpler installation process:
+
+```
+sudo apt install dotnet8
+```
+
 ## How to use it
+
+To build a .nes ROM, choose the "Game" -> "Export As" -> "Export ROM". After a bit of a wait, your .nes ROM will appear in the build/rom sub-folder of your project.
+
+To adapt your GBC game to the NES, you may need to do some changes.
 
 There are a few key things to consider to make your GBC game run well on the NES.
 
@@ -53,6 +69,13 @@ There are a few key things to consider to make your GBC game run well on the NES
 
 * The 6502 CPU may struggle to keep up with the double-clocked GBC CPU. If your game already tends to lag when running in monochrome DMG mode, it will probably struggle on the NES as well.
 - More optimizations are planned for the next version.
+
+## Running your built NES game
+
+Your NES game can be run on an Everdrive N8 Pro, by placing your built .nes file in a subdirectory on the sdcard along with the provided bbstudio.rbf. This contains an Everdrive N8 Pro implementation of the custom mapper BB Studio requires.
+
+For running on a PC you can instead use a customized version of the Mesen emulator [downloadable here](https://github.com/michel-iwaniec/Mesen2/releases/tag/Mesen2-with-bbstudio-mapper).
+
 
 ### Using music in your project
 
@@ -75,15 +98,11 @@ And change the line `FAMISTUDIO_USE_FAMITRACKER_TEMPO = 1` to `FAMISTUDIO_USE_FA
 
 Don't try to change any other settings unless you really know what you're doing. The FamiStudio driver will likely crash your game if you disable an effect the music relies on.
 
-#### Sound effects
+#### Sound effects / DPCM
 
 SFX is not supported in this alpha version, but will be added soon.
 
-## Running your built NES game
-
-Your NES game can be run on an Everdrive N8 Pro, by placing your built .nes file in a subdirectory on the sdcard along with the provided bbstudio.rbf. This contains an Everdrive N8 Pro implementation of the custom mapper BB Studio requires.
-
-For running on a PC you can instead use a customized version of the Mesen emulator [downloadable here](https://github.com/michel-iwaniec/Mesen2/releases/tag/Mesen2-with-bbstudio-mapper).
+DPCM is also not support in SFX nor music tracks yet.
 
 ## Putting your NES game on a stand-alone cartridge for sale
 
