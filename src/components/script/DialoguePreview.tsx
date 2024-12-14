@@ -9,6 +9,7 @@ import {
 } from "store/features/entities/entitiesState";
 import { loadFont, drawFrame, drawText, FontData } from "./TextPreviewHelper";
 import { assetURL } from "shared/lib/helpers/assets";
+import { SCREEN_WIDTH, SCREEN_WIDTH_PX, SCREEN_HEIGHT_PX } from "consts";
 
 interface DialoguePreviewProps {
   text: string;
@@ -130,7 +131,7 @@ export const DialoguePreview: FC<DialoguePreviewProps> = ({
       // eslint-disable-next-line no-self-assign
       canvas.width = canvas.width;
       if (ctx) {
-        const tileWidth = 20;
+        const tileWidth = SCREEN_WIDTH; // gbdk-nes: Width is always full screen width
         const tileHeight = textNumLines(text) + 2;
         canvas.width = tileWidth * 8;
         canvas.height = tileHeight * 8;
@@ -169,10 +170,10 @@ export const DialoguePreview: FC<DialoguePreviewProps> = ({
   return (
     <canvas
       ref={ref}
-      width={160}
-      height={48}
+      width={SCREEN_WIDTH_PX}
+      height={SCREEN_HEIGHT_PX/3}
       style={{
-        width: 240,
+        width: (SCREEN_WIDTH_PX*1.5),
         imageRendering: "pixelated",
         boxShadow: "5px 5px 10px 0px rgba(0,0,0,0.5)",
         borderRadius: 4,

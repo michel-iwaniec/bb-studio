@@ -5,6 +5,7 @@ import { useAppSelector } from "store/hooks";
 import { fontSelectors } from "store/features/entities/entitiesState";
 import { loadFont, drawFrame, drawText, FontData } from "./TextPreviewHelper";
 import { assetURL } from "shared/lib/helpers/assets";
+import { SCREEN_WIDTH, SCREEN_WIDTH_PX, SCREEN_HEIGHT_PX } from "consts";
 
 interface MenuPreviewProps {
   items: string[];
@@ -88,7 +89,7 @@ export const MenuPreview: FC<MenuPreviewProps> = ({ items, layout }) => {
       // eslint-disable-next-line no-self-assign
       canvas.width = canvas.width;
       if (ctx) {
-        const tileWidth = layout === "dialogue" ? 20 : 10;
+        const tileWidth = SCREEN_WIDTH; // gbdk-nes: Width is always full screen width
         const tileHeight =
           (layout === "dialogue" ? Math.min(items.length, 4) : items.length) +
           2;
@@ -126,10 +127,10 @@ export const MenuPreview: FC<MenuPreviewProps> = ({ items, layout }) => {
   return (
     <canvas
       ref={ref}
-      width={160}
-      height={48}
+      width={SCREEN_WIDTH_PX}
+      height={SCREEN_HEIGHT_PX/3}
       style={{
-        width: layout === "dialogue" ? 240 : 120,
+        width: SCREEN_WIDTH_PX*1.5,
         imageRendering: "pixelated",
         boxShadow: "5px 5px 10px 0px rgba(0,0,0,0.5)",
         borderRadius: 4,
