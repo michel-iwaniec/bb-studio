@@ -1258,6 +1258,7 @@ ipcMain.handle(
         const readmeTmpPath = Path.join(buildToolsPath, "mapper", "readme.txt");
         const readmeProjectPath = Path.join(projectRoot, "build", `${buildType}`, "readme.txt");
         await copy(mapperTmpPath, mapperProjectPath);
+        await copy(readmeTmpPath, readmeProjectPath);
 
         shell.openPath(Path.join(projectRoot, "build", buildType));
         buildLog(`-`);
