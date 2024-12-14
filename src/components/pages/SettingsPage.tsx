@@ -292,6 +292,7 @@ const SettingsPage: FC = () => {
             searchTerm={searchTerm}
             searchMatches={[l10n("FIELD_COLOR_MODE")]}
           >
+          { /* gbdk-nes: Hide colorMode setting as it does not make sense for NES
             <SettingRowLabel>{l10n("FIELD_COLOR_MODE")}</SettingRowLabel>
             <SettingRowInput>
               <ColorModeSelect
@@ -329,6 +330,7 @@ const SettingsPage: FC = () => {
                 </ul>
               </FormInfo>
             </SettingRowInput>
+          */ }
           </SearchableSettingRow>
           {colorEnabled && (
             <>

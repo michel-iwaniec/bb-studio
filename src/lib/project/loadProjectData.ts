@@ -384,6 +384,9 @@ const loadProject = async (
 
   const fixedEngineFieldValues = json.engineFieldValues || [];
 
+  // gbdk-nes: Override project "colorOnly" setting to be "mixed" instead, as distinction doesn't make sense for NES
+  json.settings.colorMode = "mixed";
+
   return {
     data: {
       ...json,
