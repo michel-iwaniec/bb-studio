@@ -11,6 +11,7 @@ import {
 import { assetFilename } from "shared/lib/helpers/assets";
 import { readFileToTilesDataArray } from "lib/tiles/readFileToTiles";
 import { MAX_BACKGROUND_TILES, MAX_BACKGROUND_TILES_CGB } from "consts";
+import { SCREEN_WIDTH_PX, SCREEN_HEIGHT_PX } from "consts";
 
 const MAX_IMAGE_WIDTH = 2040;
 const MAX_IMAGE_HEIGHT = 2040;
@@ -104,18 +105,18 @@ export const getBackgroundInfo = async (
     );
   }
 
-  if (tilesetLength > MAX_BACKGROUND_TILES_CGB && !is360 && isCGBOnly) {
+  if (tilesetLength > MAX_BACKGROUND_TILES && !is360 && isCGBOnly) {
     warnings.push(
       l10n("WARNING_BACKGROUND_TOO_MANY_TILES", {
         tilesetLength,
-        maxTilesetLength: MAX_BACKGROUND_TILES_CGB,
+        maxTilesetLength: MAX_BACKGROUND_TILES,
       })
     );
   }
 
   if (
     is360 &&
-    (background.imageWidth !== 160 || background.imageHeight !== 144)
+    (background.imageWidth !== SCREEN_WIDTH_PX || background.imageHeight !== SCREEN_HEIGHT_PX)
   ) {
     warnings.push(
       l10n("WARNING_LOGO_WRONG_SIZE", {
