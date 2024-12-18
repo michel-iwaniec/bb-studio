@@ -189,7 +189,7 @@ const AppToolbar: FC = () => {
   return (
     <Toolbar focus={windowFocus}>
       <Helmet>
-        <title>{`GB Studio - ${name || "Untitled"}${
+        <title>{`BB Studio - ${name || "Untitled"}${
           modified ? ` (${l10n("TOOLBAR_MODIFIED")})` : ""
         }`}</title>
       </Helmet>

@@ -120,7 +120,7 @@ export const SplashAppTitle = () => {
           {VERSION} ({COMMITHASH})
         </div>
       ) : (
-        `GB Studio ${VERSION}`
+        `BB Studio ${VERSION}`
       )}
     </SplashAppTitleWrapper>
   );

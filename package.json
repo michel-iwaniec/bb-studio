@@ -1,9 +1,9 @@
 {
-  "name": "gb-studio",
-  "productName": "GB Studio",
-  "homepage": "https://www.gbstudio.dev",
+  "name": "bb-studio",
+  "productName": "BB Studio (NES hack of GB Studio)",
+  "homepage": "https://github.com/michel-iwaniec/bb-studio/",
   "bugs": {
-    "url": "https://github.com/chrismaltby/gb-studio/issues"
+    "url": "https://github.com/michel-iwaniec/bb-studio/issues"
   },
   "version": "4.0.2",
   "description": "Visual retro game maker",
