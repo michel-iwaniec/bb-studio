@@ -202,11 +202,12 @@ const compileUgeTrack = async (
       ? `"${buildToolsPath}\\famistudio\\FamiStudio.exe"`
       : `"${buildToolsPath}/famistudio/FamiStudio"`;
 
-  console.log(`Executing ${FamiStudioExe}`);
+  const args = [`"${fmsPath}"`, "famistudio-asm-export", `"${asmPath}"`, "famistudio-asm-seperate-song-pattern", `${Path.basename(fmsPath) }_42`, "-famistudio-asm-format:sdas"];
+  console.log(`Executing ${FamiStudioExe} ${args}`);
 
   await new Promise<void>((resolve, reject) => {
     const child = childProcess.spawn(FamiStudioExe,
-                                     [fmsPath, "famistudio-asm-export", asmPath, "famistudio-asm-seperate-song-pattern", `${Path.basename(fmsPath)}_42`, "-famistudio-asm-format:sdas"],
+                                     args,
                                      options);
 
     child.on("error", (err) => {
