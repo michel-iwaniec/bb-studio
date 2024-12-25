@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
+import { nesHex_to_rgb888Hex } from "lib/compiler/rgb_to_nes";
 
 type PaletteBlockProps = {
   colors: string[];
@@ -61,7 +62,7 @@ const PaletteBlock: React.FC<PaletteBlockProps> = ({
         <Color
           key={index}
           style={{
-            backgroundColor: `#${color}`,
+            backgroundColor: `#${nesHex_to_rgb888Hex(color)}`,
           }}
         />
       );

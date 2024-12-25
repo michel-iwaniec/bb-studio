@@ -64,7 +64,7 @@ const ColorizedImage = ({
     if (canvasRef.current && worker.current) {
       worker.current.postMessage({
         src,
-        palettes: palettes.map((p) => p.colors),
+        palettes: palettes.map((p) => p.nesColors),
         tiles,
         width,
         height,

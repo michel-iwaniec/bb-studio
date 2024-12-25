@@ -24,6 +24,11 @@ import { Dictionary } from "@reduxjs/toolkit";
 import { loadEngineFields } from "lib/project/engineFields";
 import { loadSceneTypes } from "lib/project/sceneTypes";
 import loadAllTilesetData from "lib/project/loadTilesetData";
+import { rgb555_to_rgb222, rgb888Hex_to_nesHex } from "lib/compiler/rgb_to_nes";
+import { rgb222_to_nes } from "lib/compiler/rgb_to_nes";
+import { rgb555_to_nes } from "lib/compiler/rgb_to_nes";
+import { rgb888_to_nes } from "lib/compiler/rgb_to_nes";
+import { hexDec } from "shared/lib/helpers/8bit";
 
 const toUnixFilename = (filename: string) => {
   return filename.replace(/\\/g, "/");
@@ -321,46 +326,55 @@ const loadProject = async (
       id: "default-bg-1",
       name: "Default BG 1",
       colors: ["F8E8C8", "D89048", "A82820", "301850"],
+      nesColors: [rgb888Hex_to_nesHex("F8E8C8"), rgb888Hex_to_nesHex("D89048"), rgb888Hex_to_nesHex("A82820"), rgb888Hex_to_nesHex("301850")],
     },
     {
       id: "default-bg-2",
       name: "Default BG 2",
       colors: ["E0F8A0", "78C838", "488818", "081800"],
+      nesColors: [rgb888Hex_to_nesHex("E0F8A0"), rgb888Hex_to_nesHex("78C838"), rgb888Hex_to_nesHex("488818"), rgb888Hex_to_nesHex("081800")],
     },
     {
       id: "default-bg-3",
       name: "Default BG 3",
       colors: ["F8D8A8", "E0A878", "785888", "002030"],
+      nesColors: [rgb888Hex_to_nesHex("F8D8A8"), rgb888Hex_to_nesHex("E0A878"), rgb888Hex_to_nesHex("785888"), rgb888Hex_to_nesHex("002030")],
     },
     {
       id: "default-bg-4",
       name: "Default BG 4",
       colors: ["B8D0D0", "D880D8", "8000A0", "380000"],
+      nesColors: [rgb888Hex_to_nesHex("B8D0D0"), rgb888Hex_to_nesHex("D880D8"), rgb888Hex_to_nesHex("8000A0"), rgb888Hex_to_nesHex("380000")],
     },
     {
       id: "default-bg-5",
       name: "Default BG 5",
       colors: ["F8F8B8", "90C8C8", "486878", "082048"],
+      nesColors: [rgb888Hex_to_nesHex("F8F8B8"), rgb888Hex_to_nesHex("90C8C8"), rgb888Hex_to_nesHex("486878"), rgb888Hex_to_nesHex("082048")],
     },
     {
       id: "default-bg-6",
       name: "Default BG 6",
       colors: ["F8D8B0", "78C078", "688840", "583820"],
+      nesColors: [rgb888Hex_to_nesHex("F8D8B0"), rgb888Hex_to_nesHex("78C078"), rgb888Hex_to_nesHex("688840"), rgb888Hex_to_nesHex("583820")],
     },
     {
       id: "default-sprite",
       name: "Default Sprites",
       colors: ["F8F0E0", "D88078", "B05010", "000000"],
+      nesColors: ["37", "17", "17", "1D"],
     },
     {
       id: "default-ui",
       name: "Default UI",
       colors: ["F8F8B8", "90C8C8", "486878", "082048"],
+      nesColors: [rgb888Hex_to_nesHex("F8F8B8"), rgb888Hex_to_nesHex("90C8C8"), rgb888Hex_to_nesHex("486878"), rgb888Hex_to_nesHex("082048")],
     },
   ] as {
     id: string;
     name: string;
     colors: [string, string, string, string];
+    nesColors: [string, string, string, string];
   }[];
 
   const fixedPalettes = (json.palettes || []).map(addMissingEntityId);
@@ -386,6 +400,22 @@ const loadProject = async (
 
   // gbdk-nes: Override project "colorOnly" setting to be "mixed" instead, as distinction doesn't make sense for NES
   json.settings.colorMode = "mixed";
+
+  // gbdk-nes: Convert RGB values to NES PPU colors
+  for (let i = 0; i < fixedPalettes.length; i++) {
+    const c = fixedPalettes[i].colors;
+    const d = fixedPalettes[i].defaultColors || ["F8E8C8", "D89048", "A82820", "301850"];
+    if (!fixedPalettes[i].nesColors) {
+      fixedPalettes[i].nesColors = [rgb888Hex_to_nesHex(c[0]),
+                                    rgb888Hex_to_nesHex(c[1]),
+                                    rgb888Hex_to_nesHex(c[2]),
+                                    rgb888Hex_to_nesHex(c[3])];
+      fixedPalettes[i].defaultNesColors = [rgb888Hex_to_nesHex(d[0]),
+                                           rgb888Hex_to_nesHex(d[1]),
+                                           rgb888Hex_to_nesHex(d[2]),
+                                           rgb888Hex_to_nesHex(d[3])];
+    }
+  }
 
   return {
     data: {

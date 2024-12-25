@@ -86,7 +86,7 @@ export const SpriteSliceCanvas = ({
       flipX,
       flipY,
       objPalette: palette ? "OBP0" : objPalette,
-      palette: (palette || DMG_PALETTE).colors,
+      palette: (palette || DMG_PALETTE).nesColors
     });
   }, [
     canvasRef,

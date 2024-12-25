@@ -1021,7 +1021,7 @@ ${palette.dmg
 ${palette.colors
   .map(
     (paletteColors: string[]) =>
-      `        CGB_PALETTE(${paletteColors.map(compileColor).join(", ")})`
+      `        {${paletteColors.map((nesColor: string) => `0x${nesColor}`).join(", ")}}`
   )
   .join(",\n")}
     }`

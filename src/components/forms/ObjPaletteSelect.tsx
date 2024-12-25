@@ -7,6 +7,7 @@ import {
   SingleValueWithPreview,
 } from "ui/form/Select";
 import l10n from "shared/lib/lang/l10n";
+import { defaultColors } from "consts";
 
 interface ObjPaletteSelectProps {
   name: string;
@@ -18,6 +19,7 @@ interface ObjPaletteOption {
   value: ObjPalette;
   label: string;
   colors: string[];
+  nesColors: string[];
 }
 
 const options: ObjPaletteOption[] = [
@@ -25,11 +27,13 @@ const options: ObjPaletteOption[] = [
     value: "OBP0",
     label: "0: OBP0",
     colors: ["E8F8E0", "B0F088", "", "202850"],
+    nesColors: defaultColors,
   },
   {
     value: "OBP1",
     label: "1: OBP1",
     colors: ["E8F8E0", "509878", "", "202850"],
+    nesColors: defaultColors,
   },
 ];
 
@@ -51,7 +55,7 @@ export const ObjPaletteSelect: FC<ObjPaletteSelectProps> = ({
         return (
           <OptionLabelWithPreview
             preview={
-              <PaletteBlock type="sprite" colors={option.colors} size={20} />
+              <PaletteBlock type="sprite" colors={option.nesColors} size={20} />
             }
           >
             {l10n("FIELD_PALETTE")} {option.label}
@@ -64,7 +68,7 @@ export const ObjPaletteSelect: FC<ObjPaletteSelectProps> = ({
             preview={
               <PaletteBlock
                 type="sprite"
-                colors={currentValue?.colors || []}
+                colors={currentValue?.nesColors || []}
                 size={20}
               />
             }

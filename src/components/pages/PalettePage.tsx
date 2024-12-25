@@ -14,7 +14,7 @@ import editorActions from "store/features/editor/editorActions";
 import { paletteSelectors } from "store/features/entities/entitiesState";
 import l10n from "shared/lib/lang/l10n";
 import { Button } from "ui/buttons/Button";
-import CustomPalettePicker from "components/forms/CustomPalettePicker";
+import CustomPalettePickerNES from "components/forms/CustomPalettePickerNES";
 import { NavigatorPalettes } from "components/palettes/NavigatorPalettes";
 import entitiesActions from "store/features/entities/entitiesActions";
 import { IMEInput } from "ui/form/IMEInput";
@@ -226,7 +226,7 @@ const PalettePage = () => {
                 ) : (
                   <h1>{paletteName(viewPalette, viewPaletteIndex)}</h1>
                 )}
-                {!viewPalette.defaultColors && !edit && (
+                {!viewPalette.defaultNesColors && !edit && (
                   <Button
                     key="edit"
                     onClick={onStartEdit}
@@ -239,7 +239,7 @@ const PalettePage = () => {
               </>
             )}
           </Header>
-          {viewPalette && <CustomPalettePicker paletteId={viewPaletteId} />}
+          {viewPalette && <CustomPalettePickerNES paletteId={viewPaletteId} />}
         </Container>
       </Document>
     </Wrapper>

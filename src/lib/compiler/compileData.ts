@@ -122,6 +122,7 @@ import { walkSceneScripts, walkScenesScripts } from "shared/lib/scripts/walk";
 import { ScriptEventHandlers } from "lib/project/loadScriptEventHandlers";
 import { EntityType } from "shared/lib/scripts/context";
 import compileTilesets from "lib/compiler/compileTilesets";
+import { DEFAULT_WHITE, DEFAULT_LIGHT, DEFAULT_DARK, DEFAULT_BLACK, defaultColors } from "consts";
 
 type CompiledTilemapData = {
   symbol: string;
@@ -462,9 +463,10 @@ export const precompilePalettes = async (
 
   const getSpritePalette = (id: string, fallbackId: string): Palette => {
     const p = getPalette(id, fallbackId);
+    const nesColors: [string, string, string, string] = p?.nesColors || defaultColors;
     return {
       ...p,
-      colors: [p.colors[0], p.colors[0], p.colors[1], p.colors[3]],
+      colors: [nesColors[0], nesColors[0], nesColors[1], nesColors[3]],
     };
   };
 
@@ -537,7 +539,7 @@ export const precompilePalettes = async (
               defaultBackgroundPaletteIds,
               background?.autoPalettes
             ),
-          ].map((p) => p.colors)
+        ].map((p) => p?.nesColors || defaultColors as [string, string, string, string])
         : undefined,
     };
 
@@ -609,10 +611,9 @@ export const precompilePalettes = async (
               sceneSpritePaletteIds[7],
               defaultSpritePaletteIds[7]
             ),
-          ].map((p) => p.colors)
-        : undefined,
+          ].map((p) => p?.colors || defaultColors as [string, string, string, string])
+          : undefined,
     };
-
     const actorsPaletteKey = JSON.stringify(actorsPalette);
     if (usedPalettesCache[actorsPaletteKey] === undefined) {
       // New palette

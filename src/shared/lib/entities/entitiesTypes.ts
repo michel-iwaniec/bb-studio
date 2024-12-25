@@ -250,8 +250,10 @@ export type Palette = {
   id: string;
   name: string;
   colors: [string, string, string, string];
+  nesColors?: [string, string, string, string];
   defaultName?: string;
   defaultColors?: [string, string, string, string];
+  defaultNesColors?: [string, string, string, string];
 };
 
 export type Variable = {

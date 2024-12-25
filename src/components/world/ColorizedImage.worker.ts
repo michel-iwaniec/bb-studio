@@ -1,5 +1,6 @@
 import { DMG_PALETTE } from "consts";
 import { hex2GBCrgb } from "shared/lib/helpers/color";
+import { nesHex_to_rgb888_struct } from "lib/compiler/rgb_to_nes";
 
 // eslint-disable-next-line no-restricted-globals
 const workerCtx: Worker = self as unknown as Worker;
@@ -39,8 +40,8 @@ workerCtx.onmessage = async (evt) => {
   const tiles = evt.data.tiles;
   const previewAsMono = evt.data.previewAsMono;
   const palettes = evt.data.palettes;
-  const palettesRGB = palettes.map((colors: string[]) =>
-    colors.map(hex2GBCrgb)
+  const palettesRGB = palettes.map((nesColors: string[]) =>
+    nesColors.map(nesHex_to_rgb888_struct)
   );
   const dmgPalette = DMG_PALETTE.colors.map(hex2GBCrgb);
 

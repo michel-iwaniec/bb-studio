@@ -183,7 +183,7 @@ export const PaletteSelect: FC<PaletteSelectProps> = ({
             preview={
               <PaletteBlock
                 type={type}
-                colors={option?.palette?.colors || []}
+                colors={option?.palette?.nesColors || []}
                 size={20}
               />
             }
@@ -198,7 +198,7 @@ export const PaletteSelect: FC<PaletteSelectProps> = ({
             preview={
               <PaletteBlock
                 type={type}
-                colors={currentValue?.palette?.colors || []}
+                colors={currentValue?.palette?.nesColors || []}
                 size={20}
               />
             }

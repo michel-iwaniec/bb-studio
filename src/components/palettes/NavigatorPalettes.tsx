@@ -133,7 +133,7 @@ export const NavigatorPalettes = ({
         <MenuItem key="rename" onClick={() => setRenameId(item.id)}>
           {l10n("FIELD_RENAME")}
         </MenuItem>,
-        ...(!item.entity?.defaultColors
+        ...(!item.entity?.defaultNesColors
           ? [
               <MenuDivider key="div-delete" />,
               <MenuItem
@@ -166,7 +166,7 @@ export const NavigatorPalettes = ({
         <FlexRow>
           {item.filename}
           <FlexGrow />
-          <PaletteBlock colors={item.entity?.colors ?? []} size={16} />
+          <PaletteBlock colors={item.entity?.nesColors ?? []} size={16} />
         </FlexRow>
       );
     },

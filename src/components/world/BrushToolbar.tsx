@@ -573,7 +573,7 @@ const BrushToolbar = ({ hasFocusForKeyboardShortcuts }: BrushToolbarProps) => {
               })} (${paletteIndex + 1}) - ${paletteName(palettes[paletteIndex], -1)}`}
             >
               <PaletteBlock
-                colors={palettes[paletteIndex]?.colors ?? []}
+                colors={palettes[paletteIndex]?.nesColors ?? []}
                 highlight={paletteIndex === highlightPalette}
               />
             </Button>

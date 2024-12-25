@@ -13,6 +13,7 @@ import {
   Select,
   SingleValueWithPreview,
 } from "ui/form/Select";
+import { DMG_PALETTE, defaultColors } from "consts";
 
 interface PaletteIndexSelectProps {
   name: string;
@@ -82,7 +83,7 @@ export const PaletteIndexSelect: FC<PaletteIndexSelectProps> = ({
             preview={
               <PaletteBlock
                 type="sprite"
-                colors={option.palette?.colors || dmgPalette.colors}
+                colors={option.palette?.nesColors || dmgPalette?.nesColors || defaultColors}
                 size={20}
               />
             }
@@ -99,7 +100,7 @@ export const PaletteIndexSelect: FC<PaletteIndexSelectProps> = ({
             preview={
               <PaletteBlock
                 type="sprite"
-                colors={currentValue?.palette?.colors || dmgPalette.colors}
+                colors={currentValue?.palette?.nesColors || dmgPalette?.nesColors || defaultColors}
                 size={20}
               />
             }

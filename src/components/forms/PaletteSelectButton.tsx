@@ -174,7 +174,7 @@ export const PaletteSelectButton: FC<PaletteSelectProps> = ({
         title={slotNumber ? `${slotNumber}: ${palette.name}` : palette.name}
       >
         {palette ? (
-          <PaletteBlock type={type} colors={palette?.colors || []} size={22} />
+          <PaletteBlock type={type} colors={palette?.nesColors || []} size={22} />
         ) : (
           <NoValue />
         )}

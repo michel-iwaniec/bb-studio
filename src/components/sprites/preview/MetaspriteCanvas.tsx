@@ -11,6 +11,7 @@ import MetaspriteCanvasWorker, {
   MetaspriteCanvasResult,
 } from "./MetaspriteCanvas.worker";
 import { assetURL } from "shared/lib/helpers/assets";
+import { defaultColors } from "consts";
 
 interface MetaspriteCanvasProps {
   spriteSheetId: string;
@@ -58,7 +59,7 @@ export const MetaspriteCanvas = memo(
 
     // Cache scene palettes
     useEffect(() => {
-      setPaletteColors(palettes ? palettes.map((p) => p.colors) : null);
+      setPaletteColors(palettes ? palettes.map((p) => p?.nesColors || defaultColors) : null);
     }, [palettes]);
 
     const onWorkerComplete = useCallback(
@@ -108,7 +109,7 @@ export const MetaspriteCanvas = memo(
         height,
         tiles,
         flipX,
-        palette: DMG_PALETTE.colors,
+        palette: DMG_PALETTE.nesColors,
         palettes: paletteColors,
         previewAsMono,
       });

@@ -104,10 +104,23 @@ export const DRAG_DESTINATION = "DRAG_DESTINATION";
 export const DRAG_ACTOR = "DRAG_ACTOR";
 export const DRAG_TRIGGER = "DRAG_TRIGGER";
 
+export const DEFAULT_WHITE = "3A";
+export const DEFAULT_LIGHT = "2A";
+export const DEFAULT_DARK = "1A";
+export const DEFAULT_BLACK = "1D";
+
+export const defaultColors: [string, string, string, string] = [
+  DEFAULT_WHITE,
+  DEFAULT_LIGHT,
+  DEFAULT_DARK,
+  DEFAULT_BLACK,
+];
+
 export const DMG_PALETTE = {
   id: "dmg",
   name: "DMG (GB Default)",
   colors: ["E8F8E0", "B0F088", "509878", "202850"],
+  nesColors: [DEFAULT_WHITE, DEFAULT_LIGHT, DEFAULT_DARK, DEFAULT_BLACK],
 } as Palette;
 
 export const FLAG_VRAM_BANK_1 = 0x8;

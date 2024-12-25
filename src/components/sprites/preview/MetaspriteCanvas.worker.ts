@@ -1,4 +1,4 @@
-import { DMG_PALETTE } from "consts";
+import { DMG_PALETTE, defaultColors } from "consts";
 import { colorizeSpriteData, chromaKeyData } from "shared/lib/helpers/color";
 import { ObjPalette } from "shared/lib/entities/entitiesTypes";
 
@@ -79,8 +79,8 @@ workerCtx.onmessage = async (evt) => {
       [0, 1, 2, 3, 4, 5, 6, 7].forEach((i) => {
         tilesCanvases[i] = new OffscreenCanvas(img.width, img.height);
         const colors = previewAsMono
-          ? DMG_PALETTE.colors
-          : palettes[i] || DMG_PALETTE.colors;
+          ? DMG_PALETTE.nesColors
+          : palettes[i] || defaultColors;
         const canvas = tilesCanvases[i];
         const ctx = canvas.getContext("2d");
         if (!ctx) {
@@ -91,7 +91,7 @@ workerCtx.onmessage = async (evt) => {
           tileImageData.width,
           tileImageData.height
         );
-        colorizeSpriteData(imageDataCopy.data, null, colors);
+        colorizeSpriteData(imageDataCopy.data, null, colors || defaultColors);
         ctx.putImageData(imageDataCopy, 0, 0);
       });
     }

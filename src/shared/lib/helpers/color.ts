@@ -1,4 +1,5 @@
 import type { ObjPalette } from "shared/lib/entities/entitiesTypes";
+import { nesHex_to_rgb888_struct } from "lib/compiler/rgb_to_nes";
 
 /* eslint-disable no-param-reassign */
 const hexStringToDecimal = (str: string) => {
@@ -80,7 +81,7 @@ export const colorizeSpriteData = (
   objPalette: ObjPalette | null,
   palette: string[]
 ) => {
-  const paletteRGB = palette.map(hex2GBCrgb);
+  const paletteRGB = palette.map(nesHex_to_rgb888_struct);
   for (let index = 0; index < mutData.length; index += 4) {
     const colorIndex = indexSpriteColour(
       mutData[index + 1],
