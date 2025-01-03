@@ -8,6 +8,7 @@ import { Button } from "ui/buttons/Button";
 import {
   ColorModeSetting,
   MusicDriverSetting,
+  MusicTempoSetting,
   SettingsState,
 } from "store/features/settings/settingsState";
 import settingsActions from "store/features/settings/settingsActions";
@@ -34,6 +35,7 @@ import { FontSelect } from "components/forms/FontSelect";
 import { SpriteSheetSelect } from "components/forms/SpriteSheetSelect";
 import { ColorAnimationText } from "components/settings/ColorAnimationText";
 import { MusicDriverSelect } from "components/forms/MusicDriverSelect";
+import { MusicTempoSelect } from "components/forms/MusicTempoSelect";
 import { FormInfo } from "ui/form/FormInfo";
 import electronActions from "store/features/electron/electronActions";
 import CartSettingsEditor from "components/settings/CartSettingsEditor";
@@ -83,6 +85,7 @@ const SettingsPage: FC = () => {
     defaultFontId,
     defaultPlayerSprites,
     musicDriver,
+    musicTempo,
     openBuildLogOnWarnings,
     generateDebugFilesEnabled,
   } = settings;
@@ -132,6 +135,11 @@ const SettingsPage: FC = () => {
 
   const onChangeMusicDriver = useCallback(
     (e: MusicDriverSetting) => onChangeSettingProp("musicDriver", e),
+    [onChangeSettingProp]
+  );
+
+  const onChangeMusicTempo = useCallback(
+    (e: MusicTempoSetting) => onChangeSettingProp("musicTempo", e),
     [onChangeSettingProp]
   );
 
@@ -592,7 +600,7 @@ const SettingsPage: FC = () => {
 
         <SearchableCard
           searchTerm={searchTerm}
-          searchMatches={[l10n("SETTINGS_MUSIC"), l10n("FIELD_MUSIC_FORMAT")]}
+          searchMatches={[l10n("SETTINGS_MUSIC"), l10n("FIELD_MUSIC_FORMAT"), l10n("FIELD_MUSIC_TEMPO_MODE")]}
         >
           <CardAnchor id="settingsMusic" />
           <CardHeading>{l10n("SETTINGS_MUSIC")}</CardHeading>
@@ -613,6 +621,27 @@ const SettingsPage: FC = () => {
                   <FormInfo>{l10n("FIELD_HUGE_DRIVER_NOTE")}</FormInfo>
                 ) : (
                   <FormInfo>{l10n("FIELD_GBT_PLAYER_NOTE")}</FormInfo>
+                )}
+              </FormField>
+            </SettingRowInput>
+          </SearchableSettingRow>
+
+          <SearchableSettingRow
+            searchTerm={searchTerm}
+            searchMatches={[l10n("FIELD_MUSIC_TEMPO_MODE")]}
+          >
+            <SettingRowLabel>{l10n("FIELD_MUSIC_TEMPO_MODE")}</SettingRowLabel>
+            <SettingRowInput>
+              <FormField name="musicTempo">
+                <MusicTempoSelect
+                  name="musicTempo"
+                  value={musicTempo || ""}
+                  onChange={onChangeMusicTempo}
+                />
+                {musicTempo !== "famitracker_tempo" ? (
+                  <FormInfo>{"Use FamiStudio tempo mode for ALL FamiStudio tracks."}</FormInfo>
+                ) : (
+                  <FormInfo>{"Use FamiTracker tempo mode for ALL FamiStudio tracks."}</FormInfo>
                 )}
               </FormField>
             </SettingRowInput>

@@ -194,6 +194,7 @@ export const defaultProjectSettings: SettingsState = {
   defaultCharacterEncoding: "",
   defaultPlayerSprites: {},
   musicDriver: "gbt",
+  musicTempo: "famitracker_tempo",
   cartType: "mbc5",
   batterylessEnabled: false,
   favoriteEvents: ["EVENT_TEXT", "EVENT_SWITCH_SCENE"],

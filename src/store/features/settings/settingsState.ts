@@ -8,6 +8,7 @@ import type { ScriptEditorCtx } from "shared/lib/scripts/context";
 export type ColorModeSetting = "mono" | "mixed" | "color";
 export type ShowConnectionsSetting = "all" | "selected" | true | false;
 export type MusicDriverSetting = "huge" | "gbt";
+export type MusicTempoSetting = "famitracker_tempo" | "famistudio_tempo";
 export type CartType = "mbc5" | "mbc3";
 export type BreakpointData = {
   scriptEventId: string;
@@ -59,6 +60,7 @@ export type SettingsState = {
   defaultCharacterEncoding: string;
   defaultPlayerSprites: Record<string, string>;
   musicDriver: MusicDriverSetting;
+  musicTempo: MusicTempoSetting;
   cartType: CartType;
   batterylessEnabled: boolean;
   favoriteEvents: string[];

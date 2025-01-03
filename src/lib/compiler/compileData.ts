@@ -73,6 +73,7 @@ import { compileScriptEngineInit } from "./compileBootstrap";
 import {
   compileMusicTracks,
   compileMusicHeader,
+  compileFamiStudioSettings,
   PrecompiledMusicTrack,
 } from "./compileMusic";
 import { chunk } from "shared/lib/helpers/array";
@@ -2006,10 +2007,12 @@ const compile = async (
     startMoveSpeed = 1,
     startAnimSpeed = 15,
     musicDriver,
+    musicTempo,
   } = projectData.settings;
 
   // Add music data
   output["music_data.h"] = compileMusicHeader(precompiled.usedMusic);
+  output["famistudio_settings.i"] = compileFamiStudioSettings(musicTempo);
   await compileMusicTracks(precompiled.usedMusic, {
     engine: musicDriver,
     output,

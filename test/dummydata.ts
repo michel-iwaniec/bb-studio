@@ -257,6 +257,7 @@ export const dummyProjectData: ProjectData = {
     defaultCharacterEncoding: "",
     defaultPlayerSprites: {},
     musicDriver: "huge",
+    musicTempo: "famitracker_tempo",
     cartType: "mbc5",
     batterylessEnabled: false,
     favoriteEvents: [],

@@ -300,6 +300,17 @@ extern const void ${track.dataName}_Data;`
 `;
 };
 
+export const compileFamiStudioSettings = (tempoMode: string) => {
+  if (tempoMode === "famitracker_tempo") {
+    return ["FAMISTUDIO_USE_FAMITRACKER_TEMPO = 1",
+            "FAMISTUDIO_USE_FAMITRACKER_DELAYED_NOTES_OR_CUTS = 1"].join("\n");
+  }
+  else {
+    return ["FAMISTUDIO_USE_FAMITRACKER_TEMPO = 0",
+            "FAMISTUDIO_USE_FAMITRACKER_DELAYED_NOTES_OR_CUTS = 0"].join("\n");
+  }
+}
+
 export const compileMusicTracks = (
   tracks: PrecompiledMusicTrack[],
   options: CompileMusicOptions
