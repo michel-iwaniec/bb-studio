@@ -91,8 +91,6 @@ workerCtx.onmessage = async (evt) => {
   for (let t = 0; t < tilesLength; t++) {
     const tX = t % tileWidth;
     const tY = Math.floor(t / tileWidth);
-    const palette =
-      palettesRGB[tiles[t] & TILE_COLOR_PALETTE] || palettesRGB[0];
     const p1X = tX * 8;
     const p2X = p1X + 8;
     const p1Y = tY * 8;
@@ -101,6 +99,10 @@ workerCtx.onmessage = async (evt) => {
       for (let pY = p1Y; pY < p2Y; pY++) {
         const index = (pX + pY * width) * 4;
         const colorIndex = indexColour(data[index + 1]);
+        // NES: colorIndex 0 is unified background color (color 0 of first sub-palette)
+        const palette = 
+          (colorIndex === 0) ? palettesRGB[0] || palettesRGB[0]
+                            : palettesRGB[tiles[t] & TILE_COLOR_PALETTE] || palettesRGB[0];
         const color = previewAsMono
           ? dmgPalette[colorIndex]
           : palette[colorIndex];
