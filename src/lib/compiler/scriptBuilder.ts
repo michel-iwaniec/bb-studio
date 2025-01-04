@@ -81,7 +81,53 @@ import keyBy from "lodash/keyBy";
 import { rgb555_to_rgb222 } from "lib/compiler/rgb_to_nes";
 import { rgb222_to_nes } from "lib/compiler/rgb_to_nes";
 
+const vmRpnCmdLength: { [cmd: string]: number } = {
+  ".R_REF": 3,
+  ".R_REF_IND": 3,
+  ".R_REF_SET": 3,
+  ".R_REF_SET_IND": 3,
+  ".R_INT8": 2,
+  ".R_INT16": 3,
+  ".R_OPERATOR": 1,
+  ".R_STOP": 1
+};
 export type ScriptOutput = string[];
+
+const calcLengthOfRPN = (input: string[]): number => {
+  let length = 0;
+  const reCmdTokens: string = Object.keys(vmRpnCmdLength).map((s: string) => `\\${s}`).join("|");
+  const reCmd = new RegExp(`(\s*)?(?<cmd>${reCmdTokens}).*`);
+  for (const line of input.slice(1)) {
+    const m = reCmd.exec(line);
+    if (m != null && m.groups) {
+      const cmd = m.groups["cmd"];
+      length += vmRpnCmdLength[cmd];
+      if (cmd === ".R_STOP") {
+        return length + 1;
+      }
+    }
+  }
+  return 0;
+};
+
+const postProcessScript = (input: ScriptOutput): ScriptOutput => {
+  const output: ScriptOutput = [];
+  const reRPN = new RegExp(/(?<initialWS>\s*)?(VM_RPN).*/);
+  for (let i = 0; i < input.length; i++) {
+    const line = input[i];
+    const wasRPN: boolean = reRPN.test(line);
+    if (wasRPN) {
+      const m = reRPN.exec(line);
+      if (m != null && m.groups) {
+        const rpnLength = calcLengthOfRPN(input.slice(i));
+        output.push(`${m.groups["initialWS"]}VM_RPN ${rpnLength}`);
+      }
+    } else {
+      output.push(line);
+    }
+  }
+  return output;
+};
 
 export interface ScriptBuilderEntity {
   id: string;
@@ -1251,12 +1297,10 @@ class ScriptBuilder {
 
   _rpn = () => {
     const output: string[] = [];
-    var length: number = 0;
     const stack: number[] = [];
 
     const rpnCmd = (
       cmd: string,
-      cmdLength: number,
       ...args: Array<ScriptBuilderStackVariable>
     ) => {
       output.push(
@@ -1267,17 +1311,16 @@ class ScriptBuilder {
           12
         )
       );
-      length += cmdLength;
     };
 
     const rpn = {
       ref: (variable: ScriptBuilderStackVariable) => {
-        rpnCmd(".R_REF", 1 + 2, variable);
+        rpnCmd(".R_REF", variable);
         stack.push(0);
         return rpn;
       },
       refInd: (variable: ScriptBuilderStackVariable) => {
-        rpnCmd(".R_REF_IND", 1 + 2, variable);
+        rpnCmd(".R_REF_IND", variable);
         stack.push(0);
         return rpn;
       },
@@ -1290,12 +1333,12 @@ class ScriptBuilder {
         }
       },
       refSet: (variable: ScriptBuilderStackVariable) => {
-        rpnCmd(".R_REF_SET", 1 + 2, variable);
+        rpnCmd(".R_REF_SET", variable);
         stack.pop();
         return rpn;
       },
       refSetInd: (variable: ScriptBuilderStackVariable) => {
-        rpnCmd(".R_REF_SET_IND", 1 + 2, variable);
+        rpnCmd(".R_REF_SET_IND", variable);
         stack.pop();
         return rpn;
       },
@@ -1308,25 +1351,25 @@ class ScriptBuilder {
         }
       },
       int8: (value: number | string) => {
-        rpnCmd(".R_INT8", 1 + 1, value);
+        rpnCmd(".R_INT8", value);
         stack.push(0);
         return rpn;
       },
       int16: (value: number | string) => {
-        rpnCmd(".R_INT16", 1 + 2, value);
+        rpnCmd(".R_INT16", value);
         stack.push(0);
         return rpn;
       },
       operator: (op: ScriptBuilderRPNOperation) => {
-        rpnCmd(".R_OPERATOR", 1, op);
+        rpnCmd(".R_OPERATOR", op);
         if (!rpnUnaryOperators.includes(op)) {
           stack.pop();
         }
         return rpn;
       },
       stop: () => {
-        rpnCmd(".R_STOP", 1);
-        this._addCmd("VM_RPN", length+1);
+        rpnCmd(".R_STOP");
+        this._addCmd("VM_RPN");
         output.forEach((cmd: string) => {
           this.output.push(cmd);
         });
@@ -6957,7 +7000,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       reserveMem > 0
         ? this._padCmd("VM_RESERVE", String(reserveMem), 8, 24) + "\n\n"
         : ""
-    }${this.output.join("\n")}
+    }${postProcessScript(this.output).join("\n")}
 `;
   };
 }
