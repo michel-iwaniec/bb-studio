@@ -95,6 +95,7 @@ import { monoOverrideForFilename } from "shared/lib/assets/backgrounds";
 import { Asset, AssetType } from "shared/lib/helpers/assets";
 import { assertUnreachable } from "shared/lib/scriptValue/format";
 import { addNewSongFile } from "store/features/trackerDocument/trackerDocumentState";
+import { DEFAULT_WHITE, DEFAULT_LIGHT, DEFAULT_DARK, DEFAULT_BLACK, defaultColors } from "consts";
 
 const MIN_SCENE_X = 60;
 const MIN_SCENE_Y = 30;
@@ -2469,6 +2470,12 @@ const addPalette: CaseReducer<
       DMG_PALETTE.colors[1],
       DMG_PALETTE.colors[2],
       DMG_PALETTE.colors[3],
+    ],
+    nesColors: [
+      defaultColors[0],
+      defaultColors[1],
+      defaultColors[2],
+      defaultColors[3],
     ],
   };
   palettesAdapter.addOne(state.palettes, newPalette);
