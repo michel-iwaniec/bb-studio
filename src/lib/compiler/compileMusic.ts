@@ -197,16 +197,16 @@ const compileUgeTrack = async (
   };
 
   //const buildToolsPath = await ensureBuildTools(tmpPath);
-  const FamiStudioExe =
+  const FamiStudioDll =
     process.platform === "win32"
-      ? `"${buildToolsPath}\\famistudio\\FamiStudio.exe"`
-      : `"${buildToolsPath}/famistudio/FamiStudio"`;
+      ? `"${buildToolsPath}\\famistudio\\FamiStudio.dll"`
+      : `"${buildToolsPath}/famistudio/FamiStudio.dll"`;
 
   const args = [`"${fmsPath}"`, "famistudio-asm-export", `"${asmPath}"`, "famistudio-asm-seperate-song-pattern", `${Path.basename(fmsPath) }_42`, "-famistudio-asm-format:sdas"];
-  console.log(`Executing ${FamiStudioExe} ${args}`);
+  console.log(`Executing "dotnet ${FamiStudioDll} ${args}""`);
 
   await new Promise<void>((resolve, reject) => {
-    const child = childProcess.spawn(FamiStudioExe,
+    const child = childProcess.spawn(`dotnet ${FamiStudioDll}`,
                                      args,
                                      options);
 
