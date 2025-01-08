@@ -135,7 +135,6 @@ jobs:
           yarn make:win32
           mkdir -p ./out/keep
           mv ./out/make/zip/win32/ia32/*.zip ./out/keep/gb-studio-${CIRCLE_BRANCH}-windows_x86.zip
-          mv ./out/make/squirrel.windows/ia32 ./out/keep/gb-studio-${CIRCLE_BRANCH}-windows_x86-squirrel
 
       - name: Build Win64
         if: matrix.name == 'win64'
@@ -146,7 +145,6 @@ jobs:
           yarn make:win
           mkdir -p ./out/keep
           mv ./out/make/zip/win32/x64/*.zip ./out/keep/gb-studio-${CIRCLE_BRANCH}-windows_x86_64.zip
-          mv ./out/make/squirrel.windows/x64 ./out/keep/gb-studio-${CIRCLE_BRANCH}-windows_x86_64-squirrel
 
       - uses: actions/upload-artifact@v4
         with:
