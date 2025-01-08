@@ -42,12 +42,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: mac
-            label: macOS ARM
-            os: macos-14
-          - name: mac-intel
-            label: macOS Intel
-            os: macos-14
+#          - name: mac
+#            label: macOS ARM
+#            os: macos-14
+#          - name: mac-intel
+#            label: macOS Intel
+#            os: macos-14
           - name: win32
             label: Windows 32-bit
             os: ubuntu-latest
@@ -87,13 +87,13 @@ jobs:
         run: |
           yarn
 
-      - name: Update credits
-        env:
-          PATREON_ACCESS_TOKEN: ${{ secrets.PATREON_ACCESS_TOKEN }}
-          PATREON_CAMPAIGN_ID: ${{ secrets.PATREON_CAMPAIGN_ID }}
-        run: |
-          npm run fetch-contributors
-          npm run fetch-patrons
+#      - name: Update credits
+#        env:
+#          PATREON_ACCESS_TOKEN: ${{ secrets.PATREON_ACCESS_TOKEN }}
+#          PATREON_CAMPAIGN_ID: ${{ secrets.PATREON_CAMPAIGN_ID }}
+#        run: |
+#          npm run fetch-contributors
+#          npm run fetch-patrons
 
       # ==== Builds ====
 
