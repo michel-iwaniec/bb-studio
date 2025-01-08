@@ -101,7 +101,7 @@ jobs:
           export APPLE_TEAM_ID=${APPLE_TEAM_ID}        
           yarn make:mac
           mkdir -p ./out/keep
-          mv ./out/make/zip/darwin/arm64/*.zip ./out/keep/gb-studio-${GITHUB_REF##*/}-darwin_arm64.zip
+          mv ./out/make/zip/darwin/arm64/*.zip ./out/keep/bb-studio-${GITHUB_REF##*/}-darwin_arm64.zip
 
       - name: Build Mac Intel
         if: matrix.name == 'mac-intel'
@@ -115,16 +115,16 @@ jobs:
           export APPLE_TEAM_ID=${APPLE_TEAM_ID}        
           yarn make:mac-intel
           mkdir -p ./out/keep
-          mv ./out/make/zip/darwin/x64/*.zip ./out/keep/gb-studio-${GITHUB_REF##*/}-darwin_x64.zip
+          mv ./out/make/zip/darwin/x64/*.zip ./out/keep/bb-studio-${GITHUB_REF##*/}-darwin_x64.zip
 
       - name: Build Linux
         if: matrix.name == 'linux'
         run: |
           yarn make:linux
           mkdir -p ./out/keep
-          mv ./out/make/deb/x64/*.deb ./out/keep/gb-studio-${GITHUB_REF##*/}-linux_x86_64.deb
-          mv ./out/make/rpm/x64/*.rpm ./out/keep/gb-studio-${GITHUB_REF##*/}-linux_x86_64.rpm
-          mv ./out/make/AppImage/x64/*.AppImage ./out/keep/gb-studio-${GITHUB_REF##*/}-linux_x86_64.AppImage
+          mv ./out/make/deb/x64/*.deb ./out/keep/bb-studio-${GITHUB_REF##*/}-linux_x86_64.deb
+          mv ./out/make/rpm/x64/*.rpm ./out/keep/bb-studio-${GITHUB_REF##*/}-linux_x86_64.rpm
+          mv ./out/make/AppImage/x64/*.AppImage ./out/keep/bb-studio-${GITHUB_REF##*/}-linux_x86_64.AppImage
 
       - name: Build Win32
         if: matrix.name == 'win32'
@@ -135,7 +135,7 @@ jobs:
           export PATH=$PATH:/usr/lib/wine
           yarn make:win32
           mkdir -p ./out/keep
-          mv ./out/make/zip/win32/ia32/*.zip ./out/keep/gb-studio-${CIRCLE_BRANCH}-windows_x86.zip
+          mv ./out/make/zip/win32/ia32/*.zip ./out/keep/bb-studio-${CIRCLE_BRANCH}-windows_x86.zip
 
       - name: Build Win64
         if: matrix.name == 'win64'
@@ -146,7 +146,7 @@ jobs:
           export PATH=$PATH:/usr/lib/wine
           yarn make:win
           mkdir -p ./out/keep
-          mv ./out/make/zip/win32/x64/*.zip ./out/keep/gb-studio-${CIRCLE_BRANCH}-windows_x86_64.zip
+          mv ./out/make/zip/win32/x64/*.zip ./out/keep/bb-studio-${CIRCLE_BRANCH}-windows_x86_64.zip
 
       - uses: actions/upload-artifact@v4
         with:

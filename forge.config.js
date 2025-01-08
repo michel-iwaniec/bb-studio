@@ -9,8 +9,8 @@ module.exports = async () => {
       {
         name: "@electron-forge/maker-squirrel",
         config: {
-          name: "gb_studio",
-          exe: "gb-studio.exe",
+          name: "bb_studio",
+          exe: "bb-studio.exe",
           loadingGif: "src/assets/app/install.gif",
           setupIcon: "src/assets/app/icon/app_icon.ico",
         },
@@ -30,8 +30,8 @@ module.exports = async () => {
       },
     ],
     packagerConfig: {
-      name: "GB Studio",
-      executableName: "gb-studio",
+      name: "BB Studio",
+      executableName: "bb-studio",
       packageManager: "yarn",
       icon: "src/assets/app/icon/app_icon",
       darwinDarkModeSupport: true,
