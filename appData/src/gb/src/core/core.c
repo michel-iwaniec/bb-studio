@@ -56,11 +56,16 @@ void core_reset(void) BANKED {
     music_init_events(FALSE);
 }
 
+extern uint8_t _lcd_scanline;
+uint8_t max_sprites_previous;
+
 void process_VM(void) {
+    max_sprites_previous = MAX_HARDWARE_SPRITES;
     while (TRUE) {
         switch (script_runner_update()) {
             case RUNNER_DONE:
             case RUNNER_IDLE: {                
+                //PPUMASK = shadow_PPUMASK | 0x01; // DEBUGHACK: Make initial frame events set grayscale bit (ON)
                 input_update();
                 if (INPUT_SOFT_RESTART) {
                     // kill all threads and clear VM memory 
@@ -70,27 +75,37 @@ void process_VM(void) {
                     break;
                 }
                 if (!VM_ISLOCKED()) {
+                    //PPUMASK = shadow_PPUMASK | 0x61; // DEBUGHACK: Make events update color screen yellow-gray (ON)
                     if (joy != 0) events_update();                      // update joypad events (must be the first)
+                    //PPUMASK = shadow_PPUMASK | 0x21; // DEBUGHACK: Make state update color screen red-gray (ON)    
                     state_update();                                     // update current scene, depending on its type
+                    //PPUMASK = shadow_PPUMASK | 0x41; // DEBUGHACK: Make state update color screen green-gray (ON)
                     if ((game_time & 0x0F) == 0x00) timers_update();    // update timers
+                    //PPUMASK = shadow_PPUMASK | 0x61; // DEBUGHACK: Make state update color screen yellow-gray (ON)
                     music_events_update();                              // update music events
                 }
+                //PPUMASK = shadow_PPUMASK;
 
                 toggle_shadow_OAM();                
-
+                //PPUMASK = shadow_PPUMASK | 0x80; // DEBUGHACK: Make scroll update color screen blue (ON)
                 camera_update();
+                //PPUMASK = shadow_PPUMASK | 0x40; // DEBUGHACK: Make scroll update color screen green (ON)
                 scroll_update();
+                //PPUMASK = shadow_PPUMASK | 0x20; // DEBUGHACK: Make actors/projectiles update color screen red (ON)
                 actors_update();
+                //PPUMASK = shadow_PPUMASK;        // DEBUGHACK: color screen (OFF)
                 projectiles_update();                                   // update and render projectiles
-
+                //PPUMASK = shadow_PPUMASK | 0x60; // DEBUGHACK: Make UI update color screen yellow (ON)
                 ui_update();
+                //PPUMASK = shadow_PPUMASK | 0x20; // DEBUGHACK: Make actors/projectiles update color screen red (ON)
                 actors_handle_player_collision();
 
                 game_time++;
-
+                //PPUMASK = shadow_PPUMASK | 0xC0; // DEBUGHACK: Make actors/projectiles update color screen cyan (ON)
                 activate_shadow_OAM();
-
+                //PPUMASK = shadow_PPUMASK | 0xE0; // DEBUGHACK: Make actors/projectiles update color screen gray (ON)
                 wait_vbl_done();
+                //PPUMASK = shadow_PPUMASK;        // DEBUGHACK: color screen (OFF)
                 break;
             }
             case RUNNER_BUSY: break;
@@ -98,7 +113,12 @@ void process_VM(void) {
                 UBYTE fade_in = TRUE;
                 switch (vm_exception_code) {
                     case EXCEPTION_RESET: {
+                        // Default to 8x16 sprite mode
+                        SPRITES_8x16;
+                        // Hide BG and SPR in leftmost column
+                        //shadow_PPUMASK &= ~(PPUMASK_SHOW_BG_LC | PPUMASK_SHOW_SPR_LC);
                         // remove previous LCD ISR's
+                        _lcd_scanline = 16;
                         remove_LCD_ISRs();
                         // reset everything
                         core_reset_hook();
@@ -159,7 +179,7 @@ void process_VM(void) {
                             add_LCD(simple_LCD_isr);
                             break;
                     }
-                    LYC_REG = 0u;
+                    //LYC_REG = 0u;
                 }
                 if (!hide_sprites) SHOW_SPRITES;    // show sprites back if we switched LCD ISR while sprites were hidden 
 
@@ -189,13 +209,13 @@ void core_run(void) BANKED {
     _is_CGB = ((!_is_SGB) && (_cpu == CGB_TYPE) && (*(UBYTE *)0x0143 & 0x80));
 #else
     _is_SGB = FALSE;
-    _is_CGB = ((_cpu == CGB_TYPE) && (*(UBYTE *)0x0143 & 0x80));
+    _is_CGB = TRUE; //FALSE; //((_cpu == CGB_TYPE) && (*(UBYTE *)0x0143 & 0x80));
 #endif
     // GBA features only available together with CGB
-    _is_GBA = (_is_GBA && _is_CGB);
+    //_is_GBA = (_is_GBA && _is_CGB);
 
 #ifdef CGB
-    if (_is_CGB) cpu_fast();
+    //if (_is_CGB) cpu_fast();
 #endif
 
     memset(shadow_OAM2, 0, sizeof(shadow_OAM2));
@@ -205,12 +225,12 @@ void core_run(void) BANKED {
     display_off();
     palette_init();
 
-    LCDC_REG = LCDCF_OFF | LCDCF_WIN9C00 | LCDCF_WINON | LCDCF_BG8800 | LCDCF_BG9800 | LCDCF_OBJ16 | LCDCF_OBJON | LCDCF_BGON;
+    //LCDC_REG = LCDCF_OFF | LCDCF_WIN9C00 | LCDCF_WINON | LCDCF_BG8800 | LCDCF_BG9800 | LCDCF_OBJ16 | LCDCF_OBJON | LCDCF_BGON;
 
-    WX_REG = DEVICE_WINDOW_PX_OFFSET_X;
-    WY_REG = MENU_CLOSED_Y;
+    //WX_REG = DEVICE_WINDOW_PX_OFFSET_X;
+    //WY_REG = MENU_CLOSED_Y;
 
-    initrand(DIV_REG);
+    //initrand(DIV_REG);
 
     // reset everything (before init interrupts below!)
     core_reset_hook();
@@ -219,13 +239,15 @@ void core_run(void) BANKED {
 
     CRITICAL {
         parallax_row = parallax_rows;
-        LYC_REG = 0u;
+        //LYC_REG = 0u;
 
         add_VBL(VBL_isr);
-        STAT_REG |= STATF_LYC; 
+        //STAT_REG |= STATF_LYC; 
+        
+        add_TIM(music_update_driver);
 
         music_setup_timer();
-        IE_REG |= (TIM_IFLAG | LCD_IFLAG | SIO_IFLAG);
+        //IE_REG |= (TIM_IFLAG | LCD_IFLAG | SIO_IFLAG);
     }
     DISPLAY_ON;
 

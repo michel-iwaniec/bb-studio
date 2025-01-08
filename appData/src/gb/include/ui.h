@@ -10,9 +10,10 @@
 #define MENU_CANCEL_B    2
 #define MENU_SET_START   4
 
-#define TEXT_BUFFER_START 0xCCu
-#define TEXT_BUFFER_START_BANK1 0xC0u
-#define TEXT_BUFFER_LEN ((UBYTE)(0x100 - TEXT_BUFFER_START))
+#define TEXT_BUFFER_START 0x8C //0xCCu
+#define TEXT_BUFFER_START_BANK1 0x80u //0xC0u
+//#define TEXT_BUFFER_LEN ((UBYTE)(0x100 - TEXT_BUFFER_START))
+#define TEXT_BUFFER_LEN ((UBYTE)(0x0FC - TEXT_BUFFER_START)) // gbdk-nes: Reserve last 4 tiles of CHR for 8x8 attributes
 #define TEXT_BKG_FILL_W 0x00u
 #define TEXT_BKG_FILL_B 0xffu
 #define TEXT_MAX_LENGTH 255
@@ -27,17 +28,18 @@
 #define MENU_CANCEL_ON_B_PRESSED 0x02U
 
 #define ui_bkg_tile   0x07u
-#define ui_white_tile 0xC9u
-#define ui_black_tile 0xCAu
+#define ui_white_tile 0x89u //0xC9u
+#define ui_black_tile 0x8Au //0xCAu
 
-#define ui_cursor_tile 0xCBu
-#define ui_bg_tile 0xC4u
+#define ui_cursor_tile 0x8Bu //0xCBu
+#define ui_bg_tile 0x84u //0xC4u
 
 extern UBYTE win_pos_x, win_dest_pos_x;
 extern UBYTE win_pos_y, win_dest_pos_y;
 extern UBYTE win_speed;
 
 extern UBYTE text_drawn;
+extern UBYTE text_wait;
 
 #define TEXT_OPT_DEFAULT 0
 #define TEXT_OPT_PRESERVE_POS 1
@@ -79,7 +81,7 @@ extern UBYTE text_palette;
 #endif
 
 void ui_init(void) BANKED;
-void ui_update(void) NONBANKED;  // critical path, NONBANKED for speed
+void ui_update(void) BANKED REENTRANT;  // critical path, NONBANKED for speed
 
 void ui_load_tiles(void) BANKED;
 
@@ -111,6 +113,6 @@ inline void ui_move_to(UBYTE x, UBYTE y, BYTE speed) {
     if (speed == UI_SPEED_INSTANT) win_pos_y = y, win_pos_x = x; else win_speed = speed;
 }
 
-UBYTE ui_run_menu(menu_item_t * start_item, UBYTE bank, UBYTE options, UBYTE count, UBYTE start_index) BANKED;
+UBYTE ui_run_menu(menu_item_t * start_item, UBYTE bank, UBYTE options, UBYTE count, UBYTE start_index) BANKED REENTRANT;
 
 #endif

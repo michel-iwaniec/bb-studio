@@ -1,5 +1,5 @@
 XL4
-H 22 areas 2C global symbols
+H 22 areas 2D global symbols
 M Runtime
 S l__DATA Ref00000000
 S _main Ref00000000
@@ -77,6 +77,7 @@ A _HEAP size 0 flags 0 addr 0
 A _HEAP_END size 0 flags 0 addr 0
 A _HRAM size 0 flags 8 addr 0
 A _HRAM12 size 3 flags 8 addr FF90
+S __vbl_done Def0000FF91
 S __shadow_OAM_base Def0000FF92
 S __current_bank Def0000FF90
 T 20 00 00 00
@@ -332,6 +333,8 @@ R 00 00 21 00
 T 90 FF 00 00
 R 00 00 21 00
 T 90 FF 00 00
+R 00 00 21 00
+T 91 FF 00 00
 R 00 00 21 00
 T 91 FF 00 00
 R 00 00 21 00

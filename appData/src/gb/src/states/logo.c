@@ -7,8 +7,8 @@
 #include "game_time.h"
 
 void logo_init(void) BANKED {
-  camera_offset_x = 0;
-  camera_offset_y = 0;
+  camera_offset_x_x16 = 0;
+  camera_offset_y_x16 = 0;
 
   game_time = 0;
 }

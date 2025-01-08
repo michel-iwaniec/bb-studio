@@ -36,7 +36,7 @@ void fade_out(void) BANKED;
 /**
  * Update current fade
  */
-void fade_update(void) BANKED;
+void fade_update(void) BANKED REENTRANT;
 
 /**
  * Refresh tile coloring to reflect changes in palette

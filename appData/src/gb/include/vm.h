@@ -23,12 +23,19 @@ BANKREF_EXTERN(VM_MAIN)
 
 #if defined(NINTENDO)
 #define STEP_FUNC_ATTR
-typedef UWORD DUMMY0_t;
-typedef UWORD DUMMY1_t;
+typedef uint16_t DUMMY0_t;
+typedef uint16_t DUMMY1_t;
+#define DUMMY_SIGNATURE DUMMY0_t dummy0, DUMMY1_t dummy1, SCRIPT_CTX * THIS
 #elif defined(SEGA)
 #define STEP_FUNC_ATTR Z88DK_FASTCALL
-typedef UBYTE DUMMY0_t;
-typedef UWORD DUMMY1_t;
+typedef uint8_t DUMMY0_t;
+typedef uint16_t DUMMY1_t;
+#define DUMMY_SIGNATURE DUMMY0_t dummy0, DUMMY1_t dummy1, SCRIPT_CTX * THIS
+#elif defined(NINTENDO_NES)
+#define STEP_FUNC_ATTR
+typedef uint8_t DUMMY0_t;
+typedef uint16_t DUMMY1_t;
+#define DUMMY_SIGNATURE SCRIPT_CTX * THIS, DUMMY0_t dummy0, DUMMY1_t dummy1
 #endif
 
 typedef void * SCRIPT_CMD_FN;
@@ -40,7 +47,7 @@ typedef struct SCRIPT_CMD {
 } SCRIPT_CMD;
 
 #define FAR_CALL_EX(addr, seg, typ, ...) (__call_banked_addr=(addr),__call_banked_bank=(seg),((typ)(&__call__banked))(__VA_ARGS__))
-typedef UBYTE (*SCRIPT_UPDATE_FN)(void * THIS, UBYTE start, UWORD * stack_frame) OLDCALL BANKED;
+typedef UBYTE (*SCRIPT_UPDATE_FN)(void * THIS, UBYTE start, UWORD * stack_frame) OLDCALL BANKED REENTRANT;
 
 #define VM_REF_TO_PTR(idx) (void *)(((idx) < 0) ? THIS->stack_ptr + (idx) : script_memory + (idx))
 #define VM_GLOBAL(idx) script_memory[(idx)]
@@ -69,11 +76,17 @@ typedef struct SCRIPT_CTX {
 #define INSTRUCTION_SIZE 1
 
 // maximum number of concurrent running VM threads
-#define VM_MAX_CONTEXTS 16
+#ifndef VM_MAX_CONTEXTS
+#define VM_MAX_CONTEXTS 4 //16
+#endif
 // stack size of each VM thread
-#define VM_CONTEXT_STACK_SIZE 64
+#ifndef VM_CONTEXT_STACK_SIZE
+#define VM_CONTEXT_STACK_SIZE 32 //64
+#endif
 // number of shared variables
-#define VM_HEAP_SIZE 768
+#ifndef VM_HEAP_SIZE
+#define VM_HEAP_SIZE 128 //1024
+#endif
 // quant size
 #define INSTRUCTIONS_PER_QUANT 0x10
 // termination flag
@@ -91,7 +104,7 @@ typedef struct SCRIPT_CTX {
 #define VM_OP_NOT 9
 
 // shared context memory
-extern UWORD script_memory[VM_HEAP_SIZE + (VM_MAX_CONTEXTS * VM_CONTEXT_STACK_SIZE)];  // maximum stack depth is 16 words
+extern UWORD AT(0x7800) script_memory[VM_HEAP_SIZE + (VM_MAX_CONTEXTS * VM_CONTEXT_STACK_SIZE)];  // maximum stack depth is 16 words
 
 // contexts for executing scripts
 // ScriptRunnerInit(), ExecuteScript(), ScriptRunnerUpdate() manipulate these contexts
@@ -111,43 +124,43 @@ extern UBYTE vm_exception_params_bank;
 extern const void * vm_exception_params_offset;
 
 // script core functions
-void vm_push(SCRIPT_CTX * THIS, UWORD value) OLDCALL BANKED;
-UWORD vm_pop(SCRIPT_CTX * THIS, UBYTE n) OLDCALL BANKED;
-void vm_call(SCRIPT_CTX * THIS, UBYTE * pc) OLDCALL BANKED;
-void vm_ret(SCRIPT_CTX * THIS, UBYTE n) OLDCALL BANKED;
-void vm_call_far(SCRIPT_CTX * THIS, UBYTE bank, UBYTE * pc) OLDCALL BANKED;
-void vm_ret_far(SCRIPT_CTX * THIS, UBYTE n) OLDCALL BANKED;
-void vm_loop(SCRIPT_CTX * THIS, INT16 idx, UINT8 * pc, UBYTE n) OLDCALL BANKED;
-void vm_switch(DUMMY0_t dummy0, DUMMY1_t dummy1, SCRIPT_CTX * THIS, INT16 idx, UBYTE size, UBYTE n) OLDCALL NONBANKED;
-void vm_jump(SCRIPT_CTX * THIS, UBYTE * pc) OLDCALL BANKED;
-void vm_invoke(SCRIPT_CTX * THIS, UBYTE bank, UBYTE * fn, UBYTE nparams, INT16 idx) OLDCALL BANKED;
-void vm_beginthread(DUMMY0_t dummy0, DUMMY1_t dummy1, SCRIPT_CTX * THIS, UBYTE bank, UBYTE * pc, INT16 idx, UBYTE nargs) OLDCALL NONBANKED;
-void vm_if(SCRIPT_CTX * THIS, UBYTE condition, INT16 idxA, INT16 idxB, UBYTE * pc, UBYTE n) OLDCALL BANKED;
-void vm_if_const(SCRIPT_CTX * THIS, UBYTE condition, INT16 idxA, INT16 B, UBYTE * pc, UBYTE n) OLDCALL BANKED;
-void vm_push_value(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED;
-void vm_push_value_ind(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED;
-void vm_push_reference(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED;
-void vm_reserve(SCRIPT_CTX * THIS, INT8 ofs) OLDCALL BANKED;
-void vm_set(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB) OLDCALL BANKED;
-void vm_set_const(SCRIPT_CTX * THIS, INT16 idx, UWORD value) OLDCALL BANKED;
-void vm_rpn(DUMMY0_t dummy0, DUMMY1_t dummy1, SCRIPT_CTX * THIS) OLDCALL NONBANKED;
-void vm_join(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED;
-void vm_terminate(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED;
-void vm_idle(SCRIPT_CTX * THIS) OLDCALL BANKED;
-void vm_get_tlocal(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB) OLDCALL BANKED;
-void vm_get_far(DUMMY0_t dummy0, DUMMY1_t dummy1, SCRIPT_CTX * THIS, INT16 idxA, UBYTE size, UBYTE bank, UBYTE * addr) OLDCALL NONBANKED;
-void vm_init_rng(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED;
-void vm_rand(SCRIPT_CTX * THIS, INT16 idx, UINT16 min, UINT16 limit) OLDCALL BANKED;
-void vm_lock(SCRIPT_CTX * THIS) OLDCALL BANKED;
-void vm_unlock(SCRIPT_CTX * THIS) OLDCALL BANKED;
-void vm_raise(SCRIPT_CTX * THIS, UBYTE code, UBYTE size) OLDCALL BANKED;
-void vm_set_indirect(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB) OLDCALL BANKED;
-void vm_get_indirect(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB) OLDCALL BANKED;
-void vm_test_terminate(SCRIPT_CTX * THIS, UBYTE flags) OLDCALL BANKED;
-void vm_poll_loaded(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED;
-void vm_call_native(DUMMY0_t dummy0, DUMMY1_t dummy1, SCRIPT_CTX * THIS, UINT8 bank, const void * ptr) OLDCALL NONBANKED;
-void vm_memset(SCRIPT_CTX * THIS, INT16 idx, INT16 value, INT16 count) OLDCALL BANKED;
-void vm_memcpy(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB, INT16 count) OLDCALL BANKED;
+void vm_push(SCRIPT_CTX * THIS, UWORD value) OLDCALL BANKED REENTRANT;
+UWORD vm_pop(SCRIPT_CTX * THIS, UBYTE n) OLDCALL BANKED REENTRANT;
+void vm_call(SCRIPT_CTX * THIS, UBYTE * pc) OLDCALL BANKED REENTRANT;
+void vm_ret(SCRIPT_CTX * THIS, UBYTE n) OLDCALL BANKED REENTRANT;
+void vm_call_far(SCRIPT_CTX * THIS, UBYTE bank, UBYTE * pc) OLDCALL BANKED REENTRANT;
+void vm_ret_far(SCRIPT_CTX * THIS, UBYTE n) OLDCALL BANKED REENTRANT;
+void vm_loop(SCRIPT_CTX * THIS, INT16 idx, UINT8 * pc, UBYTE n) OLDCALL BANKED REENTRANT;
+void vm_switch(DUMMY_SIGNATURE, INT16 idx, UBYTE size, UBYTE n) OLDCALL NONBANKED REENTRANT;
+void vm_jump(SCRIPT_CTX * THIS, UBYTE * pc) OLDCALL BANKED REENTRANT;
+void vm_invoke(SCRIPT_CTX * THIS, UBYTE bank, UBYTE * fn, UBYTE nparams, INT16 idx) OLDCALL BANKED REENTRANT;
+void vm_beginthread(DUMMY_SIGNATURE, UBYTE bank, UBYTE * pc, INT16 idx, UBYTE nargs) OLDCALL NONBANKED REENTRANT;
+void vm_if(SCRIPT_CTX * THIS, UBYTE condition, INT16 idxA, INT16 idxB, UBYTE * pc, UBYTE n) OLDCALL BANKED REENTRANT;
+void vm_if_const(SCRIPT_CTX * THIS, UBYTE condition, INT16 idxA, INT16 B, UBYTE * pc, UBYTE n) OLDCALL BANKED REENTRANT;
+void vm_push_value(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED REENTRANT;
+void vm_push_value_ind(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED REENTRANT;
+void vm_push_reference(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED REENTRANT;
+void vm_reserve(SCRIPT_CTX * THIS, INT8 ofs) OLDCALL BANKED REENTRANT;
+void vm_set(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB) OLDCALL BANKED REENTRANT;
+void vm_set_const(SCRIPT_CTX * THIS, INT16 idx, UWORD value) OLDCALL BANKED REENTRANT;
+void vm_rpn(DUMMY_SIGNATURE) OLDCALL BANKED REENTRANT;
+void vm_join(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED REENTRANT;
+void vm_terminate(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED REENTRANT;
+void vm_idle(SCRIPT_CTX * THIS) OLDCALL BANKED REENTRANT;
+void vm_get_tlocal(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB) OLDCALL BANKED REENTRANT;
+void vm_get_far(DUMMY0_t dummy0, DUMMY1_t dummy1, SCRIPT_CTX * THIS, INT16 idxA, UBYTE size, UBYTE bank, UBYTE * addr) OLDCALL NONBANKED REENTRANT;
+void vm_init_rng(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED REENTRANT;
+void vm_rand(SCRIPT_CTX * THIS, INT16 idx, UINT16 min, UINT16 limit) OLDCALL BANKED REENTRANT;
+void vm_lock(SCRIPT_CTX * THIS) OLDCALL BANKED REENTRANT;
+void vm_unlock(SCRIPT_CTX * THIS) OLDCALL BANKED REENTRANT;
+void vm_raise(SCRIPT_CTX * THIS, UBYTE code, UBYTE size) OLDCALL BANKED REENTRANT;
+void vm_set_indirect(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB) OLDCALL BANKED REENTRANT;
+void vm_get_indirect(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB) OLDCALL BANKED REENTRANT;
+void vm_test_terminate(SCRIPT_CTX * THIS, UBYTE flags) OLDCALL BANKED REENTRANT;
+void vm_poll_loaded(SCRIPT_CTX * THIS, INT16 idx) OLDCALL BANKED REENTRANT;
+void vm_call_native(DUMMY_SIGNATURE, UINT8 bank, const void * ptr) OLDCALL NONBANKED REENTRANT;
+void vm_memset(SCRIPT_CTX * THIS, INT16 idx, INT16 value, INT16 count) OLDCALL BANKED REENTRANT;
+void vm_memcpy(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB, INT16 count) OLDCALL BANKED REENTRANT;
 
 // return zero if script end
 // bank with VM code must be active
@@ -162,7 +175,7 @@ inline UBYTE VM_ISLOCKED(void) {
 // #define SAFE_SCRIPT_EXECUTE
 
 // initialize script runner contexts
-void script_runner_init(UBYTE reset) BANKED;
+void script_runner_init(UBYTE reset) BANKED REENTRANT;
 // execute a script in the new allocated context
 SCRIPT_CTX * script_execute(UBYTE bank, UBYTE * pc, UWORD * handle, UBYTE nargs, ...) BANKED;
 // terminate script by ID; returns non zero if no such thread is running

@@ -25,17 +25,21 @@ uint8_t music_play_isr_counter;
 uint8_t music_play_isr_pause;
 uint8_t music_global_mute_mask;
 uint8_t music_sfx_priority;
+//
+int8_t music_update_pending;
 
 #ifdef HUGE_TRACKER
 void hUGETrackerRoutine(unsigned char tick, unsigned int param) NONBANKED {
+/*
     if (tick) return; // return if not zero tick
     routine_queue_head++, routine_queue_head &= (MAX_ROUTINE_QUEUE_LEN - 1);
     if (routine_queue_head == routine_queue_tail) routine_queue_tail++, routine_queue_tail &= (MAX_ROUTINE_QUEUE_LEN - 1);
     routine_queue[routine_queue_head] = (uint8_t)param;
+*/
 }
 #endif
 
-void music_init_driver(void) BANKED {
+void music_init_driver(void) NONBANKED REENTRANT{
     music_init();
     music_play_isr_counter = 0;
     music_play_isr_pause = FALSE;
@@ -43,7 +47,7 @@ void music_init_driver(void) BANKED {
     music_sfx_priority = MUSIC_SFX_PRIORITY_MINIMAL;
 }
 
-void music_init_events(uint8_t preserve) BANKED {
+void music_init_events(uint8_t preserve) BANKED REENTRANT {
     if (preserve) {
         for (uint8_t i = 0; i < 4; i++)
             music_events[i].handle = 0;
@@ -55,7 +59,7 @@ void music_init_events(uint8_t preserve) BANKED {
     }
 }
 
-void music_events_update(void) NONBANKED {
+void music_events_update(void) NONBANKED REENTRANT {
     while (routine_queue_head != routine_queue_tail) {
         uint8_t data;
         CRITICAL {
@@ -69,7 +73,7 @@ void music_events_update(void) NONBANKED {
     }
 }
 
-uint8_t music_events_poll(void) BANKED {
+uint8_t music_events_poll(void) BANKED REENTRANT {
     if (routine_queue_head != routine_queue_tail) {
         uint8_t data;
         CRITICAL {
@@ -99,17 +103,51 @@ void music_play_isr(void) NONBANKED {
     }
     if (music_play_isr_pause) return;
     if (music_current_track_bank == MUSIC_STOP_BANK) return;
-    if (++music_play_isr_counter & 3) return;
+    //if (++music_play_isr_counter & 3) return;
     uint8_t save_bank = CURRENT_BANK;
     SWITCH_ROM(music_current_track_bank);
     if (music_next_track) {
+        music_update_pending |= 0x80;
         music_sound_cut();
         driver_init(music_current_track_bank, music_next_track, TRUE);
         music_next_track = NULL;
-    } else driver_update();
+    } else {
+        music_update_pending &= 0x7F;
+        //driver_update();
+        //music_update_pending += 1;
+    }
     SWITCH_ROM(save_bank);
 }
 
 void music_pause(uint8_t pause) {
     if (music_play_isr_pause = pause) music_sound_cut();
 }
+
+void music_sound_cut(void) NONBANKED {
+    music_current_track_bank = MUSIC_BANK; // TODO: Don't hardcode music bank
+    sfx_sound_cut();
+#ifdef FAMISTUDIO
+    uint8_t save_bank = CURRENT_BANK;
+    SWITCH_ROM(music_current_track_bank);
+    famistudio_music_stop();
+    famistudio_update();
+    SWITCH_ROM(save_bank);
+#endif
+}
+/*
+void music_update_driver(void) NONBANKED {
+#ifdef FAMISTUDIO
+    uint8_t save_bank = CURRENT_BANK;
+    SWITCH_ROM(music_current_track_bank);
+    if(music_update_pending > 0) {
+        driver_update();
+        music_update_pending -= 1;
+    }
+    if(music_update_pending > 0) {
+        driver_update();
+        music_update_pending -= 1;
+    }
+    SWITCH_ROM(save_bank);
+#endif
+}
+*/

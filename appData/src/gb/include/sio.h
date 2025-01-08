@@ -31,18 +31,22 @@ extern UBYTE link_packet_sent;
 void SIO_init(void) BANKED;
 
 inline void SIO_set_mode(UBYTE mode) {
+#if defined(GAMEBOY)
     link_operation_mode = mode;
     if (mode == LINK_MODE_SLAVE) {
         SIO_receive();
     }
+#endif
 }
 
 inline void SIO_send_async(UBYTE len, const UBYTE * data) {
+#if defined(GAMEBOY)
     link_packet_snd_len = len;
     link_packet_snd_ptr = data;
     link_byte_sent = FALSE;
     SIO_send_byte(len);
     link_packet_sent = (link_packet_snd_len == 0);
+#endif
 }
 
 #endif

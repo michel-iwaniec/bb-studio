@@ -17,6 +17,9 @@ projectile_def_t projectile_defs[MAX_PROJECTILE_DEFS];
 projectile_t *projectiles_active_head;
 projectile_t *projectiles_inactive_head;
 
+extern int16_t scene_sprite_px_offset_x_compensate;
+extern int16_t scene_sprite_px_offset_y_compensate;
+
 void projectiles_init(void) BANKED {
     projectiles_active_head = projectiles_inactive_head = NULL;
     for (projectile_t * proj = projectiles; proj < (projectiles + MAX_PROJECTILES); ++proj) {
@@ -24,12 +27,50 @@ void projectiles_init(void) BANKED {
     }
 }
 
+// Optimized versions for projectile_update
+inline UBYTE bb_intersects_opt_p(bounding_box_16_t *bb_a, uint16_t a_x, uint16_t a_y, bounding_box_16_t *bb_b, upoint16_t *offset_b) {
+    if ((offset_b->x + bb_b->left   > a_x + bb_a->right) ||
+        (offset_b->x + bb_b->right  < a_x + bb_a->left)) return FALSE;
+    if ((offset_b->y + bb_b->top    > a_y + bb_a->bottom) ||
+        (offset_b->y + bb_b->bottom < a_y + bb_a->top)) return FALSE;
+    return TRUE;
+}
+
+inline actor_t *actor_overlapping_bb_opt_p(bounding_box_16_t *bb, uint16_t pos_x, uint16_t pos_y) {
+    actor_t *actor = &PLAYER;
+
+    while (actor) {
+        if (bb_intersects_opt_p(bb, pos_x, pos_y, &actor->bounds_x16, &actor->pos)) {
+            return actor;
+        }
+
+        actor = actor->prev;
+    }
+
+    return NULL;
+}
+
+
 static UBYTE _save_bank;
 static projectile_t *projectile;
 static projectile_t *prev_projectile;
 
-void projectiles_update(void) NONBANKED {
-    projectile_t *next;
+void draw_projectile(UBYTE x, UBYTE y) NONBANKED
+{
+    spritesheet_t *sprite = projectile->def.sprite.ptr;
+    SWITCH_ROM(projectile->def.sprite.bank);
+    allocated_hardware_sprites += move_metasprite(
+                *(sprite->metasprites + projectile->frame),
+                projectile->def.base_tile | 1,
+                allocated_hardware_sprites,
+                x + scene_sprite_px_offset_x_compensate, //DEVICE_SPRITE_PX_OFFSET_X_COMPENSATE,
+                y + scene_sprite_px_offset_y_compensate //DEVICE_SPRITE_PX_OFFSET_Y_COMPENSATE
+            );
+    SWITCH_ROM(_save_bank);
+}
+
+void projectiles_update(void) BANKED {
+        projectile_t *next;
 
     projectile = projectiles_active_head;
     prev_projectile = NULL;
@@ -65,7 +106,7 @@ void projectiles_update(void) NONBANKED {
         projectile->pos.y -= projectile->delta_pos.y;
 
         if (IS_FRAME_EVEN) {
-            actor_t *hit_actor = actor_overlapping_bb(&projectile->def.bounds, &projectile->pos, NULL, FALSE);
+            actor_t *hit_actor = actor_overlapping_bb_opt_p(&projectile->def.bounds_x16, projectile->pos.x, projectile->pos.y);
             if (hit_actor && (hit_actor->collision_group & projectile->def.collision_mask)) {
                 // Hit! - Fire collision script here
                 if ((hit_actor->script.bank) && (hit_actor->hscript_hit & SCRIPT_TERMINATED)) {
@@ -94,25 +135,16 @@ void projectiles_update(void) NONBANKED {
             continue;
         }
 
-        SWITCH_ROM(projectile->def.sprite.bank);
-        spritesheet_t *sprite = projectile->def.sprite.ptr;
-
-        allocated_hardware_sprites += move_metasprite(
-            *(sprite->metasprites + projectile->frame),
-            projectile->def.base_tile,
-            allocated_hardware_sprites,
-            screen_x,
-            screen_y
-        );
+        draw_projectile(screen_x, screen_y);
 
         prev_projectile = projectile;
         projectile = projectile->next;
     }
 
-    SWITCH_ROM(_save_bank);
+    //SWITCH_ROM(_save_bank);
 }
 
-void projectiles_render(void) NONBANKED {
+void projectiles_render(void) BANKED {
     projectile = projectiles_active_head;
     prev_projectile = NULL;
 
@@ -131,16 +163,9 @@ void projectiles_render(void) NONBANKED {
             continue;
         }
 
-        SWITCH_ROM(projectile->def.sprite.bank);
+        //SWITCH_ROM(projectile->def.sprite.bank);
         spritesheet_t *sprite = projectile->def.sprite.ptr;
-
-        allocated_hardware_sprites += move_metasprite(
-            *(sprite->metasprites + projectile->frame),
-            projectile->def.base_tile,
-            allocated_hardware_sprites,
-            screen_x,
-            screen_y
-        );
+        draw_projectile(screen_x, screen_y);
 
         prev_projectile = projectile;
         projectile = projectile->next;

@@ -51,37 +51,37 @@
 #define INPUT_SELECT (joy & J_SELECT)
 
 /* TRUE on first frame that any button is pressed */
-#define INPUT_ANY_PRESSED (joy & ~last_joy)
+#define INPUT_ANY_PRESSED (joy_pressed)
 
 /* TRUE on first frame that left is pressed on dpad  */
-#define INPUT_LEFT_PRESSED ((joy & ~last_joy) & J_LEFT)
+#define INPUT_LEFT_PRESSED (joy_pressed & J_LEFT)
 
 /* TRUE on first frame that right is pressed on dpad  */
-#define INPUT_RIGHT_PRESSED ((joy & ~last_joy) & J_RIGHT)
+#define INPUT_RIGHT_PRESSED (joy_pressed & J_RIGHT)
 
 /* TRUE on first frame that up is pressed on dpad  */
-#define INPUT_UP_PRESSED ((joy & ~last_joy) & J_UP)
+#define INPUT_UP_PRESSED (joy_pressed & J_UP)
 
 /* TRUE on first frame that down is pressed on dpad  */
-#define INPUT_DOWN_PRESSED ((joy & ~last_joy) & J_DOWN)
+#define INPUT_DOWN_PRESSED (joy_pressed & J_DOWN)
 
 /* TRUE on first frame that button is pressed */
-#define INPUT_PRESSED(btn) ((joy & ~last_joy) & (btn))
+#define INPUT_PRESSED(btn) (joy_pressed & (btn))
 
 /* TRUE on first frame that A button is pressed */
-#define INPUT_A_PRESSED ((joy & ~last_joy) & J_A)
+#define INPUT_A_PRESSED (joy_pressed & J_A)
 
 /* TRUE on first frame that B button is pressed */
-#define INPUT_B_PRESSED ((joy & ~last_joy) & J_B)
+#define INPUT_B_PRESSED (joy_pressed & J_B)
 
 /* TRUE on first frame that A OR B button is pressed */
-#define INPUT_A_OR_B_PRESSED ((joy & ~last_joy) & (J_A | J_B))
+#define INPUT_A_OR_B_PRESSED (joy_pressed & (J_A | J_B))
 
 /* TRUE on first frame that Start button is pressed */
-#define INPUT_START_PRESSED ((joy & ~last_joy) & J_START)
+#define INPUT_START_PRESSED (joy_pressed & J_START)
 
 /* TRUE on first frame that Select button is pressed */
-#define INPUT_SELECT_PRESSED ((joy & ~last_joy) & J_SELECT)
+#define INPUT_SELECT_PRESSED (joy_pressed & J_SELECT)
 
 #define INPUT_SOFT_RESTART (joy == (J_A | J_B | J_START | J_SELECT))
 
@@ -97,8 +97,9 @@ extern joypads_t joypads;
 extern UBYTE frame_joy;
 extern UBYTE last_joy;
 extern UBYTE recent_joy;
+extern UBYTE joy_pressed;
 
 void input_init(void) BANKED;
-void input_update(void) NONBANKED;
+void input_update(void) BANKED; //NONBANKED;
 
 #endif

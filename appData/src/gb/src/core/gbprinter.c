@@ -29,24 +29,28 @@ static uint16_t printer_status;
 static uint8_t printer_tile_num;
 
 uint8_t printer_send_receive(uint8_t b) {
-    SB_REG = b;
-    SC_REG = START_TRANSFER;
-    while (SC_REG & 0x80);
-    return SB_REG;
+    //SB_REG = b;
+    //SC_REG = START_TRANSFER;
+    //while (SC_REG & 0x80);
+    //return SB_REG;
+    return 0;
 }
 
 uint8_t printer_send_byte(uint8_t b) {
-    return (uint8_t)(printer_status = ((printer_status << 8) | printer_send_receive(b)));
+//    return (uint8_t)(printer_status = ((printer_status << 8) | printer_send_receive(b)));
+    return 0;
 }
 
 uint8_t printer_send_command(const uint8_t *command, uint8_t length) {
-    uint8_t index = 0;
-    while (index++ < length) printer_send_byte(*command++);
-    return ((uint8_t)(printer_status >> 8) == 0x81) ? (uint8_t)printer_status : PRN_STATUS_MASK_ERRORS;
+    //uint8_t index = 0;
+    //while (index++ < length) printer_send_byte(*command++);
+    //return ((uint8_t)(printer_status >> 8) == 0x81) ? (uint8_t)printer_status : //PRN_STATUS_MASK_ERRORS;
+    return 0;
 }
 #define PRINTER_SEND_COMMAND(CMD) printer_send_command((const uint8_t *)&(CMD), sizeof(CMD))
 
 uint8_t printer_print_tile(const uint8_t *tiledata) {
+/*
     static const uint8_t PRINT_TILE[] = { 0x88,0x33,0x04,0x00,0x80,0x02 };
     static uint16_t printer_CRC;
     if (printer_tile_num == 0) {
@@ -67,14 +71,18 @@ uint8_t printer_print_tile(const uint8_t *tiledata) {
         return TRUE;
     }
     return FALSE;
+*/
 }
 
 inline void printer_init(void) {
+/*
     printer_tile_num = 0;
     PRINTER_SEND_COMMAND(PRN_PKT_INIT);
+*/
 }
 
 uint8_t printer_wait(uint16_t timeout, uint8_t mask, uint8_t value) {
+/*
     uint8_t error;
     while (((error = PRINTER_SEND_COMMAND(PRN_PKT_STATUS)) & mask) != value) {
         if (timeout-- == 0) return PRN_STATUS_MASK_ERRORS;
@@ -82,15 +90,19 @@ uint8_t printer_wait(uint16_t timeout, uint8_t mask, uint8_t value) {
         wait_vbl_done();
     }
     return error;
+*/
 }
 
 
 uint8_t gbprinter_detect(uint8_t delay) BANKED {
+/*
     printer_init();
     return printer_wait(delay, PRN_STATUS_MASK_ANY, PRN_STATUS_OK);
+*/
 }
 
 uint8_t gbprinter_print_overlay(uint8_t start, uint8_t rows, uint8_t margins) BANKED {
+/*
     uint8_t tile_data[16], error, packets, pkt_count = 0;
     if ((packets = rows >> 1) == 0) return PRN_STATUS_OK;
 
@@ -136,4 +148,5 @@ uint8_t gbprinter_print_overlay(uint8_t start, uint8_t rows, uint8_t margins) BA
         if ((error = printer_wait(PRN_COMPLETION_TIMEOUT, PRN_STATUS_BUSY, 0)) & PRN_STATUS_MASK_ERRORS) return error;
     }
     return PRINTER_SEND_COMMAND(PRN_PKT_STATUS);
+*/
 }

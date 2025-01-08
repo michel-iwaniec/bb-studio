@@ -33,7 +33,8 @@ extern const uint8_t _SYSTEM;
 #define SYSTEM_60HZ    0x00
 #define SYSTEM_50HZ    0x01
 
-#define RGB(r,g,b)        RGB_TO_NES(((r) | ((g) << 2) | ((b) << 4)))
+//#define RGB(r,g,b)        RGB_TO_NES(((r) | ((g) << 2) | ((b) << 4)))
+#define RGB(r,g,b)        RGB_TO_NES((((r) >> 3) | (((g) >> 3) << 2) | (((b) >> 3) << 4)))
 #define RGB8(r,g,b)       RGB_TO_NES((((r) >> 6) | (((g) >> 6) << 2) | (((b) >> 6) << 4)))
 #define RGBHTML(RGB24bit) RGB_TO_NES((((RGB24bit) >> 22) | ((((RGB24bit) & 0xFFFF) >> 14) << 2) | ((((RGB24bit) & 0xFF) >> 6) << 4)))
 
@@ -184,6 +185,11 @@ void remove_VBL(int_handler h) NO_OVERLAY_LOCALS;
 */
 void remove_LCD(int_handler h) NO_OVERLAY_LOCALS;
 
+/** Removes the TIM interrupt handler.
+    @see add_TIM(), remove_VBL()
+*/
+void remove_TIM(int_handler h) NO_OVERLAY_LOCALS;
+
 /** Adds a Vertical Blanking interrupt handler.
 
     @param h  The handler to be called whenever a V-blank
@@ -247,6 +253,19 @@ void add_VBL(int_handler h) NO_OVERLAY_LOCALS;
     @see add_VBL, nowait_int_handler, ISR_VECTOR()
 */
 void add_LCD(int_handler h) NO_OVERLAY_LOCALS;
+
+/** Adds a timer interrupt handler.
+
+    Can not be used together with @ref add_low_priority_TIM
+
+    This interrupt handler is invoked at end-of-vblank for gbdk-nes,
+    after first invoking the VBL and LCD handler. It is therefore
+    currently limited to 60Hz / 50Hz (depending on system).
+
+    @see add_VBL
+    @see set_interrupts() with TIM_IFLAG, ISR_VECTOR()
+*/
+void add_TIM(int_handler h) NO_OVERLAY_LOCALS;
 
 /** The maximum number of times the LCD handler will be called per frame.
  */
@@ -748,11 +767,7 @@ void set_bkg_submap_attributes_nes16x16(uint8_t x, uint8_t y, uint8_t w, uint8_t
     @see SHOW_BKG
     @see set_bkg_data, set_bkg_tiles, set_win_submap, set_tiles
 */
-inline void set_bkg_submap_attributes(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint8_t *attributes, uint8_t map_w)
-{
-    set_bkg_submap_attributes_nes16x16(x >> 1, y >> 1, (w + 1) >> 1, (h + 1) >> 1, attributes, map_w >> 1);
-}
-
+void set_bkg_submap_attributes(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint8_t *attributes, uint8_t map_w) NO_OVERLAY_LOCALS;
 
 extern uint8_t _map_tile_offset;
 
@@ -866,6 +881,15 @@ uint8_t * set_bkg_tile_xy(uint8_t x, uint8_t y, uint8_t t) NO_OVERLAY_LOCALS;
 #define set_tile_xy set_bkg_tile_xy
 
 /**
+ * Set single tile t on window layer at x,y
+ * @param x X-coordinate
+ * @param y Y-coordinate
+ * @param t tile index
+ * @return returns the address of tile, so you may use faster set_vram_byte() later
+ */
+uint8_t * set_win_tile_xy(uint8_t x, uint8_t y, uint8_t t);
+
+/**
     Set single attribute data a on background layer at x,y
 
     @param x X-coordinate
@@ -886,10 +910,7 @@ void set_bkg_attribute_xy_nes16x16(uint8_t x, uint8_t y, uint8_t a) NO_OVERLAY_L
     @param y Y-coordinate
     @param a tile attributes
  */
-inline void set_bkg_attribute_xy(uint8_t x, uint8_t y, uint8_t a)
-{
-    set_bkg_attribute_xy_nes16x16(x >> 1, y >> 1, a);
-}
+void set_bkg_attribute_xy(uint8_t x, uint8_t y, uint8_t a) NO_OVERLAY_LOCALS;
 #define set_attribute_xy set_bkg_attribute_xy
 
 /**
@@ -1238,6 +1259,16 @@ void vmemset (void *s, uint8_t c, size_t n) NO_OVERLAY_LOCALS;
 */
 void fill_bkg_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t tile) NO_OVERLAY_LOCALS;
 #define fill_rect fill_bkg_rect
+
+/** Fills a rectangular region of Tile Map entries for the Window layer with tile.
+
+    @param x      X Start position in Window Map tile coordinates. Range 0 - 31
+    @param y      Y Start position in Window Map tile coordinates. Range 0 - 31
+    @param w      Width of area to set in tiles. Range 0 - 31
+    @param h      Height of area to set in tiles. Range 0 - 31
+    @param tile   Fill value
+*/
+void fill_win_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t tile);
 
 /** "Flushes" the updates to the shadow attributes so they are written
     to the transfer buffer, and then written to PPU memory on next vblank.
