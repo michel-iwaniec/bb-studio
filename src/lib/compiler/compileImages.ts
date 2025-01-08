@@ -15,7 +15,7 @@ import {
   TilesetData,
 } from "shared/lib/entities/entitiesTypes";
 import promiseLimit from "lib/helpers/promiseLimit";
-import { FLAG_VRAM_BANK_1 } from "consts";
+import { FLAG_VRAM_BANK_1, SCREEN_WIDTH, SCREEN_HEIGHT } from "consts";
 import { fileExists } from "lib/helpers/fs/fileExists";
 import {
   readFileToPalettes,
@@ -72,24 +72,17 @@ export const imageTileAllocationDefault: ImageTileAllocationStrategy = (
 export const imageTileAllocationColorOnly: ImageTileAllocationStrategy = (
   tileIndex
 ) => {
-  // First 128 tiles go into vram bank 1
-  if (tileIndex < 128) {
+  if (tileIndex < 256) {
     return {
       tileIndex,
       inVRAM2: false,
     };
-    // Next 128 tiles go into vram bank 2
-  } else if (tileIndex < 256) {
+  } else {
     return {
-      tileIndex: tileIndex - 128,
+      tileIndex,
       inVRAM2: true,
     };
   }
-  // After that split evenly between bank 1 and 2
-  return {
-    tileIndex: 128 + Math.floor((tileIndex - 256) / 2),
-    inVRAM2: tileIndex % 2 !== 0,
-  };
 };
 
 const padArrayEnd = <T>(arr: T[], len: number, padding: T) => {
@@ -203,7 +196,7 @@ const compileImage = async (
   }
 
   if (is360) {
-    const tilemap = Array.from(Array(360)).map((_, i) => i);
+    const tilemap = Array.from(Array(SCREEN_WIDTH * SCREEN_HEIGHT)).map((_, i) => i);
     const tiles = tileArrayToTileData(tileData);
     const attr = buildAttr(img.tileColors, autoTileColors, tilemap.length);
     return {
