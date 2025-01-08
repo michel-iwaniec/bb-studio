@@ -38,15 +38,15 @@ jobs:
     strategy:
       matrix:
         include:
-#          - name: mac
-#            label: macOS ARM
-#            os: macos-14
-#          - name: mac-intel
-#            label: macOS Intel
-#            os: macos-14
-#          - name: win32
-#            label: Windows 32-bit
-#            os: ubuntu-latest
+          - name: mac
+            label: macOS ARM
+            os: macos-14
+          - name: mac-intel
+            label: macOS Intel
+            os: macos-14
+ #         - name: win32
+ #           label: Windows 32-bit
+ #           os: ubuntu-latest
           - name: win64
             label: Windows 64-bit
             os: ubuntu-latest
@@ -61,19 +61,6 @@ jobs:
         with:
           node-version: "21.6.2"
           cache: "yarn"
-
-      - name: Setup codesign certificate
-        if: (matrix.name == 'mac') || (matrix.name == 'mac-intel')
-        env:
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-        run: |
-          echo $MACOS_CERTIFICATE | base64 -i - --decode > certificate.p12
-          security create-keychain -p "$KEYCHAIN_PWD" build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p "$KEYCHAIN_PWD" build.keychain
-          security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PWD" build.keychain
 
       - name: Install Dependencies
         run: |
@@ -91,28 +78,15 @@ jobs:
 
       - name: Build Mac ARM
         if: matrix.name == 'mac'
-        env:
-          APPLE_ID: ${{ secrets.MAC_NOTARIZE_ID }}
-          APPLE_ID_PASSWORD: ${{ secrets.MAC_NOTARIZE_PWD }}
-          APPLE_TEAM_ID: ${{ secrets.MAC_NOTARIZE_TEAM }}
         run: |
-          export APPLE_ID=${APPLE_ID}
-          export APPLE_ID_PASSWORD=${APPLE_ID_PASSWORD}
-          export APPLE_TEAM_ID=${APPLE_TEAM_ID}        
           yarn make:mac
           mkdir -p ./out/keep
           mv ./out/make/zip/darwin/arm64/*.zip ./out/keep/bb-studio-${GITHUB_REF##*/}-darwin_arm64.zip
 
       - name: Build Mac Intel
         if: matrix.name == 'mac-intel'
-        env:
-          APPLE_ID: ${{ secrets.MAC_NOTARIZE_ID }}
-          APPLE_ID_PASSWORD: ${{ secrets.MAC_NOTARIZE_PWD }}
-          APPLE_TEAM_ID: ${{ secrets.MAC_NOTARIZE_TEAM }}
         run: |
-          export APPLE_ID=${APPLE_ID}
-          export APPLE_ID_PASSWORD=${APPLE_ID_PASSWORD}
-          export APPLE_TEAM_ID=${APPLE_TEAM_ID}        
+          export CSC_IDENTITY_AUTO_DISCOVERY=false
           yarn make:mac-intel
           mkdir -p ./out/keep
           mv ./out/make/zip/darwin/x64/*.zip ./out/keep/bb-studio-${GITHUB_REF##*/}-darwin_x64.zip
