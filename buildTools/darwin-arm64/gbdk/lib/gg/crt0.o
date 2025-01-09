@@ -1,5 +1,5 @@
 XL4
-H 16 areas 31 global symbols
+H 16 areas 32 global symbols
 M Runtime
 S l__DATA Ref00000000
 S _main Ref00000000
@@ -47,6 +47,7 @@ A _INITIALIZED size 13 flags 0 addr 0
 S _VDP_ATTR_SHIFT Def0000000E
 S _shadow_VDP_R10 Def0000000A
 S __sprites_OFF Def00000011
+S __vbl_done Def0000000D
 S _sys_time Def0000000B
 S _shadow_VDP_RSCX Def00000008
 S _shadow_VDP_RSCY Def00000009
@@ -267,6 +268,8 @@ R 00 00 11 00
 T 0B 00 00 00
 R 00 00 11 00
 T 0B 00 00 00
+R 00 00 11 00
+T 0D 00 00 00
 R 00 00 11 00
 T 0D 00 00 00
 R 00 00 11 00

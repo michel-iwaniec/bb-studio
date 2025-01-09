@@ -99,7 +99,8 @@ inline uint8_t move_metasprite_ex(const metasprite_t * metasprite, uint8_t base_
 inline uint8_t move_metasprite(const metasprite_t * metasprite, uint8_t base_tile, uint8_t base_sprite, int16_t x, int16_t y) {
     __current_metasprite = metasprite;
     __current_base_tile = base_tile;
-    __current_base_prop = 0;
+    // HACK: gbstudio does not use _current_base_prop
+    //__current_base_prop = 0;
     return __move_metasprite(base_sprite, x, y);
 }
 

@@ -21,13 +21,16 @@ BANKREF(VM_SIO)
 
 UBYTE exchange_state = EXCHANGE_COMPLETED;
 
-void vm_sio_set_mode(SCRIPT_CTX * THIS, UBYTE mode) OLDCALL BANKED {
+void vm_sio_set_mode(SCRIPT_CTX * THIS, UBYTE mode) OLDCALL BANKED REENTRANT {
+#if defined(GAMEBOY)
     THIS;
     exchange_state = EXCHANGE_COMPLETED;
     SIO_set_mode(mode);
+#endif
 }
 
-void vm_sio_exchange(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB, UBYTE len) OLDCALL BANKED {
+void vm_sio_exchange(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB, UBYTE len) OLDCALL BANKED REENTRANT {
+#if defined(GAMEBOY)
     INT16 * data;
     // terminate if something is wrong
     if (link_operation_mode == LINK_MODE_NONE) {
@@ -89,4 +92,5 @@ void vm_sio_exchange(SCRIPT_CTX * THIS, INT16 idxA, INT16 idxB, UBYTE len) OLDCA
     }
     // re-run next time if transfer is not completed
     if (exchange_state != EXCHANGE_COMPLETED) THIS->PC -= (INSTRUCTION_SIZE + sizeof(idxA) + sizeof(idxB) + sizeof(len)), THIS->waitable = TRUE;
+#endif
 }

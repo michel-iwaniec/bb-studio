@@ -17,6 +17,10 @@ typedef struct bounding_box_t {
     BYTE left, right, top, bottom;
 } bounding_box_t;
 
+typedef struct bounding_box_16_t {
+    WORD left, right, top, bottom;
+} bounding_box_16_t;
+
 extern UBYTE collision_bank;
 extern unsigned char *collision_ptr;
 extern UBYTE image_tile_width;
@@ -47,11 +51,11 @@ inline UBYTE bb_contains(bounding_box_t *bb, upoint16_t *offset, upoint16_t *poi
  * @param offset_b Pointer to position offset for bounding box B
  * @return Positioned bounding boxes intersect
  */
-inline UBYTE bb_intersects(bounding_box_t *bb_a, upoint16_t *offset_a, bounding_box_t *bb_b, upoint16_t *offset_b) {
-    if (((offset_b->x >> 4) + bb_b->left   > (offset_a->x >> 4) + bb_a->right) ||
-        ((offset_b->x >> 4) + bb_b->right  < (offset_a->x >> 4) + bb_a->left)) return FALSE;
-    if (((offset_b->y >> 4) + bb_b->top    > (offset_a->y >> 4) + bb_a->bottom) ||
-        ((offset_b->y >> 4) + bb_b->bottom < (offset_a->y >> 4) + bb_a->top)) return FALSE;
+inline UBYTE bb_intersects(bounding_box_16_t *bb_x16_a, upoint16_t *offset_a, bounding_box_16_t *bb_x16_b, upoint16_t *offset_b) {
+    if ((offset_b->x + bb_x16_b->left   > offset_a->x + bb_x16_a->right) ||
+        (offset_b->x + bb_x16_b->right  < offset_a->x + bb_x16_a->left)) return FALSE;
+    if ((offset_b->y + bb_x16_b->top    > offset_a->y + bb_x16_a->bottom) ||
+        (offset_b->y + bb_x16_b->bottom < offset_a->y + bb_x16_a->top)) return FALSE;
     return TRUE;
 }
 
@@ -62,10 +66,6 @@ inline UBYTE bb_intersects(bounding_box_t *bb_a, upoint16_t *offset_a, bounding_
  * @param ty Top tile
  * @return Tile value, 0 if no collisions, COLLISION_ALL if out of bounds
  */
-inline UBYTE tile_at(UBYTE tx, UBYTE ty) {
-    if ((tx < image_tile_width) && (ty < image_tile_height)) 
-        return ReadBankedUBYTE(collision_ptr + (ty * (UINT16)image_tile_width) + tx, collision_bank);
-    return COLLISION_ALL;
-}
+UBYTE tile_at(UBYTE tx, UBYTE ty) __no_overlay_locals;
 
 #endif

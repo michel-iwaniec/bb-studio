@@ -1,5 +1,5 @@
 XL4
-H E areas 32 global symbols
+H E areas 33 global symbols
 M Runtime
 S l__DATA Ref00000000
 S _main Ref00000000
@@ -11,6 +11,7 @@ S _puts Ref00000000
 S l__INITIALIZER Ref00000000
 S s__INITIALIZER Ref00000000
 A _CODE size 351 flags 0 addr 0
+S __vbl_done Def00000345
 S __mapper_page_mask Def000000F8
 S .wait_vbl_done Def000001DC
 S _sys_time Def00000343
@@ -394,6 +395,8 @@ R 00 00 00 00
 T 43 03 00 00
 R 00 00 00 00
 T 43 03 00 00 00 00
+R 00 00 00 00
+T 45 03 00 00
 R 00 00 00 00
 T 45 03 00 00
 R 00 00 00 00

@@ -10,9 +10,11 @@ extern UBYTE image_attr_bank;
 extern UBYTE collision_bank;
 extern unsigned char *image_ptr;
 extern unsigned char *image_attr_ptr;
+extern unsigned char *image_attr_nes_ptr;
 extern unsigned char *collision_ptr;
 extern UBYTE image_tile_width;
 extern UBYTE image_tile_height;
+extern UINT16 image_attr_size;
 extern UINT16 image_width;
 extern UINT16 image_height;
 extern scene_type_e scene_type;
@@ -29,12 +31,12 @@ extern scene_stack_item_t * scene_stack_ptr;
 extern UBYTE scene_sprites_base_tiles[MAX_SCENE_SPRITES];
 
 void load_init(void) BANKED;
-UBYTE load_scene(const scene_t * scene, UBYTE bank, UBYTE init_data) BANKED;
+UBYTE load_scene(const scene_t * scene, UBYTE bank, UBYTE init_data) BANKED REENTRANT;
 
 UBYTE load_sprite(UBYTE sprite_offset, const spritesheet_t * sprite, UBYTE bank) BANKED;
 void load_player(void) BANKED;
 void load_emote(const unsigned char * tiles, UBYTE bank) BANKED;
-void load_animations(const spritesheet_t *sprite, UBYTE bank, UWORD animation_set, animation_t * res_animations) NONBANKED;
-void load_bounds(const spritesheet_t * sprite, UBYTE bank, bounding_box_t * res_bounds) BANKED;
+void load_animations(const spritesheet_t *sprite, UBYTE bank, UWORD animation_set, animation_t * res_animations) NONBANKED REENTRANT;
+void load_bounds(const spritesheet_t * sprite, UBYTE bank, bounding_box_t * res_bounds) BANKED REENTRANT;
 
 #endif

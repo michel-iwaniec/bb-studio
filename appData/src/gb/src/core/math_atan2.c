@@ -25,7 +25,8 @@ const uint8_t atan2_table[20][18] = {
     {  0,  2,  4,  6,  8, 10, 12, 14, 16, 18, 20, 21, 23, 24, 26, 27, 29, 30 }
 };
 
-uint8_t atan2(int16_t y, int16_t x) BANKED {
+// Slow implementation, but eating no _ZP space
+static uint8_t atan2_impl(int8_t y, int8_t x) REENTRANT {
     x = CLAMP(x, -19, 19);
     y = CLAMP(y, -17, 17);
 
@@ -38,4 +39,8 @@ uint8_t atan2(int16_t y, int16_t x) BANKED {
     } else {
         return 192 + atan2_table[-x][-y];
     }
+}
+
+uint8_t atan2(int8_t y, int8_t x) BANKED {
+    return atan2_impl(y, x);
 }

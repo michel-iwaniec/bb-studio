@@ -1,6 +1,8 @@
 #ifndef INTERRUPTS_H_INCLUDE
 #define INTERRUPTS_H_INCLUDE
 
+#define OVERLAY_START_Y 16
+
 extern UINT8 hide_sprites;
 extern UBYTE show_actors_on_overlay;
 

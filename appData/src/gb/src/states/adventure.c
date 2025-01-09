@@ -21,10 +21,10 @@
 
 void adventure_init(void) BANKED {
     // Set camera to follow player
-    camera_offset_x = 0;
-    camera_offset_y = 0;
-    camera_deadzone_x = ADVENTURE_CAMERA_DEADZONE;
-    camera_deadzone_y = ADVENTURE_CAMERA_DEADZONE;
+    camera_offset_x_x16 = 0;
+    camera_offset_y_x16 = 0;
+    camera_deadzone_x_x16 = ADVENTURE_CAMERA_DEADZONE << 4;
+    camera_deadzone_y_x16 = ADVENTURE_CAMERA_DEADZONE << 4;
 }
 
 void adventure_update(void) BANKED {
@@ -138,7 +138,7 @@ void adventure_update(void) BANKED {
     hit_actor = NULL;
     if (IS_FRAME_ODD) {
         // Check for trigger collisions
-        if (trigger_activate_at_intersection(&PLAYER.bounds, &PLAYER.pos, FALSE)) {
+        if (trigger_activate_at_intersection_PLAYER(FALSE)) {
             // Landed on a trigger
             return;
         }
