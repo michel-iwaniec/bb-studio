@@ -24,9 +24,7 @@ Other than that, the MIT license [MIT license](https://opensource.org/licenses/M
 
 ## Where to get it
 
-Download the alpha version from the [Release Page](https://github.com/michel-iwaniec/bb-studio/releases) for your operating system.
-
-(currently only Windows-x64 and Linux-x64 are supported)
+Download the latest alpha version from the [Release Page](https://github.com/michel-iwaniec/bb-studio/releases) for your operating system.
 
 Load it up, and create a new project from the Sample Project template.
 
@@ -46,7 +44,9 @@ sudo apt install dotnet8
 
 ## How to use it
 
-To build a .nes ROM, choose the "Game" -> "Export As" -> "Export ROM". After a bit of a wait, your .nes ROM will appear in the build/rom sub-folder of your project.
+To run the game using the included Mesen fork, choose the "Game" -> "Run" menu option. After a bit of a wait, Mesen should start with the .nes ROM loaded.
+
+To export a .nes ROM back to the project directory, choose the "Game" -> "Export As" -> "Export ROM". After a bit of a wait, your .nes ROM will appear in the build/rom sub-folder of your project.
 
 To adapt your GBC game to the NES, you may need to do some changes.
 
@@ -74,12 +74,15 @@ There are a few key things to consider to make your GBC game run well on the NES
 
 Your NES game can be run on an Everdrive N8 Pro, by placing your built .nes file in a subdirectory on the sdcard along with the provided bbstudio.rbf. This contains an Everdrive N8 Pro implementation of the custom mapper BB Studio requires.
 
-For running on a PC you can instead use a customized version of the Mesen emulator [downloadable here](https://github.com/michel-iwaniec/Mesen2/releases/tag/Mesen2-with-bbstudio-mapper).
+For running on a PC you can instead use a customized version of the Mesen emulator [downloadable here](https://github.com/michel-iwaniec/Mesen2/releases/tag/Mesen2-with-bbstudio-mapper-v4).
 
+This emulator is also currently bundled with BB Studio to make launching via "Game" -> "Run" easier.
 
 ### Using music in your project
 
 BB Studio uses the FamiStudio sound engine, so any songs in your game need to be re-created with FamiStudio.
+
+BB Studio currently uses FamiStudio 4.3.0, so please use that version to play it safe.
 
 A future version may support auto-converting Game Boy songs to FamiStudio format. But re-making your song in FamiStudio will always be the recommended option for best results.
 
@@ -90,13 +93,9 @@ FamiStudio also requires you to set the tempo mode to either "FamiStudio tempo" 
 
 The current setting is FamiTracker tempo, as all music files were originally in tracker format.
 
-If you wish to use FamiStudio tempo instead, you can edits this file manually:
+If you wish to use FamiStudio tempo instead, you can change this under "Music" -> "Music Tempo Mode" on the "Settings" page.
 
-`appData/src/gb/src/core/asm/nes/demo_sdcc.asminc.s`
-
-And change the line `FAMISTUDIO_USE_FAMITRACKER_TEMPO = 1` to `FAMISTUDIO_USE_FAMITRACKER_TEMPO = 0`.
-
-Don't try to change any other settings unless you really know what you're doing. The FamiStudio driver will likely crash your game if you disable an effect the music relies on.
+Make sure to check that *all* your songs use the same mode, or the sound engine will crash without mercy.
 
 #### Sound effects / DPCM
 
@@ -116,8 +115,16 @@ Prototypes of the mapper have already been built and tested. One vintage-like di
 
 And a more optimized board with all logic squeezed into a 32-macrocell CPLD.
 
-The specifications for this mapper should be finalized by the end of 2024, with boards being available in 2025.
+The specifications for this mapper should be finalized in early 2025, with boards being available later this year.
 
 ## Something isn't working! How do I report it?
 
 Please use the issue tracker on this github page... but only if the bug is specific to BB Studio rather than GB Studio :)
+
+## How do I support this development?
+
+Like GB Studio, BB Studio will always be free and open-source. But donations are much appreciated.
+
+If you have money to spare, you can support Chris Maltby, the original creator of GB Studio on his Patreon page at https://www.patreon.com/c/gbstudiodev/
+
+If you have even more money to spare after that, I also have a Patreon page at https://www.patreon.com/c/RetroCoding
