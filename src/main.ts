@@ -591,7 +591,7 @@ export const createPlayNES = async (
 
   await new Promise<void>((resolve, reject) => {
     const child = childProcess.spawn(MesenExe,
-                                      [filename, "--doNotSaveSettings"],
+                                      [filename],
                                       options);
     child.on("error", (err) => {
     });
