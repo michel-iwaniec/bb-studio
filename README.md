@@ -62,8 +62,11 @@ There are a few key things to consider to make your GBC game run well on the NES
 - Typically black is a good choice for the shared background color - but your mileage may vary.
 - The exception is palette 7. This is only used for UI, and has 4 unique colors.
 
-* The NES has a limited number of total colors, and the RGB colors entered in the UI will be automatically converted to NES colors when building. They may sometimes be off from what you intended.
-- The next version will have an option for specifying NES colors directly, to remove the guesswork of RGB -> NES color mapping.
+* The NES has a limited number of total colors, so the palette editing has a dedicated color picker 
+- If you load an existing project, an approximate RGB -> NES PPU color conversion will take place.
+- From then on the project will always use NES colors.
+- For best results always pick the colors carefully, and be aware they can vary across TVs
+- Do not rely on perceptual brightness difference between hues on the same row. Shade using different columns.
 
 * The NES graphics chip allows much fewer sprites / scanline than the GB/GBC. So you need to be much more frugal with placing sprites on the same horizontal line.
 
