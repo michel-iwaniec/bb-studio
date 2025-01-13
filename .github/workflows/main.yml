@@ -40,7 +40,7 @@ jobs:
         include:
           - name: mac
             label: macOS ARM
-            os: macos-14
+            os: macos-15
           - name: mac-intel
             label: macOS Intel
             os: macos-14
