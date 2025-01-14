@@ -32,6 +32,7 @@ import {
   PrecompiledBackground,
 } from "./generateGBVMData";
 import { DMG_PALETTE, defaultProjectSettings } from "consts";
+import { DEFAULT_WHITE, DEFAULT_LIGHT, DEFAULT_DARK, DEFAULT_BLACK, defaultColors } from "consts";
 import {
   isPropertyField,
   isVariableField,
@@ -5631,29 +5632,14 @@ extern void __mute_mask_${symbol};
 
     this._paletteLoad(mask, ".PALETTE_BKG", true);
 
-    const parseR = (hex: string) =>
-      Math.floor(hexDec(hex.substring(0, 2)) * (32 / 256));
-    const parseG = (hex: string) =>
-      Math.floor(hexDec(hex.substring(2, 4)) * (32 / 256));
-    const parseB = (hex: string) =>
-      Math.max(1, Math.floor(hexDec(hex.substring(4, 6)) * (32 / 256)));
-
     for (const palette of writePalettes) {
-      const colors = palette.colors;
-      this._paletteColor(
-        parseR(colors[0]),
-        parseG(colors[0]),
-        parseB(colors[0]),
-        parseR(colors[1]),
-        parseG(colors[1]),
-        parseB(colors[1]),
-        parseR(colors[2]),
-        parseG(colors[2]),
-        parseB(colors[2]),
-        parseR(colors[3]),
-        parseG(colors[3]),
-        parseB(colors[3])
-      );
+      const colors = palette?.nesColors || defaultColors;
+      this._addCmd(
+        ".CGB_PAL",
+        hexDec(colors[0].substring(0, 2)),
+        hexDec(colors[1].substring(0, 2)),
+        hexDec(colors[2].substring(0, 2)),
+        hexDec(colors[3].substring(0, 2)) );
     }
   };
 
@@ -5678,29 +5664,14 @@ extern void __mute_mask_${symbol};
 
     this._paletteLoad(mask, ".PALETTE_SPRITE", true);
 
-    const parseR = (hex: string) =>
-      Math.floor(hexDec(hex.substring(0, 2)) * (32 / 256));
-    const parseG = (hex: string) =>
-      Math.floor(hexDec(hex.substring(2, 4)) * (32 / 256));
-    const parseB = (hex: string) =>
-      Math.max(1, Math.floor(hexDec(hex.substring(4, 6)) * (32 / 256)));
-
     for (const palette of writePalettes) {
-      const colors = palette.colors;
-      this._paletteColor(
-        parseR(colors[0]),
-        parseG(colors[0]),
-        parseB(colors[0]),
-        parseR(colors[0]),
-        parseG(colors[0]),
-        parseB(colors[0]),
-        parseR(colors[1]),
-        parseG(colors[1]),
-        parseB(colors[1]),
-        parseR(colors[3]),
-        parseG(colors[3]),
-        parseB(colors[3])
-      );
+      const colors = palette?.nesColors || defaultColors;
+      this._addCmd(
+        ".CGB_PAL",
+        hexDec(colors[0].substring(0, 2)),
+        hexDec(colors[0].substring(0, 2)),
+        hexDec(colors[1].substring(0, 2)),
+        hexDec(colors[3].substring(0, 2)) );
     }
   };
 
@@ -5713,29 +5684,14 @@ extern void __mute_mask_${symbol};
     const UI_MASK = 128;
     this._paletteLoad(UI_MASK, ".PALETTE_BKG", true);
 
-    const parseR = (hex: string) =>
-      Math.floor(hexDec(hex.substring(0, 2)) * (32 / 256));
-    const parseG = (hex: string) =>
-      Math.floor(hexDec(hex.substring(2, 4)) * (32 / 256));
-    const parseB = (hex: string) =>
-      Math.max(1, Math.floor(hexDec(hex.substring(4, 6)) * (32 / 256)));
+    const colors = palette?.nesColors || defaultColors;
 
-    const colors = palette.colors;
-
-    this._paletteColor(
-      parseR(colors[0]),
-      parseG(colors[0]),
-      parseB(colors[0]),
-      parseR(colors[1]),
-      parseG(colors[1]),
-      parseB(colors[1]),
-      parseR(colors[2]),
-      parseG(colors[2]),
-      parseB(colors[2]),
-      parseR(colors[3]),
-      parseG(colors[3]),
-      parseB(colors[3])
-    );
+    this._addCmd(
+      ".CGB_PAL",
+      hexDec(colors[0].substring(0, 2)),
+      hexDec(colors[1].substring(0, 2)),
+      hexDec(colors[2].substring(0, 2)),
+      hexDec(colors[3].substring(0, 2)) );
   };
 
   paletteSetEmote = (paletteId: string) => {
@@ -5747,29 +5703,13 @@ extern void __mute_mask_${symbol};
     const UI_MASK = 128;
     this._paletteLoad(UI_MASK, ".PALETTE_SPRITE", true);
 
-    const parseR = (hex: string) =>
-      Math.floor(hexDec(hex.substring(0, 2)) * (32 / 256));
-    const parseG = (hex: string) =>
-      Math.floor(hexDec(hex.substring(2, 4)) * (32 / 256));
-    const parseB = (hex: string) =>
-      Math.max(1, Math.floor(hexDec(hex.substring(4, 6)) * (32 / 256)));
-
-    const colors = palette.colors;
-
-    this._paletteColor(
-      parseR(colors[0]),
-      parseG(colors[0]),
-      parseB(colors[0]),
-      parseR(colors[0]),
-      parseG(colors[0]),
-      parseB(colors[0]),
-      parseR(colors[1]),
-      parseG(colors[1]),
-      parseB(colors[1]),
-      parseR(colors[3]),
-      parseG(colors[3]),
-      parseB(colors[3])
-    );
+    const colors = palette?.nesColors || defaultColors;
+    this._addCmd(
+      ".CGB_PAL",
+      hexDec(colors[0].substring(0, 2)),
+      hexDec(colors[0].substring(0, 2)),
+      hexDec(colors[1].substring(0, 2)),
+      hexDec(colors[3].substring(0, 2)) );
   };
 
   // --------------------------------------------------------------------------
