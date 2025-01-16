@@ -818,8 +818,15 @@ _vm_rpn_asm::
 .vm_rpn_compare_A_B:
     sec
     sbc .vm_rpn_B_lo,x
+    sta .vm_rpn_B_lo,x
     tya
     sbc .vm_rpn_B_hi,x
+    sta .vm_rpn_B_hi,x
+    lda .vm_rpn_B_lo,x
+    lsr .vm_rpn_B_lo,x
+    ora .vm_rpn_B_lo,x
+    and #254
+    ora .vm_rpn_B_hi,x
     rts
 
 ;
