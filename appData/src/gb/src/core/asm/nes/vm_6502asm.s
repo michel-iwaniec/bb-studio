@@ -653,19 +653,21 @@ _vm_rpn_asm::
     jmp .vm_rpn_store_a_to_A
 .vm_rpn_op_LE:
     jsr .vm_rpn_compare_A_B
-    bpl 1$
-    lda #1
+    bmi 1$
+    beq 1$
+    lda #0
     jmp .vm_rpn_store_a_to_A
 1$:
-    lda #0
+    lda #1
     jmp .vm_rpn_store_a_to_A
 .vm_rpn_op_GT:
     jsr .vm_rpn_compare_A_B
-    bpl 1$
-    lda #0
+    bmi 1$
+    beq 1$
+    lda #1
     jmp .vm_rpn_store_a_to_A
 1$:
-    lda #1
+    lda #0
     jmp .vm_rpn_store_a_to_A
 .vm_rpn_op_GE:
     jsr .vm_rpn_compare_A_B
@@ -816,10 +818,23 @@ _vm_rpn_asm::
     jmp .vm_rpn_op_next_dec_stack_ptr
 
 .vm_rpn_compare_A_B:
-    sec
-    sbc .vm_rpn_B_lo,x
+    cmp .vm_rpn_B_lo,x
+    beq .vm_rpn_compare_A_B_lo_bytes_equal
     tya
     sbc .vm_rpn_B_hi,x
+    bvc 1$
+    eor #0x80
+1$:
+    ora #1  ; Already know Z should be 0 as lo bytes different - force this condition.
+    rts
+
+.vm_rpn_compare_A_B_lo_bytes_equal:
+    cmp .vm_rpn_B_lo,x
+    tya
+    sbc .vm_rpn_B_hi,x
+    bvc 1$
+    eor #0x80
+1$:
     rts
 
 ;
