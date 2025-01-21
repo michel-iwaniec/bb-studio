@@ -46,7 +46,7 @@ export const valueUnaryOperatorTypes = [
   // Bitwise
   "bNOT",
   // Special-case-shifts
-  //"shl4",
+  "shl4",
   "shl7",
   //"shr4",
   //"shr7",
