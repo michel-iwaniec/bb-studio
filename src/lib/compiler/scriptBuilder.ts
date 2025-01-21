@@ -576,6 +576,10 @@ const valueFunctionToScriptOperator = (
       return ".SHL7";
     case "shl4":
       return ".SHL4";
+    case "shr7":
+      return ".SHL7";
+    case "shr4":
+      return ".SHL4";
     case "rnd":
       return ".RND";
   }
