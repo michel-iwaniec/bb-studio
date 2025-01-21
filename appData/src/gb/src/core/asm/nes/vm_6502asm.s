@@ -318,11 +318,11 @@ _vm_rpn_asm::
 .db <.vm_rpn_op_ILLEGAL
 
 ; Hard-coded SHL/SHR/ASR
-.db <.vm_rpn_op_TODO        ; SHL4 (0x10)
+.db <.vm_rpn_op_SHL4        ; SHL4 (0x10)
 .db <.vm_rpn_op_SHL7        ; SHL7 (0x11)
-.db <.vm_rpn_op_TODO        ; SHR4 (0x12)
-.db <.vm_rpn_op_TODO        ; SHR7 (0x13)
-.db <.vm_rpn_op_TODO        ; ASR4 (0x14)
+.db <.vm_rpn_op_SHR4        ; SHR4 (0x12)
+.db <.vm_rpn_op_SHR7        ; SHR7 (0x13)
+.db <.vm_rpn_op_ASR4        ; ASR4 (0x14)
 .db <.vm_rpn_op_ASR7        ; ASR7 (0x15)
 .db <.vm_rpn_op_CLAMP0      ; CLAMP0 (0x16)
 
@@ -411,11 +411,11 @@ _vm_rpn_asm::
 .db >.vm_rpn_op_ILLEGAL
 
 ; Hard-coded SHL/SHR/ASR
-.db >.vm_rpn_op_TODO        ; SHL4 (0x10)
+.db >.vm_rpn_op_SHL4        ; SHL4 (0x10)
 .db >.vm_rpn_op_SHL7        ; SHL7 (0x11)
-.db >.vm_rpn_op_TODO        ; SHR4 (0x12)
-.db >.vm_rpn_op_TODO        ; SHR7 (0x13)
-.db >.vm_rpn_op_TODO        ; ASR4 (0x14)
+.db >.vm_rpn_op_SHR4        ; SHR4 (0x12)
+.db >.vm_rpn_op_SHR7        ; SHR7 (0x13)
+.db >.vm_rpn_op_ASR4        ; ASR4 (0x14)
 .db >.vm_rpn_op_ASR7        ; ASR7 (0x15)
 .db >.vm_rpn_op_CLAMP0      ; CLAMP0 (0x16)
 
@@ -741,6 +741,61 @@ _vm_rpn_asm::
     lda #0xFF
 1$:
     sta .vm_rpn_B_hi,x
+    jmp .vm_rpn_op_next
+
+.vm_rpn_op_SHR7:
+    lda .vm_rpn_B_lo,x
+    asl
+    lda .vm_rpn_B_hi,x
+    rol
+    sta .vm_rpn_B_lo,x
+    lda #0
+    rol
+    sta .vm_rpn_B_hi,x
+    jmp .vm_rpn_op_next
+
+
+.vm_rpn_op_ASR4: ; 54 cycles
+    lda .vm_rpn_B_hi,x 
+    lsr
+    ror .vm_rpn_B_lo,x
+    lsr
+    ror .vm_rpn_B_lo,x
+    lsr
+    ror .vm_rpn_B_lo,x
+    lsr
+    ror .vm_rpn_B_lo,x 
+    cmp #0x08 
+    bcc 1$ 
+    ora #0xF0 
+1$:
+    sta .vm_rpn_B_hi,x 
+    jmp .vm_rpn_op_next 
+
+.vm_rpn_op_SHR4: ; 47 cycles
+    lda .vm_rpn_B_hi,x
+    lsr
+    ror .vm_rpn_B_lo,x
+    lsr
+    ror .vm_rpn_B_lo,x
+    lsr
+    ror .vm_rpn_B_lo,x
+    lsr
+    ror .vm_rpn_B_lo,x
+    sta .vm_rpn_B_hi,x
+    jmp .vm_rpn_op_next
+
+.vm_rpn_op_SHL4: ; 47 cycles
+    lda .vm_rpn_B_lo,x
+    asl
+    rol .vm_rpn_B_hi,x
+    asl
+    rol .vm_rpn_B_hi,x
+    asl
+    rol .vm_rpn_B_hi,x
+    asl
+    rol .vm_rpn_B_hi,x
+    sta .vm_rpn_B_lo,x
     jmp .vm_rpn_op_next
 
 .vm_rpn_op_SHL:
