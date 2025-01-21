@@ -179,6 +179,11 @@ export const optimiseScriptValue = (input: ScriptValue): ScriptValue => {
           type: "number",
           value: (optimisedValue.value << 7),
         };
+      } else if (type === "shl4") {
+        return {
+          type: "number",
+          value: (optimisedValue.value << 4),
+        };
       } else if (type === "rnd") {
         return {
           type: "rnd",
@@ -559,6 +564,12 @@ export const shiftLeftScriptValueConst = (
 if(num == 7) {
   return {
     type: "shl7",
+    value,
+  };  
+}
+if(num == 4) {
+  return {
+    type: "shl4",
     value,
   };  
 } else {
