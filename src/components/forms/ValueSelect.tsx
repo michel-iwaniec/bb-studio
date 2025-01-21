@@ -120,6 +120,8 @@ const iconLookup: Record<
   shl: <TextIcon>&lt;&lt;</TextIcon>,
   shl7: <TextIcon>shl7</TextIcon>,
   shl4: <TextIcon>shl4</TextIcon>,
+  shr7: <TextIcon>shr7</TextIcon>,
+  shr4: <TextIcon>shr4</TextIcon>,
   shr: <TextIcon>&gt;&gt;</TextIcon>,
   bAND: <TextIcon>&amp;</TextIcon>,
   bOR: <TextIcon>|</TextIcon>,
@@ -163,6 +165,8 @@ const l10nKeyLookup: Record<
   rnd: "FIELD_RANDOM",
   shl7: "FIELD_NUMBER",
   shl4: "FIELD_NUMBER",
+  shr7: "FIELD_NUMBER",
+  shr4: "FIELD_NUMBER",
   // bitwise
   shl: "FIELD_LEFT_SHIFT",
   shr: "FIELD_RIGHT_SHIFT",

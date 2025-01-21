@@ -184,6 +184,16 @@ export const optimiseScriptValue = (input: ScriptValue): ScriptValue => {
           type: "number",
           value: (optimisedValue.value << 4),
         };
+      } else if (type === "shr7") {
+        return {
+          type: "number",
+          value: (optimisedValue.value >> 7),
+        };
+      } else if (type === "shr4") {
+        return {
+          type: "number",
+          value: (optimisedValue.value >> 4),
+        };
       } else if (type === "rnd") {
         return {
           type: "rnd",
@@ -588,6 +598,18 @@ export const shiftRightScriptValueConst = (
   value: ScriptValue,
   num: number
 ): ScriptValue => {
+if(num == 7) {
+  return {
+    type: "shr7",
+    value,
+  };  
+}
+if(num == 4) {
+  return {
+    type: "shr4",
+    value,
+  };  
+} else {
   return {
     type: "shr",
     valueA: value,
@@ -596,6 +618,7 @@ export const shiftRightScriptValueConst = (
       value: num,
     },
   };
+}
 };
 
 export const addScriptValueConst = (
