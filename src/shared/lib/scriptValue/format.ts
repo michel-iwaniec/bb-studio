@@ -147,6 +147,10 @@ export const scriptValueToString = (
     return `~(${scriptValueToString(value.value, options)})`;
   } else if (value.type === "shl4") {
     return `~(${scriptValueToString(value.value, options)})`;
+  } else if (value.type === "shr7") {
+    return `~(${scriptValueToString(value.value, options)})`;
+  } else if (value.type === "shr4") {
+    return `~(${scriptValueToString(value.value, options)})`;
   } else if (value.type === "abs") {
     return `abs(${scriptValueToString(value.value, options)})`;
   } else if (value.type === "isqrt") {

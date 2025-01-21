@@ -48,8 +48,8 @@ export const valueUnaryOperatorTypes = [
   // Special-case-shifts
   "shl4",
   "shl7",
-  //"shr4",
-  //"shr7",
+  "shr4",
+  "shr7",
   //"asr4",
   //"asr7",
 ] as const;
