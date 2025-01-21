@@ -574,6 +574,8 @@ const valueFunctionToScriptOperator = (
       return ".B_NOT";
     case "shl7":
       return ".SHL7";
+    case "shl4":
+      return ".SHL4";
     case "rnd":
       return ".RND";
   }
@@ -1451,7 +1453,7 @@ class ScriptBuilder {
             this._rpn() //
               .ref(this._localRef(actorRef, 1))
               //.int16(7)
-              .operator(".ASR7") //.operator(".ASR")
+              .operator(".ASR4") //.operator(".ASR")
               .refSet(localVar)
               .stop();
           } else if (propertyValue === "pypos") {
@@ -1463,7 +1465,7 @@ class ScriptBuilder {
             this._rpn() //
               .ref(this._localRef(actorRef, 2))
               //.int16(7)
-              .operator(".ASR7") //.operator(".ASR")
+              .operator(".ASR4") //.operator(".ASR")
               .refSet(localVar)
               .stop();
           } else if (propertyValue === "direction") {
