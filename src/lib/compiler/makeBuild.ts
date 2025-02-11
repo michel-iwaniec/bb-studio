@@ -144,7 +144,7 @@ const makeBuild = async ({
 
   progress(`${l10n("COMPILER_PACKING")}...`);
   const { cartSize } = await gbspack(await getPackFiles(buildRoot), {
-    bankOffset: 3, //1, // gbdk-nes: Avoid packing in VM bank (bank 2) for alignment reasons
+    bankOffset: 0, // gbdk-nes: Start packing from bank 0
     filter: 255,
     extension: "rel",
     additional: batterylessEnabled ? 4 : 0,
