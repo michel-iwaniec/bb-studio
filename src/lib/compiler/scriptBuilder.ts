@@ -3015,12 +3015,10 @@ extern void __mute_mask_${symbol};
 
     // X Value
     this._performValueRPN(rpn, rpnOpsX, localsLookup);
-    rpn.int16(0).operator(".MAX");
     rpn.refSet(this._localRef(actorRef, 1));
 
     // Y Value
     this._performValueRPN(rpn, rpnOpsY, localsLookup);
-    rpn.int16(0).operator(".MAX");
     rpn.refSet(this._localRef(actorRef, 2));
 
     rpn.stop();
