@@ -85,6 +85,7 @@ import { calculateTextBoxHeight } from "shared/lib/helpers/dialogue";
 import { chunkTextOnWaitCodes } from "shared/lib/text/textCodes";
 import {
   pxToSubpx,
+  pxToPlatformerVelocity
   subpxShiftForUnits,
   subpxSnapMaskForUnits,
   tileToSubpx,
@@ -3647,11 +3648,11 @@ extern void __mute_mask_${symbol};
     const { scene } = this.options;
     if (scene.type === "PLATFORM") {
       this._addComment("Player Bounce");
-      let value = pxToSubpx(-0x400);
+      let value = pxToPlatformerVelocity(-0x400);
       if (height === "low") {
-        value = pxToSubpx(-0x200);
+        value = pxToPlatformerVelocity(-0x200);
       } else if (height === "high") {
-        value = pxToSubpx(-0x600);
+        value = pxToPlatformerVelocity(-0x600);
       }
       this._setConstMemInt16("pl_vel_y", value);
       this._addNL();
