@@ -20,7 +20,7 @@ const fields = [
     defaultValue: "medium",
   },
   {
-    label: l10n("FIELD_BOUNCE_NOTE"),
+    label: l10n("FIELD_ONLY_AFFECTS_PLATFORM_SCENES"),
   },
 ];
 

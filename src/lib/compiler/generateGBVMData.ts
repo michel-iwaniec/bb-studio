@@ -3,6 +3,7 @@ import flatten from "lodash/flatten";
 import { SCREEN_WIDTH } from "consts";
 import type {
   Actor,
+  CollisionExtraFlag,
   EngineFieldValue,
   Palette,
   Scene,
@@ -188,22 +189,58 @@ export const toFarPtr = (ref: string): string => {
   return `TO_FAR_PTR_T(${ref})`;
 };
 
-export const enginePxToSubPx = (px?: number): string => `PX_TO_SUBPX(${px || 0})`
+export const enginePxToSubPx = (px?: number): string =>
+  `PX_TO_SUBPX(${px || 0})`;
 
-export const toASMCollisionGroup = (group: string) => {
+export const toASMCollisionGroup = (
+  group: string,
+  extras?: CollisionExtraFlag[],
+) => {
+  let baseGroup = "COLLISION_GROUP_NONE";
   if (group === "player") {
-    return "COLLISION_GROUP_PLAYER";
+    baseGroup = "COLLISION_GROUP_PLAYER";
   }
   if (group === "1") {
-    return "COLLISION_GROUP_1";
+    baseGroup = "COLLISION_GROUP_1";
   }
   if (group === "2") {
-    return "COLLISION_GROUP_2";
+    baseGroup = "COLLISION_GROUP_2";
   }
   if (group === "3") {
-    return "COLLISION_GROUP_3";
+    baseGroup = "COLLISION_GROUP_3";
   }
-  return "COLLISION_GROUP_NONE";
+
+  if (extras && extras.length > 0) {
+    return (
+      baseGroup +
+      " | " +
+      extras
+        .map((group) => {
+          if (group === "1") {
+            return "COLLISION_GROUP_FLAG_1";
+          }
+          if (group === "2") {
+            return "COLLISION_GROUP_FLAG_2";
+          }
+          if (group === "3") {
+            return "COLLISION_GROUP_FLAG_3";
+          }
+          if (group === "4") {
+            return "COLLISION_GROUP_FLAG_4";
+          }
+          if (group === "solid") {
+            return "COLLISION_GROUP_FLAG_SOLID";
+          }
+          if (group === "platform") {
+            return "COLLISION_GROUP_FLAG_PLATFORM";
+          }
+          return "";
+        })
+        .join(" | ")
+    );
+  }
+
+  return baseGroup;
 };
 
 export const toASMCollisionMask = (mask: string[]) => {
@@ -636,7 +673,10 @@ export const compileSceneActors = (
           anim_tick: actor.animSpeed,
           pinned: actor.isPinned ? "TRUE" : "FALSE",
           persistent: actor.persistent ? "TRUE" : "FALSE",
-          collision_group: toASMCollisionGroup(actor.collisionGroup),
+          collision_group: toASMCollisionGroup(
+            actor.collisionGroup,
+            actor.collisionExtraFlags,
+          ),
           collision_enabled: actor.isPinned ? "FALSE" : "TRUE",
           script_update: maybeScriptFarPtr(events.actorsMovement[actorIndex]),
           script: maybeScriptFarPtr(events.actors[actorIndex]),
@@ -682,8 +722,8 @@ export const compileSceneTriggers = (
       __comment: triggerName(trigger, triggerIndex),
       left: trigger.x,
       top: trigger.y,
-      right: trigger.x + trigger.width - 1, 
-      bottom: trigger.y + trigger.height - 1,  
+      right: trigger.x + trigger.width - 1,
+      bottom: trigger.y + trigger.height - 1,
       script: maybeScriptFarPtr(eventPtrs[sceneIndex].triggers[triggerIndex]),
       script_flags: toASMTriggerScriptFlags(trigger),
     })),
@@ -1235,6 +1275,7 @@ export const replaceScriptSymbols = (
 export const compileGameGlobalsInclude = (
   variableAliasLookup: Record<string, VariableMapData>,
   constants: Constant[],
+  engineConstants: Record<string, number>,
   stateReferences: string[],
 ) => {
   const variables = Object.values(variableAliasLookup).map(
@@ -1253,6 +1294,11 @@ export const compileGameGlobalsInclude = (
         return `${constant.symbol.toLocaleUpperCase()} = ${constant.value}\n`;
       })
       .join("") +
+    Object.entries(engineConstants)
+      .map(([name, value]) => {
+        return `${name} = ${value}\n`;
+      })
+      .join("") +
     stateReferences
       .map((string, stringIndex) => {
         return `${string} = ${stringIndex}\n`;
@@ -1264,6 +1310,7 @@ export const compileGameGlobalsInclude = (
 export const compileGameGlobalsHeader = (
   variableAliasLookup: Record<string, VariableMapData>,
   constants: Constant[],
+  engineConstants: Record<string, number>,
   stateReferences: string[],
 ) => {
   return (
@@ -1281,6 +1328,11 @@ export const compileGameGlobalsHeader = (
         return `#define ${constant.symbol.toLocaleUpperCase()} ${
           constant.value
         }\n`;
+      })
+      .join("") +
+    Object.entries(engineConstants)
+      .map(([name, value]) => {
+        return `#define ${name} ${value}\n`;
       })
       .join("") +
     stateReferences
@@ -1369,6 +1421,12 @@ export const compileStateDefines = (
           engineValue && engineValue.value !== undefined
             ? engineValue.value
             : engineField.defaultValue;
+        if (engineField.type === "checkbox") {
+          if (value) {
+            return `#define ${String(engineField.key).padEnd(32, " ")}\n`;
+          }
+          return "";
+        }
         return `#define ${String(engineField.key).padEnd(32, " ")} ${value}${
           defineIndex === defineFields.length - 1 ? "\n\n" : "\n"
         }`;

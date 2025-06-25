@@ -27,6 +27,15 @@ interface InitialState {
   usedSceneTypeIds: string[];
 }
 
+const roundValue = (
+  value: string | number | boolean | undefined,
+): string | number | boolean | undefined => {
+  if (typeof value === "number") {
+    return Math.floor(value);
+  }
+  return value;
+};
+
 export const compileScriptEngineInit = ({
   startX,
   startY,
@@ -90,14 +99,15 @@ ${usedEngineFields
 _script_engine_init::
 ${usedEngineFields
   .map((engineField) => {
-    if (engineField.cType === "define") {
+    if (engineField.cType === "define" || engineField.runtimeOnly) {
       return "";
     }
     const engineValue = engineFieldValues.find((v) => v.id === engineField.key);
-    const value =
+    const value = roundValue(
       engineValue && engineValue.value !== undefined
         ? engineValue.value
-        : engineField.defaultValue;
+        : engineField.defaultValue,
+    );
     const gbvmSetConstInstruction = gbvmSetConstForCType(engineField.cType);
     return `        ${gbvmSetConstInstruction}      _${engineField.key}, ${value}`;
   })

@@ -28,11 +28,18 @@ const fields = [
     allowNone: false,
     defaultValue: ["x", "y"],
   },
+  {
+    key: "preventScroll",
+    label: l10n("FIELD_PREVENT_BACKTRACKING"),
+    description: l10n("FIELD_PREVENT_BACKTRACKING_DESC"),
+    type: "direction",
+    allowMultiple: true,
+  },
 ];
 
 const compile = (input, helpers) => {
   const { cameraLock } = helpers;
-  cameraLock(Number(input.speed), input.axis);
+  cameraLock(Number(input.speed), input.axis, input.preventScroll);
 };
 
 module.exports = {

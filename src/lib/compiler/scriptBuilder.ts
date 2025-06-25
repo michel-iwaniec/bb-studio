@@ -85,6 +85,7 @@ import { calculateTextBoxHeight } from "shared/lib/helpers/dialogue";
 import { chunkTextOnWaitCodes } from "shared/lib/text/textCodes";
 import {
   pxToSubpx,
+  pxToSubpxVel,
   subpxShiftForUnits,
   subpxSnapMaskForUnits,
   tileToSubpx,
@@ -436,11 +437,18 @@ const toASMMoveFlags = (
   );
 };
 
-const toASMCameraLock = (axis: ScriptBuilderAxis[]) => {
+const toASMCameraLock = (
+  axis: ScriptBuilderAxis[],
+  preventScroll: ActorDirection[],
+) => {
   return unionFlags(
     ([] as string[]).concat(
       axis.includes("x") ? ".CAMERA_LOCK_X" : [],
       axis.includes("y") ? ".CAMERA_LOCK_Y" : [],
+      preventScroll.includes("left") ? ".CAMERA_LOCK_X_MIN" : [],
+      preventScroll.includes("right") ? ".CAMERA_LOCK_X_MAX" : [],
+      preventScroll.includes("up") ? ".CAMERA_LOCK_Y_MIN" : [],
+      preventScroll.includes("down") ? ".CAMERA_LOCK_Y_MAX" : [],
     ),
   );
 };
@@ -2955,7 +2963,6 @@ extern void __mute_mask_${symbol};
     rpn.refSet(this._localRef(actorRef, 3));
 
     rpn.stop();
-
     this._addComment(`-- Move Actor`);
     this.actorSetById(actorId);
     this._actorMoveTo(actorRef);
@@ -3051,7 +3058,6 @@ extern void __mute_mask_${symbol};
     rpn.refSet(this._localRef(actorRef, 3));
 
     rpn.stop();
-
     this._addComment(`-- Move Actor`);
     this.actorSetById(actorId);
     this._actorMoveTo(actorRef);
@@ -3647,13 +3653,13 @@ extern void __mute_mask_${symbol};
     const { scene } = this.options;
     if (scene.type === "PLATFORM") {
       this._addComment("Player Bounce");
-      let value = pxToSubpx(-0x400);
+      let value = pxToSubpxVel(-0x400);
       if (height === "low") {
-        value = pxToSubpx(-0x200);
+        value = pxToSubpxVel(-0x200);
       } else if (height === "high") {
-        value = pxToSubpx(-0x600);
+        value = pxToSubpxVel(-0x600);
       }
-      this._setConstMemInt16("pl_vel_y", value);
+      this._setConstMemInt16("plat_vel_y", value);
       this._addNL();
     }
   };
@@ -4714,7 +4720,11 @@ extern void __mute_mask_${symbol};
     this._addNL();
   };
 
-  cameraLock = (speed = 0, axis: ScriptBuilderAxis[]) => {
+  cameraLock = (
+    speed = 0,
+    axis: ScriptBuilderAxis[],
+    preventScroll: ActorDirection[] = [],
+  ) => {
     const actorRef = this._declareLocal("actor", 4);
     this._addComment("Camera Lock");
     this._setConst(actorRef, 0);
@@ -4730,7 +4740,11 @@ extern void __mute_mask_${symbol};
     if (speed === 0) {
       this._cameraSetPos(".ARG1");
     }
-    this._cameraMoveTo(".ARG1", pxToSubpx(speed), toASMCameraLock(axis));
+    this._cameraMoveTo(
+      ".ARG1",
+      pxToSubpx(speed),
+      toASMCameraLock(axis, preventScroll),
+    );
     this._stackPop(2);
   };
 

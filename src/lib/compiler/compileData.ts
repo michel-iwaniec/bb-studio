@@ -137,6 +137,7 @@ import {
   ProjectResources,
 } from "shared/lib/resources/types";
 import { applyPrefabs } from "./applyPrefabs";
+import { EngineSchema } from "lib/project/loadEngineSchema";
 
 type CompiledTilemapData = {
   symbol: string;
@@ -1261,8 +1262,7 @@ const compile = async (
   {
     projectRoot = "/tmp",
     scriptEventHandlers,
-    engineFields = [],
-    sceneTypes = [],
+    engineSchema,
     tmpPath = "/tmp",
     debugEnabled = false,
     progress = (_msg: string) => {},
@@ -1270,8 +1270,7 @@ const compile = async (
   }: {
     projectRoot: string;
     scriptEventHandlers: ScriptEventHandlers;
-    engineFields: EngineFieldSchema[];
-    sceneTypes: SceneTypeSchema[];
+    engineSchema: EngineSchema;
     tmpPath: string;
     debugEnabled?: boolean;
     progress: (_msg: string) => void;
@@ -1308,7 +1307,7 @@ const compile = async (
 
   const isCGBOnly = projectData.settings.colorMode === "color";
   const isSGB = projectData.settings.sgbEnabled && !isCGBOnly;
-  const precompiledEngineFields = keyBy(engineFields, "key");
+  const precompiledEngineFields = keyBy(engineSchema.fields, "key");
   const customEventsLookup = keyBy(projectData.scripts, "id");
 
   // Add UI data
@@ -1907,12 +1906,14 @@ const compile = async (
   output["game_globals.i"] = compileGameGlobalsInclude(
     variableAliasLookup,
     projectData.variables.constants,
+    engineSchema.consts,
     precompiled.stateReferences,
   );
 
   output["game_globals.h"] = compileGameGlobalsHeader(
     variableAliasLookup,
     projectData.variables.constants,
+    engineSchema.consts,
     precompiled.stateReferences,
   );
 
@@ -1935,7 +1936,7 @@ const compile = async (
   const usedSceneTypeIds = uniq(
     ["LOGO"].concat(precompiled.sceneData.map((scene) => scene.type)),
   );
-  const usedSceneTypes = sceneTypes.filter((type) =>
+  const usedSceneTypes = engineSchema.sceneTypes.filter((type) =>
     usedSceneTypeIds.includes(type.key),
   );
 
@@ -1944,7 +1945,7 @@ const compile = async (
   output[`states_ptrs.s`] = compileSceneFnPtrs(usedSceneTypes);
 
   output[`states_defines.h`] = compileStateDefines(
-    engineFields,
+    engineSchema.fields,
     projectData.engineFieldValues.engineFieldValues,
     usedSceneTypeIds,
   );
@@ -1958,7 +1959,7 @@ const compile = async (
     startAnimSpeed: ensureNumber(startAnimSpeed, 15),
     fonts: precompiled.usedFonts,
     avatarFonts,
-    engineFields,
+    engineFields: engineSchema.fields,
     engineFieldValues: projectData.engineFieldValues.engineFieldValues,
     usedSceneTypeIds,
   });

@@ -545,6 +545,18 @@ const ScriptEventFormInput = ({
       </OffscreenSkeletonInput>
     );
   } else if (type === "direction") {
+    if (field.allowMultiple) {
+      return (
+        <OffscreenSkeletonInput>
+          <DirectionPicker
+            id={id}
+            value={value as ActorDirection[]}
+            onChange={onChangeField}
+            allowMultiple
+          />
+        </OffscreenSkeletonInput>
+      );
+    }
     return (
       <OffscreenSkeletonInput>
         <DirectionPicker
@@ -772,6 +784,7 @@ const ScriptEventFormInput = ({
           name={id}
           value={String(value ?? "")}
           onChange={onChangeField}
+          showUnitsWarning
         />
       </OffscreenSkeletonInput>
     );
