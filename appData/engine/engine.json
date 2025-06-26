@@ -410,12 +410,12 @@
       "description": "FIELD_JUMP_MOVEMENT_BOOST_DESC",
       "group": "GAMETYPE_PLATFORMER",
       "type": "slider",
-      "cType": "UBYTE",
+      "cType": "WORD",
       "defaultValue": 0,
       "min": 0,
-      "max": 255,
+      "max": 16384,
       "indent": 1,
-      "editUnits": "subpx",
+      "editUnits": "subpxVelPrecise",
       "conditions": [
         {
           "key": "FEAT_PLATFORM_JUMP",
@@ -726,7 +726,7 @@
       "defaultValue": 912,
       "min": 0,
       "max": 8192,
-      "editUnits": "subpxAccPrecise",
+      "editUnits": "subpxVelPrecise",
       "indent": 1,
       "conditions": [
         {
@@ -893,7 +893,7 @@
         [-16, "FIELD_WALLS"]
       ],
       "cType": "UBYTE",
-      "defaultValue": 0,
+      "defaultValue": 255,
       "indent": 1,
       "conditions": [
         {
@@ -910,9 +910,9 @@
       "group": "GAMETYPE_PLATFORMER",
       "type": "slider",
       "cType": "WORD",
-      "defaultValue": 800,
+      "defaultValue": 1600,
       "min": 0,
-      "max": 1600,
+      "max": 5120,
       "editUnits": "subpx",
       "indent": 1,
       "conditions": [
