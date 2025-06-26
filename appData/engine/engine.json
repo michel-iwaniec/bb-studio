@@ -154,7 +154,7 @@
       "editUnits": "px",
       "defaultValue": 4,
       "min": 0,
-      "max": 32
+      "max": 48
     },
     {
       "key": "plat_camera_block",
@@ -910,7 +910,7 @@
       "group": "GAMETYPE_PLATFORMER",
       "type": "slider",
       "cType": "WORD",
-      "defaultValue": 1600,
+      "defaultValue": 2048,
       "min": 0,
       "max": 5120,
       "editUnits": "subpx",
@@ -930,9 +930,9 @@
       "group": "GAMETYPE_PLATFORMER",
       "type": "slider",
       "cType": "UBYTE",
-      "defaultValue": 5,
+      "defaultValue": 15,
       "min": 1,
-      "max": 30,
+      "max": 60,
       "indent": 1,
       "conditions": [
         {
@@ -967,10 +967,10 @@
       "description": "FIELD_DASH_DEADZONE_DESC",
       "group": "GAMETYPE_PLATFORMER",
       "type": "slider",
-      "cType": "UBYTE",
-      "defaultValue": 4,
+      "cType": "BYTE",
+      "defaultValue": 32,
       "min": 0,
-      "max": 32,
+      "max": 48,
       "indent": 1,
       "conditions": [
         {
@@ -991,7 +991,7 @@
         [2, "FIELD_AIR"]
       ],
       "cType": "UBYTE",
-      "defaultValue": 0,
+      "defaultValue": 1,
       "indent": 1,
       "conditions": [
         {
