@@ -980,13 +980,38 @@
       ]
     },
     {
-      "key": "plat_dash_use_grav",
+      "key": "plat_dash_jump_from",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_DASH_JUMP_FROM",
+      "description": "FIELD_DASH_JUMP_FROM_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "mask",
+      "options": [
+        [1, "FIELD_GROUND"],
+        [2, "FIELD_AIR"]
+      ],
+      "cType": "UBYTE",
+      "defaultValue": 0,
+      "indent": 1,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_DASH",
+          "truthy": true
+        },
+        {
+          "key": "FEAT_PLATFORM_JUMP",
+          "truthy": true
+        }
+      ]
+    },
+    {
+      "key": "FEAT_PLATFORM_DASH_USE_GRAVITY",
       "sceneType": "PLATFORM",
       "label": "FIELD_DASH_USE_GRAVITY",
       "description": "FIELD_DASH_USE_GRAVITY_DESC",
       "group": "GAMETYPE_PLATFORMER",
       "type": "checkbox",
-      "cType": "UBYTE",
+      "cType": "define",
       "defaultValue": 0,
       "indent": 1,
       "conditions": [

@@ -1107,6 +1107,8 @@
   "FIELD_DASH_PASSTHROUGH_DESC": "Choose which collision types the player ignores while dashing.",
   "FIELD_DASH_USE_GRAVITY": "Use Gravity When Dashing",
   "FIELD_DASH_USE_GRAVITY_DESC": "Controls whether gravity is applied while dashing.",
+  "FIELD_DASH_JUMP_FROM": "Dash Jump From",
+  "FIELD_DASH_JUMP_FROM_DESC": "Controls whether the player can jump while dashing.",
   "FIELD_WALLS": "Walls",
   "FIELD_PREVENT_BACKTRACKING": "Prevent Backtracking",
   "FIELD_PREVENT_BACKTRACKING_DESC": "Prevents camera from scrolling in selected directions.",
