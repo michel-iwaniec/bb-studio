@@ -29,6 +29,7 @@ const fields = [
       ["knockbackEnd", l10n("FIELD_KNOCKBACK_END")],
       ["blankStart", l10n("FIELD_BLANK_START")],
       ["blankEnd", l10n("FIELD_BLANK_END")],
+      ["dashReady", l10n("FIELD_DASH_READY")],
     ],
   },
 ];
@@ -42,6 +43,7 @@ const valuesMap = {
   jumpEnd: "PLATFORM_JUMP_END",
   dashStart: "PLATFORM_DASH_INIT",
   dashEnd: "PLATFORM_DASH_END",
+  dashReady: "PLATFORM_DASH_READY",
   ladderStart: "PLATFORM_LADDER_INIT",
   ladderEnd: "PLATFORM_LADDER_END",
   wallStart: "PLATFORM_WALL_INIT",

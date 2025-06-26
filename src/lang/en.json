@@ -1173,6 +1173,7 @@
   "FIELD_WALL_JUMP_COUNTER_DESC": "Number of wall jumps remaining before landing.",
   "FIELD_WALL_JUMP_COYOTE_TIME_COUNTER": "Wall Coyote Time Counter",
   "FIELD_WALL_JUMP_COYOTE_TIME_COUNTER_DESC": "Number of frames in which a wall jump is allowed after touching a wall.",
+  "FIELD_DASH_READY": "Dash Ready",
 
   "// 7": "Asset Viewer ---------------------------------------------",
   "ASSET_SEARCH": "Search...",
