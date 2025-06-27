@@ -1112,7 +1112,26 @@
       "isHeading": true,
       "defaultValue": 0
     },
-
+    {
+      "key": "plat_blank_grav",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_BLANK_GRAV",
+      "description": "FIELD_BLANK_GRAV_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "slider",
+      "cType": "WORD",
+      "defaultValue": 0,
+      "min": 0,
+      "max": 8192,
+      "editUnits": "subpxAccPrecise",
+      "indent": 1,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_BLANK",
+          "truthy": true
+        }
+      ]
+    },
     {
       "key": "plat_actor_attached",
       "sceneType": "PLATFORM",
