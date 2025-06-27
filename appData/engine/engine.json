@@ -384,7 +384,7 @@
       ]
     },
     {
-      "key": "plat_buffer_frames",
+      "key": "plat_jump_buffer_frames",
       "sceneType": "PLATFORM",
       "label": "FIELD_JUMP_BUFFER",
       "description": "FIELD_JUMP_BUFFER_DESC",
@@ -619,7 +619,7 @@
       ]
     },
     {
-      "key": "plat_wall_grav",
+      "key": "plat_wall_slide_vel",
       "sceneType": "PLATFORM",
       "label": "FIELD_WALL_SLIDE_GRAVITY",
       "description": "FIELD_WALL_SLIDE_GRAVITY_DESC",
@@ -629,7 +629,7 @@
       "defaultValue": 1792,
       "min": 0,
       "max": 8192,
-      "editUnits": "subpxAccPrecise",
+      "editUnits": "subpxVelPrecise",
       "indent": 2,
       "conditions": [
         {
@@ -715,7 +715,7 @@
       ]
     },
     {
-      "key": "plat_float_grav",
+      "key": "plat_float_vel",
       "sceneType": "PLATFORM",
       "label": "FIELD_FLOAT_VEL",
       "description": "FIELD_FLOAT_VEL_DESC",
