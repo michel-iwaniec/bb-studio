@@ -324,7 +324,7 @@
       ]
     },
     {
-      "key": "plat_hold_jump_max",
+      "key": "plat_hold_jump_frames",
       "sceneType": "PLATFORM",
       "label": "FIELD_JUMP_FRAMES",
       "description": "FIELD_JUMP_FRAMES_DESC",
@@ -384,7 +384,7 @@
       ]
     },
     {
-      "key": "plat_buffer_max",
+      "key": "plat_buffer_frames",
       "sceneType": "PLATFORM",
       "label": "FIELD_JUMP_BUFFER",
       "description": "FIELD_JUMP_BUFFER_DESC",
@@ -510,7 +510,7 @@
       ]
     },
     {
-      "key": "plat_coyote_max",
+      "key": "plat_coyote_frames",
       "sceneType": "PLATFORM",
       "label": "FIELD_COYOTE_TIME_FRAMES",
       "description": "FIELD_COYOTE_TIME_FRAMES_DESC",
@@ -941,7 +941,7 @@
       ]
     },
     {
-      "key": "plat_dash_ready_max",
+      "key": "plat_dash_ready_frames",
       "sceneType": "PLATFORM",
       "label": "FIELD_DASH_COOLDOWN",
       "description": "FIELD_DASH_COOLDOWN_DESC",
