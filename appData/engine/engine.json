@@ -323,7 +323,6 @@
         }
       ]
     },
-
     {
       "key": "plat_hold_jump_max",
       "sceneType": "PLATFORM",
@@ -1042,6 +1041,65 @@
       "cType": "define",
       "isHeading": true,
       "defaultValue": 0
+    },
+    {
+      "key": "plat_knockback_vel_x",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_PLATFORM_KNOCKBACK_VEL_X",
+      "description": "FIELD_PLATFORM_KNOCKBACK_VEL_X_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "slider",
+      "cType": "WORD",
+      "defaultValue": 8192,
+      "min": 0,
+      "max": 32768,
+      "editUnits": "subpxVelPrecise",
+      "indent": 1,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_KNOCKBACK",
+          "truthy": true
+        }
+      ]
+    },
+    {
+      "key": "plat_knockback_vel_y",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_KNOCKBACK_VEL_Y",
+      "description": "FIELD_KNOCKBACK_VEL_Y_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "slider",
+      "cType": "WORD",
+      "defaultValue": 16384,
+      "min": 0,
+      "max": 32768,
+      "editUnits": "subpxVelPrecise",
+      "indent": 1,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_KNOCKBACK",
+          "truthy": true
+        }
+      ]
+    },
+    {
+      "key": "plat_knockback_frames",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_KNOCKBACK_FRAMES",
+      "description": "FIELD_KNOCKBACK_FRAMES_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "slider",
+      "cType": "UBYTE",
+      "defaultValue": 30,
+      "min": 1,
+      "max": 60,
+      "indent": 1,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_KNOCKBACK",
+          "truthy": true
+        }
+      ]
     },
     {
       "key": "FEAT_PLATFORM_BLANK",
