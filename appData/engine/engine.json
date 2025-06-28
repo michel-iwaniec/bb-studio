@@ -1133,7 +1133,7 @@
       ]
     },
     {
-      "key": "plat_actor_attached",
+      "key": "plat_is_actor_attached",
       "sceneType": "PLATFORM",
       "label": "FIELD_ACTOR_ATTACHED",
       "description": "FIELD_ACTOR_ATTACHED_DESC",
