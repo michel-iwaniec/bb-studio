@@ -418,13 +418,19 @@ const toASMDir = (direction: string) => {
 
 const toASMMoveFlags = (
   moveType: string,
-  useCollisions: boolean,
+  useCollisions: boolean | Array<"walls" | "actors">,
   relative?: boolean,
   relativeUnits?: DistanceUnitType,
 ) => {
   return unionFlags(
     ([] as string[]).concat(
-      useCollisions ? ".ACTOR_ATTR_CHECK_COLL" : [],
+      useCollisions === true ? ".ACTOR_ATTR_CHECK_COLL" : [],
+      Array.isArray(useCollisions) && useCollisions.includes("walls")
+        ? ".ACTOR_ATTR_CHECK_COLL_WALLS"
+        : [],
+      Array.isArray(useCollisions) && useCollisions.includes("actors")
+        ? ".ACTOR_ATTR_CHECK_COLL_ACTORS"
+        : [],
       moveType === "horizontal" ? ".ACTOR_ATTR_H_FIRST" : [],
       moveType === "diagonal" ? ".ACTOR_ATTR_DIAGONAL" : [],
       relative && relativeUnits === "pixels"
@@ -2924,7 +2930,7 @@ extern void __mute_mask_${symbol};
     actorId: string,
     valueX: ScriptValue,
     valueY: ScriptValue,
-    useCollisions: boolean,
+    collideWith: boolean | Array<"walls" | "actors">,
     moveType: ScriptBuilderMoveType,
     units: DistanceUnitType = "tiles",
   ) => {
@@ -2959,7 +2965,7 @@ extern void __mute_mask_${symbol};
     this._performValueRPN(rpn, rpnOpsY, localsLookup);
     rpn.refSet(this._localRef(actorRef, 2));
 
-    rpn.int16(toASMMoveFlags(moveType, useCollisions));
+    rpn.int16(toASMMoveFlags(moveType, collideWith));
     rpn.refSet(this._localRef(actorRef, 3));
 
     rpn.stop();
@@ -3009,7 +3015,7 @@ extern void __mute_mask_${symbol};
     actorId: string,
     valueX: ScriptValue,
     valueY: ScriptValue,
-    useCollisions: boolean,
+    collideWith: boolean | Array<"walls" | "actors">,
     moveType: ScriptBuilderMoveType,
     units: DistanceUnitType = "tiles",
   ) => {
@@ -3054,7 +3060,7 @@ extern void __mute_mask_${symbol};
     this._performValueRPN(rpn, rpnOpsY, localsLookup2);
     rpn.refSet(this._localRef(actorRef, 2));
 
-    rpn.int16(toASMMoveFlags(moveType, useCollisions, true, units));
+    rpn.int16(toASMMoveFlags(moveType, collideWith, true, units));
     rpn.refSet(this._localRef(actorRef, 3));
 
     rpn.stop();
