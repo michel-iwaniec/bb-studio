@@ -144,6 +144,14 @@
       "defaultValue": 1
     },
     {
+      "sceneType": "PLATFORM",
+      "label": "FIELD_CAMERA_CONTROL",
+      "description": "FIELD_CAMERA_CONTROL_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "label",
+      "isHeading": true
+    },
+    {
       "key": "plat_camera_deadzone_x",
       "sceneType": "PLATFORM",
       "label": "FIELD_CAMERA_DEADZONE_X",
@@ -154,7 +162,8 @@
       "editUnits": "px",
       "defaultValue": 4,
       "min": 0,
-      "max": 48
+      "max": 48,
+      "indent": 1
     },
     {
       "key": "plat_camera_block",
@@ -170,7 +179,8 @@
         [3, "FIELD_BOTH"]
       ],
       "cType": "UBYTE",
-      "defaultValue": 0
+      "defaultValue": 0,
+      "indent": 1
     },
     {
       "key": "FEAT_PLATFORM_RUN",
@@ -324,66 +334,6 @@
       ]
     },
     {
-      "key": "plat_hold_jump_frames",
-      "sceneType": "PLATFORM",
-      "label": "FIELD_JUMP_FRAMES",
-      "description": "FIELD_JUMP_FRAMES_DESC",
-      "group": "GAMETYPE_PLATFORMER",
-      "type": "slider",
-      "cType": "UBYTE",
-      "defaultValue": 1,
-      "min": 1,
-      "max": 100,
-      "indent": 1,
-      "conditions": [
-        {
-          "key": "FEAT_PLATFORM_JUMP",
-          "truthy": true
-        }
-      ]
-    },
-
-    {
-      "key": "plat_hold_grav",
-      "sceneType": "PLATFORM",
-      "label": "FIELD_GRAVITY_JUMP",
-      "description": "FIELD_GRAVITY_JUMP_DESC",
-      "group": "GAMETYPE_PLATFORMER",
-      "type": "slider",
-      "cType": "WORD",
-      "defaultValue": 512,
-      "min": 0,
-      "max": 8192,
-      "editUnits": "subpxAccPrecise",
-      "indent": 1,
-      "conditions": [
-        {
-          "key": "FEAT_PLATFORM_JUMP",
-          "truthy": true
-        }
-      ]
-    },
-    {
-      "key": "plat_jump_min",
-      "sceneType": "PLATFORM",
-      "label": "FIELD_INITIAL_JUMP_VEL",
-      "description": "FIELD_INITIAL_JUMP_VEL_DESC",
-      "group": "GAMETYPE_PLATFORMER",
-      "type": "slider",
-      "cType": "WORD",
-      "defaultValue": 0,
-      "min": 0,
-      "max": 16384,
-      "indent": 1,
-      "editUnits": "subpxVelPrecise",
-      "conditions": [
-        {
-          "key": "FEAT_PLATFORM_JUMP",
-          "truthy": true
-        }
-      ]
-    },
-    {
       "key": "plat_run_boost",
       "sceneType": "PLATFORM",
       "label": "FIELD_JUMP_MOVEMENT_BOOST",
@@ -400,9 +350,79 @@
         {
           "key": "FEAT_PLATFORM_JUMP",
           "truthy": true
-        },
+        }
+      ]
+    },
+    {
+      "sceneType": "PLATFORM",
+      "label": "FIELD_JUMP_CONTROL",
+      "description": "FIELD_JUMP_CONTROL_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "label",
+      "isHeading": true,
+      "indent": 1,
+      "conditions": [
         {
-          "key": "FEAT_PLATFORM_RUN",
+          "key": "FEAT_PLATFORM_JUMP",
+          "truthy": true
+        }
+      ]
+    },
+    {
+      "key": "plat_jump_hold_frames",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_JUMP_HOLD_FRAMES",
+      "description": "FIELD_JUMP_HOLD_FRAMES_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "slider",
+      "cType": "UBYTE",
+      "defaultValue": 1,
+      "min": 1,
+      "max": 100,
+      "indent": 2,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_JUMP",
+          "truthy": true
+        }
+      ]
+    },
+    {
+      "key": "plat_jump_hold_vel",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_JUMP_HOLD_VEL",
+      "description": "FIELD_JUMP_HOLD_VEL_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "slider",
+      "cType": "WORD",
+      "defaultValue": 0,
+      "min": 0,
+      "max": 16384,
+      "indent": 2,
+      "editUnits": "subpxVelPrecise",
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_JUMP",
+          "truthy": true
+        }
+      ]
+    },
+    {
+      "key": "plat_hold_grav",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_GRAVITY_JUMP",
+      "description": "FIELD_GRAVITY_JUMP_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "slider",
+      "cType": "WORD",
+      "defaultValue": 512,
+      "min": 0,
+      "max": 8192,
+      "editUnits": "subpxAccPrecise",
+      "indent": 2,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_JUMP",
           "truthy": true
         }
       ]
@@ -728,7 +748,7 @@
           "truthy": true
         }
       ]
-    },      
+    },
     {
       "key": "INPUT_PLATFORM_FLOAT",
       "sceneType": "PLATFORM",
@@ -886,7 +906,7 @@
           "truthy": true
         }
       ]
-    },    
+    },
     {
       "key": "INPUT_PLATFORM_DASH",
       "sceneType": "PLATFORM",

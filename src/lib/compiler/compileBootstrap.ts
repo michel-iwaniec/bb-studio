@@ -55,6 +55,7 @@ export const compileScriptEngineInit = ({
   const usedEngineFields = engineFields.filter(
     (engineField: EngineFieldSchema) =>
       engineField.cType !== "define" &&
+      engineField.key?.length > 0 &&
       (!engineField.sceneType ||
         usedSceneTypeIds.includes(engineField.sceneType)),
   );
