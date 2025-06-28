@@ -662,21 +662,37 @@
       "defaultValue": 0
     },
     {
-      "key": "plat_drop_through",
+      "key": "plat_drop_through_active",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_DROP_THROUGH_ACTIVE",
+      "description": "FIELD_DROP_THROUGH_ACTIVE_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "checkbox",
+      "cType": "UBYTE",
+      "defaultValue": 1,
+      "indent": 2,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_DROP_THROUGH",
+          "truthy": true
+        }
+      ]
+    },
+    {
+      "key": "INPUT_PLATFORM_DROP_THROUGH",
       "sceneType": "PLATFORM",
       "label": "FIELD_DROP_THROUGH_INPUT",
       "description": "FIELD_DROP_THROUGH_INPUT_DESC",
       "group": "GAMETYPE_PLATFORMER",
       "type": "select",
       "options": [
-        [0, "FIELD_NONE"],
-        [1, "FIELD_DOWN_HOLD"],
-        [2, "FIELD_DOWN_TAP"],
-        [3, "FIELD_DOWN_AND_JUMP_HOLD"],
-        [4, "FIELD_DOWN_AND_JUMP_TAP"]
+        [0, "FIELD_DOWN_HOLD"],
+        [1, "FIELD_DOWN_TAP"],
+        [2, "FIELD_DOWN_AND_JUMP_HOLD"],
+        [3, "FIELD_DOWN_AND_JUMP_TAP"]
       ],
-      "cType": "UBYTE",
-      "defaultValue": 4,
+      "cType": "define",
+      "defaultValue": 3,
       "indent": 2,
       "conditions": [
         {
