@@ -713,19 +713,35 @@
       "defaultValue": 0
     },
     {
-      "key": "plat_float_input",
+      "key": "plat_float_active",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_FLOAT_ACTIVE",
+      "description": "FIELD_FLOAT_ACTIVE_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "checkbox",
+      "cType": "UBYTE",
+      "defaultValue": 1,
+      "indent": 1,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_FLOAT",
+          "truthy": true
+        }
+      ]
+    },      
+    {
+      "key": "INPUT_PLATFORM_FLOAT",
       "sceneType": "PLATFORM",
       "label": "FIELD_FLOAT_INPUT",
       "description": "FIELD_FLOAT_INPUT_DESC",
       "group": "GAMETYPE_PLATFORMER",
       "type": "select",
       "options": [
-        [0, "FIELD_NONE"],
-        [1, "FIELD_JUMP_HOLD"],
-        [2, "FIELD_UP_HOLD"]
+        [0, "FIELD_JUMP_HOLD"],
+        [1, "FIELD_UP_HOLD"]
       ],
-      "cType": "UBYTE",
-      "defaultValue": 1,
+      "cType": "define",
+      "defaultValue": 0,
       "indent": 1,
       "conditions": [
         {
