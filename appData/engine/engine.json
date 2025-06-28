@@ -384,25 +384,6 @@
       ]
     },
     {
-      "key": "plat_jump_buffer_frames",
-      "sceneType": "PLATFORM",
-      "label": "FIELD_JUMP_BUFFER",
-      "description": "FIELD_JUMP_BUFFER_DESC",
-      "group": "GAMETYPE_PLATFORMER",
-      "type": "slider",
-      "cType": "UBYTE",
-      "defaultValue": 0,
-      "min": 0,
-      "max": 20,
-      "indent": 1,
-      "conditions": [
-        {
-          "key": "FEAT_PLATFORM_JUMP",
-          "truthy": true
-        }
-      ]
-    },
-    {
       "key": "plat_run_boost",
       "sceneType": "PLATFORM",
       "label": "FIELD_JUMP_MOVEMENT_BOOST",
@@ -422,6 +403,70 @@
         },
         {
           "key": "FEAT_PLATFORM_RUN",
+          "truthy": true
+        }
+      ]
+    },
+    {
+      "key": "FEAT_PLATFORM_COYOTE_TIME",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_FEAT_PLATFORM_COYOTE_TIME",
+      "description": "FIELD_FEAT_PLATFORM_COYOTE_TIME_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "checkbox",
+      "cType": "define",
+      "defaultValue": 0,
+      "isHeading": true,
+      "indent": 1,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_JUMP",
+          "truthy": true
+        }
+      ]
+    },
+    {
+      "key": "plat_coyote_frames",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_COYOTE_TIME_FRAMES",
+      "description": "FIELD_COYOTE_TIME_FRAMES_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "slider",
+      "cType": "UBYTE",
+      "defaultValue": 2,
+      "min": 0,
+      "max": 15,
+      "indent": 2,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_JUMP",
+          "truthy": true
+        },
+        {
+          "key": "FEAT_PLATFORM_COYOTE_TIME",
+          "truthy": true
+        }
+      ]
+    },
+    {
+      "key": "plat_jump_buffer_frames",
+      "sceneType": "PLATFORM",
+      "label": "FIELD_JUMP_BUFFER",
+      "description": "FIELD_JUMP_BUFFER_DESC",
+      "group": "GAMETYPE_PLATFORMER",
+      "type": "slider",
+      "cType": "UBYTE",
+      "defaultValue": 2,
+      "min": 0,
+      "max": 15,
+      "indent": 2,
+      "conditions": [
+        {
+          "key": "FEAT_PLATFORM_JUMP",
+          "truthy": true
+        },
+        {
+          "key": "FEAT_PLATFORM_COYOTE_TIME",
           "truthy": true
         }
       ]
@@ -487,47 +532,6 @@
         },
         {
           "key": "FEAT_PLATFORM_DOUBLE_JUMP",
-          "truthy": true
-        }
-      ]
-    },
-    {
-      "key": "FEAT_PLATFORM_COYOTE_TIME",
-      "sceneType": "PLATFORM",
-      "label": "FIELD_FEAT_PLATFORM_COYOTE_TIME",
-      "description": "FIELD_FEAT_PLATFORM_COYOTE_TIME_DESC",
-      "group": "GAMETYPE_PLATFORMER",
-      "type": "checkbox",
-      "cType": "define",
-      "defaultValue": 0,
-      "isHeading": true,
-      "indent": 1,
-      "conditions": [
-        {
-          "key": "FEAT_PLATFORM_JUMP",
-          "truthy": true
-        }
-      ]
-    },
-    {
-      "key": "plat_coyote_frames",
-      "sceneType": "PLATFORM",
-      "label": "FIELD_COYOTE_TIME_FRAMES",
-      "description": "FIELD_COYOTE_TIME_FRAMES_DESC",
-      "group": "GAMETYPE_PLATFORMER",
-      "type": "slider",
-      "cType": "UBYTE",
-      "defaultValue": 2,
-      "min": 0,
-      "max": 10,
-      "indent": 2,
-      "conditions": [
-        {
-          "key": "FEAT_PLATFORM_JUMP",
-          "truthy": true
-        },
-        {
-          "key": "FEAT_PLATFORM_COYOTE_TIME",
           "truthy": true
         }
       ]
