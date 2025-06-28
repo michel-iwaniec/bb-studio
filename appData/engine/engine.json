@@ -1166,7 +1166,7 @@
       "runtimeOnly": true
     },
     {
-      "key": "plat_ct_val",
+      "key": "plat_coyote_timer",
       "sceneType": "PLATFORM",
       "label": "FIELD_COYOTE_TIME_COUNTER",
       "description": "FIELD_COYOTE_TIME_COUNTER_DESC",
@@ -1177,7 +1177,7 @@
       "runtimeOnly": true
     },
     {
-      "key": "plat_dj_val",
+      "key": "plat_extra_jumps_counter",
       "sceneType": "PLATFORM",
       "label": "FIELD_DOUBLE_JUMP_COUNTER",
       "description": "FIELD_DOUBLE_JUMP_COUNTER_DESC",
@@ -1188,7 +1188,7 @@
       "runtimeOnly": true
     },
     {
-      "key": "plat_wj_val",
+      "key": "plat_wall_jump_counter",
       "sceneType": "PLATFORM",
       "label": "FIELD_WALL_JUMP_COUNTER",
       "description": "FIELD_WALL_JUMP_COUNTER_DESC",
@@ -1199,7 +1199,7 @@
       "runtimeOnly": true
     },
     {
-      "key": "plat_wc_val",
+      "key": "plat_wall_coyote_timer",
       "sceneType": "PLATFORM",
       "label": "FIELD_WALL_JUMP_COYOTE_TIME_COUNTER",
       "description": "FIELD_WALL_JUMP_COYOTE_TIME_COUNTER_DESC",
