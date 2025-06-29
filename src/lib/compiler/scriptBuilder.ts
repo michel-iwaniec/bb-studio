@@ -6016,7 +6016,7 @@ extern void __mute_mask_${symbol};
   ) => {
     const { engineFields } = this.options;
     const engineField = engineFields[key];
-    if (engineField !== undefined) {
+    if (engineField !== undefined && engineField.key) {
       const cType = engineField.cType;
       let newValue = value;
       if (newValue === "" || newValue === undefined) {
@@ -6042,7 +6042,7 @@ extern void __mute_mask_${symbol};
   engineFieldSetToVariable = (key: string, variable: string) => {
     const { engineFields } = this.options;
     const engineField = engineFields[key];
-    if (engineField !== undefined) {
+    if (engineField !== undefined && engineField.key) {
       const cType = engineField.cType;
       this._addComment(`Engine Field Set To Variable`);
       if (is16BitCType(cType)) {
@@ -6057,7 +6057,7 @@ extern void __mute_mask_${symbol};
   engineFieldSetToScriptValue = (key: string, value: ScriptValue) => {
     const { engineFields } = this.options;
     const engineField = engineFields[key];
-    if (engineField !== undefined) {
+    if (engineField !== undefined && engineField.key) {
       const cType = engineField.cType;
       this._addComment(`Engine Field Set To Value`);
 
@@ -6104,7 +6104,7 @@ extern void __mute_mask_${symbol};
   engineFieldSetToDefault = (key: string) => {
     const { engineFields } = this.options;
     const engineField = engineFields[key];
-    if (engineField !== undefined) {
+    if (engineField !== undefined && engineField.key) {
       const cType = engineField.cType;
       const numberValue = Number(engineField.defaultValue || 0);
       this._addComment(`Engine Field Set To Default`);
@@ -6120,7 +6120,7 @@ extern void __mute_mask_${symbol};
   engineFieldStoreInVariable = (key: string, variable: string) => {
     const { engineFields } = this.options;
     const engineField = engineFields[key];
-    if (engineField !== undefined) {
+    if (engineField !== undefined && engineField.key) {
       const cType = engineField.cType;
       this._addComment(`Engine Field Store In Variable`);
       if (is16BitCType(cType)) {
