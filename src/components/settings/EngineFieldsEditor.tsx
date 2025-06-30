@@ -251,27 +251,6 @@ export const EngineFieldInput: FC<EngineFieldInputProps> = ({
       />
     );
   }
-  if (field.type === "select") {
-    const theValue = value !== undefined ? value : field.defaultValue;
-    const options = (field.options || []).map(([value, label]) => ({
-      value,
-      label: l10n(label as L10NKey),
-    }));
-    const selectedOption = options.find((option) => option.value === theValue);
-    return (
-      <Select
-        id={field.key}
-        name={field.key}
-        value={selectedOption}
-        onChange={(e: SingleValue<{ value: number }>) => {
-          if (e) {
-            onChange(e.value);
-          }
-        }}
-        options={options}
-      />
-    );
-  }
   if (field.type === "togglebuttons") {
     const theValue = value !== undefined ? value : field.defaultValue;
     const options = (field.options || []).map(

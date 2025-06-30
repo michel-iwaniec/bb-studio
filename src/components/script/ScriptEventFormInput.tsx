@@ -62,7 +62,9 @@ import { ensureMaybeNumber, isStringArray } from "shared/types";
 import { clampToCType } from "shared/lib/engineFields/engineFieldToCType";
 import { setDefault } from "shared/lib/helpers/setDefault";
 import { TilesetSelect } from "components/forms/TilesetSelect";
-import ValueSelect from "components/forms/ValueSelect";
+import ValueSelect, {
+  ValueSelectInputOverrideTypes,
+} from "components/forms/ValueSelect";
 import {
   isConstScriptValue,
   isScriptValue,
@@ -72,6 +74,7 @@ import { FlagSelect } from "components/forms/FlagSelect";
 import { StyledButton, ButtonPrefixIcon } from "ui/buttons/style";
 import { SingleValue } from "react-select";
 import ConstantValueSelect from "components/forms/ConstantValueSelect";
+import { EngineFieldType } from "store/features/engine/engineState";
 
 interface ScriptEventFormInputProps {
   id: string;
@@ -104,6 +107,21 @@ const argValue = (arg: unknown): unknown => {
     return undefined;
   }
   return arg;
+};
+
+const asValueSelectFieldType = (
+  fieldType: EngineFieldType,
+  fallbackType: ValueSelectInputOverrideTypes,
+): ValueSelectInputOverrideTypes => {
+  switch (fieldType) {
+    case "number":
+    case "slider":
+    case "checkbox":
+    case "select":
+      return fieldType;
+    default:
+      return fallbackType;
+  }
 };
 
 const ScriptEventFormInput = ({
@@ -820,7 +838,7 @@ const ScriptEventFormInput = ({
   } else if (type === "engineFieldValue") {
     const engineField = engineFieldsLookup[args.engineFieldKey as string];
     if (engineField) {
-      const fieldType = engineField.type || "number";
+      const fieldType = asValueSelectFieldType(engineField.type, "number");
       const engineDefaultValue = {
         type: "number",
         value: engineField.defaultValue,

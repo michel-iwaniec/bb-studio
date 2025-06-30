@@ -8,7 +8,7 @@ import {
 } from "shared/lib/resources/types";
 import projectActions from "store/features/project/projectActions";
 
-export type EngineFieldType = "number" | "slider" | "checkbox" | "select";
+export type EngineFieldType = "number" | "slider" | "checkbox" | "select" | "label" | "togglebuttons" | "mask";
 
 export type EngineFieldCType = "UBYTE" | "UWORD" | "BYTE" | "WORD" | "define";
 

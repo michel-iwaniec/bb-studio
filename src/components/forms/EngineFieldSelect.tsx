@@ -17,8 +17,8 @@ interface EngineFieldSelectProps {
   showUnitsWarning?: boolean;
 }
 
-const notDefine = (engineField: EngineFieldSchema) =>
-  engineField.cType !== "define";
+const notEditable = (engineField: EngineFieldSchema) =>
+  engineField.cType !== "define" && engineField.type !== "label";
 
 const AlertWrapper = styled.div`
   margin-top: 5px;
@@ -38,7 +38,7 @@ const EngineFieldSelect: React.FC<EngineFieldSelectProps> = ({
     setOptions(
       groupedFields.map((g) => ({
         label: l10n(g.name as L10NKey),
-        options: g.fields.filter(notDefine).map((f) => ({
+        options: g.fields.filter(notEditable).map((f) => ({
           value: f.key,
           label: l10n(f.label as L10NKey),
         })),

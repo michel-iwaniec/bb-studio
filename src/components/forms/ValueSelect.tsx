@@ -376,6 +376,8 @@ type ValueSelectInputOverride = {
     }
 );
 
+export type ValueSelectInputOverrideTypes = ValueSelectInputOverride["type"];
+
 const noop = () => {};
 
 interface ValueSelectProps {
