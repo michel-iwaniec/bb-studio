@@ -1289,9 +1289,9 @@
       "group": "GAMETYPE_SHMUP",
       "type": "slider",
       "cType": "UBYTE",
-      "defaultValue": 16,
+      "defaultValue": 32,
       "min": 0,
-      "max": 64,
+      "max": 128,
       "editUnits": "subpxVel"
     },
     {
